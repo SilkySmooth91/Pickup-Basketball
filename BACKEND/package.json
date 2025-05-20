@@ -1,0 +1,37 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
+  },
+  "keywords": [
+    "basketball",
+    "playground",
+    "sport",
+    "react",
+    "nodejs",
+    "mongodb",
+    "tailwind",
+    "webapp"
+  ],
+  "author": "Lorenzo Olivieri",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.0",
+    "multer": "^2.0.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth2": "^0.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
