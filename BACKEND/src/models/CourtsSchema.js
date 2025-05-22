@@ -7,7 +7,7 @@ const courtsSchema = new mongoose.Schema({
     baskets: { type: Number, required: true, min: 1 },
     officialsize: { type: Boolean, required: true, default: false },
     nightlights: { type: Boolean, required: true, default: false },
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }]
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments" }]
 })
 
 const courtModel = mongoose.model("Courts", courtsSchema)
