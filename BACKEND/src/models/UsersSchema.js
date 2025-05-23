@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const usersSchema = new mongoose.Schema(
   {
+    refreshToken: { type: String, default: null },
     username: { type: String, required: true, trim: true },
     age: { type: Number, required: true, min: 13 },
     city: { type: String, required: true, trim: true },
