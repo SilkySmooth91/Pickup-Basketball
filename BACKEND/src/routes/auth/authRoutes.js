@@ -2,6 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import usersModel from "../models/UsersSchema.js";
 import { generateTokens } from "../utils/generateTokens.js";
+import authMiddleware from "../middlewares/auth.js";
 
 const router = express.Router();
 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
@@ -39,6 +40,18 @@ router.post("/refresh", async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(403).json({ error: "Token non valido o scaduto" });
+  }
+});
+
+router.post("/logout", authMiddleware, async (req, res) => {
+  try {
+    const user = await usersModel.findById(req.user.id);
+    user.refreshToken = null;
+    await user.save();
+    return res.sendStatus(204);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Errore durante il logout" });
   }
 });
 

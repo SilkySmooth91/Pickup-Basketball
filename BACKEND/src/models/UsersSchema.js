@@ -13,6 +13,8 @@ const usersSchema = new mongoose.Schema(
         return !this.googleId;
       },
     },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
     googleId: { type: String, index: true },
     avatar: { type: String, default: null },
     verified: { type: Boolean, default: false },
