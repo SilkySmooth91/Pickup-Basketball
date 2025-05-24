@@ -4,19 +4,19 @@ import dotenv from "dotenv";
 import connectDB from "./src/config/db.js";
 import passport from "passport"
 import googleStrategy from "./src/auth/strategies/googleOAuth.js";
+import authRoutes from "./src/routes/auth/authRoutes.js";
 
 dotenv.config();
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 passport.use("google", googleStrategy);
+
+// Middleware
+app.use(cors());
+app.use(express.json());
 
 // Routes
 app.use("/auth", authRoutes);
-
-// Middleware
-app.use(express.json());
 
 // Connect to MongoDB
 await connectDB();

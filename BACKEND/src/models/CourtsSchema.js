@@ -3,7 +3,7 @@ import mongoose  from "mongoose"
 const courtsSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     address: { type: String, required: true, trim: true },
-    coordinates: { type: GeoJSON, required: true }, // al posto di GeoJSON, implementare libreria mappe.
+    coordinates: { type: Object, required: true }, // al posto di Object, implementare libreria mappe.
     baskets: { type: Number, required: true, min: 1 },
     officialsize: { type: Boolean, required: true, default: false },
     nightlights: { type: Boolean, required: true, default: false },

@@ -1,7 +1,7 @@
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import "dotenv/config";
-import usersModel from '../models/UsersSchema.js';
-import { generateTokens } from '../utils/generateTokens.js';
+import usersModel from '../../models/UsersSchema.js';
+import { generateTokens } from '../../utils/generateTokens.js';
 
 const googleStrategy = new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,

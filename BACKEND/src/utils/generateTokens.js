@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const jwtSecretKey = process.env.JWT_SECRET_KEY;
-const jwtRefreshKey = process.env.JWT_REFRESH;
+const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
 
 const signToken = (payload, secret, options) => {
   return new Promise((resolve, reject) => {
