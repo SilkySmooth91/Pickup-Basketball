@@ -6,6 +6,8 @@ import passport from "passport"
 import googleStrategy from "./src/auth/strategies/googleOAuth.js";
 import authRoutes from "./src/routes/auth/authRoutes.js";
 import usersRoutes from "./src/routes/users/users.routes.js";
+import courtsRoutes from "./src/routes/courts/courts.routes.js";
+import eventsRoutes from "./src/routes/events/events.routes.js";
 
 dotenv.config();
 
@@ -19,6 +21,8 @@ app.use(express.json());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
+app.use("/courts", courtsRoutes);
+app.use("/events", eventsRoutes);
 
 // Connect to MongoDB
 await connectDB();

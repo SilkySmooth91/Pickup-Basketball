@@ -7,8 +7,19 @@ const router = express.Router();
 
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const users = await usersModel.find();
-    res.json(users);
+    const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+    const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
+    const skip = (page - 1) * limit;
+    const [users, total] = await Promise.all([
+      usersModel.find().skip(skip).limit(limit),
+      usersModel.countDocuments()
+    ]);
+    res.json({
+      users,
+      page,
+      totalPages: Math.ceil(total / limit),
+      totalUsers: total
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore nel recupero utenti" });
@@ -66,6 +77,9 @@ router.patch("/:id", authMiddleware, async (req, res) => {
 
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
+    if (req.user.id !== req.params.id && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Non autorizzato a cancellare questo utente' });
+    }
     const user = await usersModel.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).json({ error: 'Utente non trovato' });

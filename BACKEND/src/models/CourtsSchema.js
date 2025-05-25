@@ -7,6 +7,10 @@ const courtsSchema = new mongoose.Schema({
     baskets: { type: Number, required: true, min: 1 },
     officialsize: { type: Boolean, required: true, default: false },
     nightlights: { type: Boolean, required: true, default: false },
+    images: [{
+        url: { type: String, required: true },
+        public_id: { type: String, required: true }
+    }], // galleria immagini
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments" }]
 })
 
