@@ -5,6 +5,7 @@ import connectDB from "./src/config/db.js";
 import passport from "passport"
 import googleStrategy from "./src/auth/strategies/googleOAuth.js";
 import authRoutes from "./src/routes/auth/authRoutes.js";
+import usersRoutes from "./src/routes/users/users.routes.js";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
 
 // Connect to MongoDB
 await connectDB();

@@ -18,6 +18,11 @@ const usersSchema = new mongoose.Schema(
     googleId: { type: String, index: true },
     avatar: { type: String, default: null },
     verified: { type: Boolean, default: false },
+    role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+    },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
     commentsOnProfile: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
     commentsByUser: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
