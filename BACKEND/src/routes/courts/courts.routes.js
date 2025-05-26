@@ -105,17 +105,16 @@ router.post("/:id/images", authMiddleware, uploadGallery.array("images", 10), as
 });
 
 // DELETE singola immagine dalla galleria
-router.delete("/:id/images/:public_id", authMiddleware, async (req, res) => {
+router.delete("/:id/images", authMiddleware, async (req, res) => {
   try {
-    const { id, public_id } = req.params;
+    const { id } = req.params;
+    const public_id = req.query.public_id;
+    if (!public_id) return res.status(400).json({ error: "public_id mancante" });
     const court = await courtModel.findById(id);
     if (!court) return res.status(404).json({ error: "Campetto non trovato" });
-    // Trova l'immagine
     const imgIndex = court.images.findIndex(img => img.public_id === public_id);
     if (imgIndex === -1) return res.status(404).json({ error: "Immagine non trovata" });
-    // Elimina da Cloudinary
-    try { await cloudinary.uploader.destroy(`covers/${public_id}`); } catch {}
-    // Rimuovi dal court
+    try { await cloudinary.uploader.destroy(public_id); } catch {}
     court.images.splice(imgIndex, 1);
     await court.save();
     res.json({ message: "Immagine eliminata", images: court.images });

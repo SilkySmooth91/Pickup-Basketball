@@ -135,7 +135,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
       return res.status(403).json({ error: "Non autorizzato a eliminare questo evento" });
     }
     await eventModel.findByIdAndDelete(req.params.id);
-    res.sendStatus(204);
+    res.sendStatus(204).json({ message: "Evento eliminato" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore durante l'eliminazione evento" });
