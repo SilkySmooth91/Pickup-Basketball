@@ -8,6 +8,7 @@ import authRoutes from "./src/routes/auth/authRoutes.js";
 import usersRoutes from "./src/routes/users/users.routes.js";
 import courtsRoutes from "./src/routes/courts/courts.routes.js";
 import eventsRoutes from "./src/routes/events/events.routes.js";
+import friendsRoutes from "./routes/friends-requests/friends.routes.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/courts", courtsRoutes);
 app.use("/events", eventsRoutes);
+app.use("/friends", friendsRoutes);
 
 // Connect to MongoDB
 await connectDB();
