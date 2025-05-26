@@ -142,6 +142,54 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+// Iscrizione a un evento
+router.post("/:id/join", authMiddleware, async (req, res) => {
+  try {
+    const event = await eventModel.findById(req.params.id);
+    if (!event) return res.status(404).json({ error: "Evento non trovato" });
+
+    // Già iscritto?
+    if (event.participants.includes(req.user.id)) {
+      return res.status(400).json({ error: "Sei già iscritto a questo evento" });
+    }
+    // Controlla maxplayers
+    if (event.maxplayers && event.participants.length >= event.maxplayers) {
+      return res.status(400).json({ error: "Evento pieno" });
+    }
+    event.participants.push(req.user.id);
+    await event.save();
+    res.json({ message: "Iscritto all'evento", event });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore durante l'iscrizione" });
+  }
+});
+
+// Disiscrizione da un evento
+router.post("/:id/leave", authMiddleware, async (req, res) => {
+  try {
+    const event = await eventModel.findById(req.params.id);
+    if (!event) return res.status(404).json({ error: "Evento non trovato" });
+
+    // Non iscritto?
+    if (!event.participants.includes(req.user.id)) {
+      return res.status(400).json({ error: "Non sei iscritto a questo evento" });
+    }
+    // Non permettere al creator di lasciare l'evento
+    if (event.creator.toString() === req.user.id) {
+      return res.status(400).json({ error: "Il creatore non può lasciare l'evento" });
+    }
+    event.participants = event.participants.filter(
+      userId => userId.toString() !== req.user.id
+    );
+    await event.save();
+    res.json({ message: "Disiscritto dall'evento", event });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore durante la disiscrizione" });
+  }
+});
+
 
 
 export default router;
