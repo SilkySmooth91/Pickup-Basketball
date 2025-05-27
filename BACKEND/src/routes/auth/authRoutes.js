@@ -7,12 +7,13 @@ import sendEmail from "../../utils/sendEmails.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import "dotenv/config";
+import uniqueUserFields from "../../middlewares/uniqueUserFields.js";
 
 const router = express.Router();
 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
 const FE_URL = process.env.FE_URL;
 
-router.post('/register', async (req, res) => {
+router.post('/register', uniqueUserFields, async (req, res) => {
   const { username, email, password, confirmPassword, age, city } = req.body;
 
   // Verifica campi obbligatori
@@ -26,11 +27,6 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    // Controlla email duplicata
-    if (await usersModel.findOne({ email })) {
-      return res.status(409).json({ error: 'Email già in uso' });
-    }
-
     // Hash della password
     const hashed = await bcrypt.hash(password, 10);
 

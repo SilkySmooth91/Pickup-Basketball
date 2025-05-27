@@ -1,17 +1,15 @@
 import express from "express";
 import authMiddleware from "../../middlewares/auth.js";
+import validateFriendRequest from "../../middlewares/friendRequestValidation.js";
 import friendRequestModel from "../../models/FriendReqModel.js";
+import usersModel from "../../models/UsersSchema.js";
 
 const router = express.Router();
 
 // Invia una richiesta di amicizia
-router.post("/requests", authMiddleware, async (req, res) => {
+router.post("/requests", authMiddleware, validateFriendRequest, async (req, res) => {
   try {
     const { to } = req.body;
-    if (!to) return res.status(400).json({ error: "ID destinatario mancante" });
-    // Evita doppioni
-    const exists = await friendRequestModel.findOne({ from: req.user.id, to, status: "pending" });
-    if (exists) return res.status(400).json({ error: "Richiesta già inviata" });
     const request = await friendRequestModel.create({ from: req.user.id, to });
     res.status(201).json(request);
   } catch (err) {
@@ -76,6 +74,24 @@ router.get("/", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore nel recupero amici" });
+  }
+});
+
+// Ricerca utenti per username (case-insensitive, escluso se stessi)
+router.get("/search", authMiddleware, async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) return res.status(400).json({ error: "Parametro di ricerca mancante" });
+
+    const users = await usersModel.find({
+      username: { $regex: q, $options: "i" },
+      _id: { $ne: req.user.id }
+    }).select("username _id");
+
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nella ricerca utenti" });
   }
 });
 

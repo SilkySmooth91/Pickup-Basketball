@@ -9,6 +9,8 @@ import usersRoutes from "./src/routes/users/users.routes.js";
 import courtsRoutes from "./src/routes/courts/courts.routes.js";
 import eventsRoutes from "./src/routes/events/events.routes.js";
 import friendsRoutes from "./src/routes/friends-requests/friends.routes.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./src/config/swagger.js";
 
 dotenv.config();
 
@@ -29,6 +31,9 @@ app.use("/friends", friendsRoutes);
 // Connect to MongoDB
 await connectDB();
 
+// Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.get("/", (req, res) => {
     res.send("API running...")
 })
@@ -37,3 +42,5 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
+
+export default app
