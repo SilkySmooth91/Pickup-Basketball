@@ -5,6 +5,30 @@ import { adminMiddleware } from "../../middlewares/admin.js";
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /comments:
+ *   post:
+ *     summary: Aggiungi un commento
+ *     tags:
+ *       - Comments
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *               target:
+ *                 type: string
+ *               targetid:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Commento creato
+ */
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const { text, target, targetid } = req.body;
@@ -24,6 +48,30 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /comments/{target}/{targetid}:
+ *   get:
+ *     summary: Ottieni i commenti per un target
+ *     tags:
+ *       - Comments
+ *     parameters:
+ *       - in: path
+ *         name: target
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Tipo di target (es. Events)
+ *       - in: path
+ *         name: targetid
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del target
+ *     responses:
+ *       200:
+ *         description: Lista commenti
+ */
 // Ottieni tutti i commenti per un target
 router.get("/:target/:targetid", async (req, res) => {
   try {

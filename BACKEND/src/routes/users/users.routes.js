@@ -5,6 +5,28 @@ import upload from "../../config/multer.js";
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /users:
+ *   get:
+ *     summary: Ottieni la lista utenti
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Numero della pagina
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Numero di utenti per pagina
+ *     responses:
+ *       200:
+ *         description: Lista utenti paginata
+ */
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
@@ -26,6 +48,26 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /users/{id}:
+ *   get:
+ *     summary: Ottieni i dettagli di un utente
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *     responses:
+ *       200:
+ *         description: Dettagli utente
+ *       404:
+ *         description: Utente non trovato
+ */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const user = await usersModel.findById(req.params.id);
@@ -39,6 +81,38 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /users/{id}/avatar:
+ *   patch:
+ *     summary: Aggiorna l'avatar dell'utente
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               avatar:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Avatar aggiornato
+ *       400:
+ *         description: Nessun file caricato
+ *       404:
+ *         description: Utente non trovato
+ */
 router.patch("/:id/avatar", authMiddleware, upload.single("avatar"), async (req, res) => {
   try {
     const user = await usersModel.findById(req.params.id);
@@ -57,6 +131,32 @@ router.patch("/:id/avatar", authMiddleware, upload.single("avatar"), async (req,
   }
 });
 
+/**
+ * @openapi
+ * /users/{id}:
+ *   patch:
+ *     summary: Aggiorna i dati di un utente
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Utente aggiornato
+ *       404:
+ *         description: Utente non trovato
+ */
 router.patch("/:id", authMiddleware, async (req, res) => {
   try {
     const user = await usersModel.findByIdAndUpdate(
@@ -74,7 +174,28 @@ router.patch("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-
+/**
+ * @openapi
+ * /users/{id}:
+ *   delete:
+ *     summary: Elimina un utente
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *     responses:
+ *       204:
+ *         description: Utente eliminato
+ *       403:
+ *         description: Non autorizzato
+ *       404:
+ *         description: Utente non trovato
+ */
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     if (req.user.id !== req.params.id && req.user.role !== 'admin') {

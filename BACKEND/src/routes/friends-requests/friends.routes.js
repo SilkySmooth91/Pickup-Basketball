@@ -6,6 +6,29 @@ import usersModel from "../../models/UsersSchema.js";
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /friends/requests:
+ *   post:
+ *     summary: Invia una richiesta di amicizia
+ *     tags:
+ *       - Friends
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               to:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Richiesta inviata
+ *       400:
+ *         description: Richiesta non valida
+ */
+
 // Invia una richiesta di amicizia
 router.post("/requests", authMiddleware, validateFriendRequest, async (req, res) => {
   try {
@@ -17,17 +40,62 @@ router.post("/requests", authMiddleware, validateFriendRequest, async (req, res)
   }
 });
 
+/**
+ * @openapi
+ * /friends/requests/received:
+ *   get:
+ *     summary: Ottieni le richieste di amicizia ricevute
+ *     tags:
+ *       - Friends
+ *     responses:
+ *       200:
+ *         description: Lista richieste ricevute
+ */
+
 // Visualizza richieste ricevute
 router.get("/requests/received", authMiddleware, async (req, res) => {
   const requests = await friendRequestModel.find({ to: req.user.id, status: "pending" }).populate("from", "username");
   res.json(requests);
 });
 
+/**
+ * @openapi
+ * /friends/requests/sent:
+ *   get:
+ *     summary: Ottieni le richieste di amicizia inviate
+ *     tags:
+ *       - Friends
+ *     responses:
+ *       200:
+ *         description: Lista richieste inviate
+ */
+
 // Visualizza richieste inviate
 router.get("/requests/sent", authMiddleware, async (req, res) => {
   const requests = await friendRequestModel.find({ from: req.user.id, status: "pending" }).populate("to", "username");
   res.json(requests);
 });
+
+/**
+ * @openapi
+ * /friends/requests/{id}/accept:
+ *   post:
+ *     summary: Accetta una richiesta di amicizia
+ *     tags:
+ *       - Friends
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID della richiesta
+ *     responses:
+ *       200:
+ *         description: Richiesta accettata
+ *       404:
+ *         description: Richiesta non trovata
+ */
 
 // Accetta una richiesta
 router.post("/requests/:id/accept", authMiddleware, async (req, res) => {
@@ -38,6 +106,27 @@ router.post("/requests/:id/accept", authMiddleware, async (req, res) => {
   res.json({ message: "Richiesta accettata" });
 });
 
+/**
+ * @openapi
+ * /friends/requests/{id}/reject:
+ *   post:
+ *     summary: Rifiuta una richiesta di amicizia
+ *     tags:
+ *       - Friends
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID della richiesta
+ *     responses:
+ *       200:
+ *         description: Richiesta rifiutata
+ *       404:
+ *         description: Richiesta non trovata
+ */
+
 // Rifiuta una richiesta
 router.post("/requests/:id/reject", authMiddleware, async (req, res) => {
   const request = await friendRequestModel.findById(req.params.id);
@@ -46,6 +135,18 @@ router.post("/requests/:id/reject", authMiddleware, async (req, res) => {
   await request.save();
   res.json({ message: "Richiesta rifiutata" });
 });
+
+/**
+ * @openapi
+ * /friends:
+ *   get:
+ *     summary: Ottieni la lista degli amici
+ *     tags:
+ *       - Friends
+ *     responses:
+ *       200:
+ *         description: Lista amici
+ */
 
 // Lista amici attuali ordinati per username
 router.get("/", authMiddleware, async (req, res) => {
@@ -76,6 +177,27 @@ router.get("/", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Errore nel recupero amici" });
   }
 });
+
+/**
+ * @openapi
+ * /friends/search:
+ *   get:
+ *     summary: Ricerca utenti per username
+ *     tags:
+ *       - Friends
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Stringa di ricerca per username
+ *     responses:
+ *       200:
+ *         description: Lista utenti trovati
+ *       400:
+ *         description: Parametro di ricerca mancante
+ */
 
 // Ricerca utenti per username (case-insensitive, escluso se stessi)
 router.get("/search", authMiddleware, async (req, res) => {

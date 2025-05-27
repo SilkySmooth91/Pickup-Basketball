@@ -11,6 +11,41 @@ const router = express.Router();
 // Multer per upload multiplo immagini (galleria)
 const uploadGallery = multer({ storage: uploadCover.storage });
 
+/**
+ * @openapi
+ * /courts:
+ *   post:
+ *     summary: Crea un nuovo campetto
+ *     tags:
+ *       - Courts
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               coordinates:
+ *                 type: object
+ *               baskets:
+ *                 type: integer
+ *               officialsize:
+ *                 type: boolean
+ *               nightlights:
+ *                 type: boolean
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       201:
+ *         description: Campetto creato
+ */
 router.post("/", authMiddleware, uploadGallery.array("images", 10), async (req, res) => {
   try {
     const { name, address, coordinates, baskets, officialsize, nightlights } = req.body;
@@ -37,6 +72,28 @@ router.post("/", authMiddleware, uploadGallery.array("images", 10), async (req, 
   }
 });
 
+/**
+ * @openapi
+ * /courts:
+ *   get:
+ *     summary: Ottieni la lista dei campetti
+ *     tags:
+ *       - Courts
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Numero della pagina
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Numero di campetti per pagina
+ *     responses:
+ *       200:
+ *         description: Lista campetti paginata
+ */
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
@@ -58,6 +115,26 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /courts/{id}:
+ *   get:
+ *     summary: Ottieni i dettagli di un campetto
+ *     tags:
+ *       - Courts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del campetto
+ *     responses:
+ *       200:
+ *         description: Dettagli campetto
+ *       404:
+ *         description: Campetto non trovato
+ */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const court = await courtModel.findById(req.params.id);
@@ -71,6 +148,32 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /courts/{id}:
+ *   patch:
+ *     summary: Modifica i dati di un campetto
+ *     tags:
+ *       - Courts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del campetto
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Campetto aggiornato
+ *       404:
+ *         description: Campetto non trovato
+ */
 router.patch("/:id", authMiddleware, async (req, res) => {
   try {
     const court = await courtModel.findByIdAndUpdate(
@@ -88,7 +191,38 @@ router.patch("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// AGGIUNTA immagini alla galleria
+/**
+ * @openapi
+ * /courts/{id}/images:
+ *   post:
+ *     summary: Aggiungi immagini alla galleria del campetto
+ *     tags:
+ *       - Courts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del campetto
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       200:
+ *         description: Immagini aggiunte
+ *       404:
+ *         description: Campetto non trovato
+ */
 router.post("/:id/images", authMiddleware, uploadGallery.array("images", 10), async (req, res) => {
   try {
     const court = await courtModel.findById(req.params.id);
@@ -104,7 +238,32 @@ router.post("/:id/images", authMiddleware, uploadGallery.array("images", 10), as
   }
 });
 
-// DELETE singola immagine dalla galleria
+/**
+ * @openapi
+ * /courts/{id}/images/{public_id}:
+ *   delete:
+ *     summary: Elimina una singola immagine dalla galleria del campetto
+ *     tags:
+ *       - Courts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del campetto
+ *       - in: path
+ *         name: public_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Public ID dell'immagine su Cloudinary
+ *     responses:
+ *       200:
+ *         description: Immagine eliminata
+ *       404:
+ *         description: Campetto o immagine non trovati
+ */
 router.delete("/:id/images", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
@@ -124,6 +283,28 @@ router.delete("/:id/images", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /courts/{id}:
+ *   delete:
+ *     summary: Elimina un campetto (solo admin)
+ *     tags:
+ *       - Courts
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del campetto
+ *     responses:
+ *       204:
+ *         description: Campetto eliminato
+ *       403:
+ *         description: Non autorizzato
+ *       404:
+ *         description: Campetto non trovato
+ */
 router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const court = await courtModel.findById(req.params.id);

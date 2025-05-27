@@ -5,7 +5,23 @@ import authMiddleware from "../../middlewares/auth.js";
 
 const router = express.Router();
 
-
+/**
+ * @openapi
+ * /events:
+ *   post:
+ *     summary: Crea un nuovo evento
+ *     tags:
+ *       - Events
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Evento creato
+ */
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const { title, description, court, datetime, maxplayers, isprivate } = req.body;
@@ -35,6 +51,81 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /events:
+ *   get:
+ *     summary: Ottieni la lista degli eventi
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Numero della pagina
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Numero di eventi per pagina
+ *     responses:
+ *       200:
+ *         description: Lista eventi paginata
+ */
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+    const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
+    const skip = (page - 1) * limit;
+    // Trova tutti gli eventi, ordinati per data crescente
+    const [events, total] = await Promise.all([
+      eventModel.find()
+        .sort({ datetime: 1 })
+        .skip(skip)
+        .limit(limit),
+      eventModel.countDocuments()
+    ]);
+    res.json({
+      events,
+      page,
+      totalPages: Math.ceil(total / limit),
+      totalEvents: total
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nel recupero eventi" });
+  }
+});
+
+/**
+ * @openapi
+ * /events/court/{courtId}:
+ *   get:
+ *     summary: Ottieni gli eventi di un campetto
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: path
+ *         name: courtId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del campetto
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Numero della pagina
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Numero di eventi per pagina
+ *     responses:
+ *       200:
+ *         description: Lista eventi del campetto
+ */
 router.get("/court/:courtId", authMiddleware, async (req, res) => {
   try {
     const { courtId } = req.params;
@@ -61,31 +152,26 @@ router.get("/court/:courtId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
-    const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
-    const skip = (page - 1) * limit;
-    // Trova tutti gli eventi, ordinati per data crescente
-    const [events, total] = await Promise.all([
-      eventModel.find()
-        .sort({ datetime: 1 })
-        .skip(skip)
-        .limit(limit),
-      eventModel.countDocuments()
-    ]);
-    res.json({
-      events,
-      page,
-      totalPages: Math.ceil(total / limit),
-      totalEvents: total
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Errore nel recupero eventi" });
-  }
-});
-
+/**
+ * @openapi
+ * /events/{id}:
+ *   get:
+ *     summary: Ottieni i dettagli di un evento
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'evento
+ *     responses:
+ *       200:
+ *         description: Dettagli evento
+ *       404:
+ *         description: Evento non trovato
+ */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const event = await eventModel.findById(req.params.id);
@@ -99,6 +185,34 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /events/{id}:
+ *   patch:
+ *     summary: Modifica un evento (solo creator o admin)
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'evento
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Evento aggiornato
+ *       403:
+ *         description: Non autorizzato
+ *       404:
+ *         description: Evento non trovato
+ */
 router.patch("/:id", authMiddleware, async (req, res) => {
   try {
     const event = await eventModel.findById(req.params.id);
@@ -124,6 +238,28 @@ router.patch("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /events/{id}:
+ *   delete:
+ *     summary: Elimina un evento (solo creator o admin)
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'evento
+ *     responses:
+ *       204:
+ *         description: Evento eliminato
+ *       403:
+ *         description: Non autorizzato
+ *       404:
+ *         description: Evento non trovato
+ */
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const event = await eventModel.findById(req.params.id);
@@ -143,6 +279,28 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 });
 
 // Iscrizione a un evento
+/**
+ * @openapi
+ * /events/{id}/join:
+ *   post:
+ *     summary: Iscriviti a un evento
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'evento
+ *     responses:
+ *       200:
+ *         description: Iscritto all'evento
+ *       400:
+ *         description: Errore di iscrizione
+ *       404:
+ *         description: Evento non trovato
+ */
 router.post("/:id/join", authMiddleware, async (req, res) => {
   try {
     const event = await eventModel.findById(req.params.id);
@@ -166,6 +324,28 @@ router.post("/:id/join", authMiddleware, async (req, res) => {
 });
 
 // Disiscrizione da un evento
+/**
+ * @openapi
+ * /events/{id}/leave:
+ *   post:
+ *     summary: Disiscriviti da un evento
+ *     tags:
+ *       - Events
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'evento
+ *     responses:
+ *       200:
+ *         description: Disiscritto dall'evento
+ *       400:
+ *         description: Errore di disiscrizione
+ *       404:
+ *         description: Evento non trovato
+ */
 router.post("/:id/leave", authMiddleware, async (req, res) => {
   try {
     const event = await eventModel.findById(req.params.id);
