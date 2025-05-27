@@ -49,4 +49,34 @@ router.post("/requests/:id/reject", authMiddleware, async (req, res) => {
   res.json({ message: "Richiesta rifiutata" });
 });
 
+// Lista amici attuali ordinati per username
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    // Trova tutte le richieste accettate dove l'utente è coinvolto
+    const requests = await friendRequestModel.find({
+      status: "accepted",
+      $or: [
+        { from: req.user.id },
+        { to: req.user.id }
+      ]
+    }).populate([
+      { path: "from", select: "username" },
+      { path: "to", select: "username" }
+    ]);
+
+    // Ricava la lista degli amici (l'altro utente rispetto a req.user.id)
+    const friends = requests.map(r =>
+      r.from._id.toString() === req.user.id ? r.to : r.from
+    );
+
+    // Ordina per username
+    friends.sort((a, b) => a.username.localeCompare(b.username));
+
+    res.json(friends);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nel recupero amici" });
+  }
+});
+
 export default router;
