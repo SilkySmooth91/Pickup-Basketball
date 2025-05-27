@@ -1,23 +1,51 @@
-import React from 'react'
+import { useState } from 'react'
 import FloatingLabel from './FloatingLabel'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignInComp({ isVisible, onRegister, className }) {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState(null)
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError(null)
+    try {
+      await login({ email, password })
+      navigate("/profile")
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   return (
     <div className={`absolute transition-all duration-1000 ease-in-out transform ${
       isVisible 
         ? 'opacity-100 scale-100 translate-y-0' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
     } ${className}`}>
-      <form className='bg-none p-6 text-black'>
+      <form className='bg-none p-6 text-black' onSubmit={handleSubmit}>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2 text-center">
+            {error}
+          </div>
+        )}
         <FloatingLabel 
           id="signin-email" 
           type="email" 
-          label="Email" 
+          label="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
         />
         <FloatingLabel 
           id="signin-password" 
           type="password" 
-          label="Password" 
+          label="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
         />
         <div className='flex flex-col justify-center items-center'>
           <button className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-1'>

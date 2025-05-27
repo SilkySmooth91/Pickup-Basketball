@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function FloatingLabel({ id, type, label }) {
+export default function FloatingLabel({ id, type, label, value, onChange }) {
   return (
     <div className="relative mb-4">
       <input
@@ -8,6 +8,13 @@ export default function FloatingLabel({ id, type, label }) {
         id={id}
         placeholder=" "
         className="block w-full p-2 border border-gray-300 rounded peer"
+        value={value}
+        onChange={e => {
+          // DEBUG: log per vedere se viene chiamato
+          // console.log("FloatingLabel onChange", e.target.value);
+          onChange(e);
+        }}
+        autoComplete="off"
       />
       <label
         htmlFor={id}

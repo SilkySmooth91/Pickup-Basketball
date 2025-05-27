@@ -14,6 +14,7 @@ const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
 const FE_URL = process.env.FE_URL;
 
 router.post('/register', uniqueUserFields, async (req, res) => {
+  console.log("BODY:", req.body);
   const { username, email, password, confirmPassword, age, city } = req.body;
 
   // Verifica campi obbligatori
