@@ -13,7 +13,7 @@ let eventId;
 let commentId;
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGO_URI); // Connect to MongoDB
+  await mongoose.connect(process.env.MONGO_URI); //
   await mongoose.connection.db.dropDatabase();
 });
 
