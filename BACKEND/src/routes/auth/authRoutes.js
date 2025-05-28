@@ -100,36 +100,40 @@ router.post('/login', async (req, res) => {
 
 router.post("/refresh", async (req, res) => {
   const { refreshToken } = req.body;
+  console.log("=== [DEBUG] /auth/refresh chiamato ===");
+  console.log("=== [DEBUG] Refresh token ricevuto dal client:", refreshToken);
 
   if (!refreshToken)
     return res.status(401).json({ error: "Token di refresh mancante" });
 
   try {
-    // Verifica il refresh token
     const decoded = jwt.verify(refreshToken, jwtRefreshKey);
+    console.log("=== [DEBUG] Decoded refresh token:", decoded);
 
-    // Trova l'utente
     const user = await usersModel.findById(decoded.id);
+    console.log("=== [DEBUG] Utente trovato:", user ? user.email : "Nessun utente");
+    console.log("=== [DEBUG] Refresh token salvato nel DB:", user?.refreshToken);
+
     if (!user || user.refreshToken !== refreshToken) {
+      console.log("=== [DEBUG] Token non valido o non corrispondente");
       return res.status(403).json({ error: "Token non valido o non corrispondente" });
     }
 
-    // Genera nuovi token
     const { accessToken, refreshToken: newRefreshToken } = await generateTokens({
       id: user.id,
       username: user.username,
       email: user.email,
     });
 
-    // Salva il nuovo refresh token nel DB
     user.refreshToken = newRefreshToken;
     await user.save();
 
-    // Restituisci i token aggiornati
+    console.log("=== [DEBUG] Nuovo refresh token generato:", newRefreshToken);
+
     res.json({ accessToken, refreshToken: newRefreshToken });
 
   } catch (err) {
-    console.error(err);
+    console.error("=== [DEBUG] Errore refresh:", err);
     return res.status(403).json({ error: "Token non valido o scaduto" });
   }
 });

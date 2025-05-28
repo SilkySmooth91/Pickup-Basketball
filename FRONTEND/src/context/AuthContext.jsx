@@ -5,7 +5,11 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] = useState(null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Recupera user da localStorage se presente
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
 
   // login: salva accessToken, user e refreshToken (in localStorage)
@@ -14,6 +18,7 @@ export function AuthProvider({ children }) {
     setAccessToken(data.accessToken);
     setUser(data.user);
     if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+    if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
   };
 
   // logout: rimuove tutto e chiama API logout
@@ -24,6 +29,7 @@ export function AuthProvider({ children }) {
     setAccessToken(null);
     setUser(null);
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
   };
 
   // refresh: aggiorna accessToken
@@ -39,8 +45,14 @@ export function AuthProvider({ children }) {
     refreshToken(token)
       .then(data => {
         setAccessToken(data.accessToken);
-        if (data.user) setUser(data.user);
-        if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+        // Salva SEMPRE il nuovo refreshToken
+        if (data.refreshToken) {
+          localStorage.setItem("refreshToken", data.refreshToken);
+        }
       })
       .catch(() => {
         logout();

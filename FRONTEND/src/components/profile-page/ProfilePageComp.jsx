@@ -11,16 +11,18 @@ export default function ProfilePageComp() {
   const fileInputRef = useRef(null)
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const data = await getUserProfile(user?.id, { accessToken, refresh, logout });
-        setProfile(data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-    if (user?.id) fetchProfile();
-  }, [user, accessToken, refresh, logout])
+    if (!loading && user?.id) {
+      const fetchProfile = async () => {
+        try {
+          const data = await getUserProfile(user.id, { accessToken, refresh, logout });
+          setProfile(data);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+      fetchProfile();
+    }
+  }, [loading, user, accessToken, refresh, logout])
 
   if (loading) {
     return (
