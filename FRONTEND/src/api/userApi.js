@@ -32,6 +32,24 @@ export async function updateUserProfile(userId, data, auth) {
   return await res.json();
 }
 
+// Aggiorna avatar utente
+export async function updateUserAvatar(userId, file, auth) {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  const formData = new FormData();
+  formData.append("avatar", file);
+  const res = await fetchWithAuth(
+    `${API_URL}/users/${userId}/avatar`,
+    {
+      method: "PATCH",
+      body: formData
+      // headers: lasciamo che il browser imposti il boundary multipart
+    },
+    auth
+  );
+  if (!res.ok) throw new Error("Errore nell'aggiornamento avatar");
+  return await res.json();
+}
+
 // Elimina utente
 export async function deleteUser(userId, auth) {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";

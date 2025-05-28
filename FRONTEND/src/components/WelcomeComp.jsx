@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import '/src/styles/WelcomeComp.css'
-import SignInComp from './SignInComp'
-import RegisterComp from './RegisterComp'
+import SignInComp from './auth/SignInComp'
+import RegisterComp from './auth/RegisterComp'
 
 export default function WelcomeComp() {
   const [isTitleMoved, setIsTitleMoved] = useState(false)

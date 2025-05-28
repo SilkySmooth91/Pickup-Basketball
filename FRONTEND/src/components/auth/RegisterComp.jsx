@@ -1,8 +1,8 @@
 import { useReducer, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import FloatingLabel from './FloatingLabel'
-import { registerUser } from '../api/authApi'
-import { useAuth } from '../context/AuthContext'
+import FloatingLabel from '../FloatingLabel'
+import { registerUser } from '../../api/authApi'
+import { useAuth } from '../../context/AuthContext'
 
 // Stato iniziale per tutti i campi
 const initialState = {

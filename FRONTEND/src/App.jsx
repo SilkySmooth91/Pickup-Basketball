@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
-import ProfilePageComp from './components/ProfilePageComp'
+import ProfilePageComp from './components/profile-page/ProfilePageComp'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
 export default function App() {

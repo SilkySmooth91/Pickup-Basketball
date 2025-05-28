@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import FloatingLabel from './FloatingLabel'
-import { useAuth } from '../context/AuthContext'
+import FloatingLabel from '../utils/FloatingLabel'
+import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
 export default function SignInComp({ isVisible, onRegister, className }) {
