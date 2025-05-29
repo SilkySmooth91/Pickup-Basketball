@@ -1,10 +1,10 @@
 import { useReducer, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import FloatingLabel from '../FloatingLabel'
+import FloatingLabel from '../utils/FloatingLabel'
 import { registerUser } from '../../api/authApi'
 import { useAuth } from '../../context/AuthContext'
 
-// Stato iniziale per tutti i campi
+
 const initialState = {
   username: '',
   email: '',
@@ -14,7 +14,7 @@ const initialState = {
   city: ''
 }
 
-// Reducer per aggiornare i campi
+
 function reducer(state, action) {
   switch (action.type) {
     case 'SET_FIELD':

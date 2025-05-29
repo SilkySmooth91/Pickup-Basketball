@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { getUserProfile, updateUserAvatar } from '../../api/userApi'
 import ProfileHeaderComp from './ProfileHeaderComp'
+import InfoCardComp from './InfoCardComp'
 import { Navigate } from 'react-router-dom'
 
 export default function ProfilePageComp() {
@@ -58,7 +59,7 @@ export default function ProfilePageComp() {
   }
 
   return (
-    <div>
+    <div className="container mx-auto px-4 py-8">
       <ProfileHeaderComp profile={profile} onChangeAvatar={handleChangeAvatar} />
       <input
         type="file"
@@ -67,7 +68,7 @@ export default function ProfilePageComp() {
         ref={fileInputRef}
         onChange={handleAvatarFileChange}
       />
-      {/* altri dati o componenti */}
+      <InfoCardComp profile={profile} />
     </div>
   )
 }

@@ -6,6 +6,9 @@ const usersSchema = new mongoose.Schema(
     username: { type: String, required: true, trim: true },
     age: { type: Number, required: true, min: 13 },
     city: { type: String, required: true, trim: true },
+    height: { type: Number, default: null },
+    basketrole: {type: String, default: null, enum: ['playmaker', 'guard', 'forward', 'center']},
+    bestskill: { type: String, default: null},
     email: { type: String, required: true, unique: true },
     password: {
       type: String,

@@ -8,8 +8,6 @@ export default function FloatingLabel({ id, type, label, value, onChange }) {
         className="block w-full p-2 border border-gray-300 rounded peer"
         value={value}
         onChange={e => {
-          // DEBUG: log per vedere se viene chiamato
-          // console.log("FloatingLabel onChange", e.target.value);
           onChange(e);
         }}
         autoComplete="off"

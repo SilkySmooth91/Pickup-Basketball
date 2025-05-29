@@ -70,10 +70,25 @@ router.get("/", authMiddleware, async (req, res) => {
  */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
-    const user = await usersModel.findById(req.params.id);
+    const user = await usersModel
+      .findById(req.params.id)
+      .select("-password -refreshToken") // Esclude direttamente i campi riservati
+      .populate({
+        path: "userEvents",
+        select: "_id title datetime court",
+      })
+      .populate({
+        path: "friends",
+        select: "_id username email",
+      })
+      .lean(); // Restituisce un oggetto JS semplice
+
     if (!user) {
       return res.status(404).json({ error: "Utente non trovato" });
     }
+
+    user.friendsCount = user.friends ? user.friends.length : 0;
+
     res.json(user);
   } catch (err) {
     console.error(err);
