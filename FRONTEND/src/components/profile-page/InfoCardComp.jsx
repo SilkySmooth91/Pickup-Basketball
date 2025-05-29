@@ -26,8 +26,10 @@ export default function InfoCardComp({ profile }) {
           <div className="font-semibold text-lg">Informazioni</div>
         </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-          <span className="font-semibold text-gray-600">Email:</span>
-          <span className="text-gray-700">{userProfile?.email || "email@email.com"}</span>
+          <div>
+            <span className="font-semibold text-gray-600">Email: </span>
+            <span className="text-gray-700">{userProfile?.email || "email@email.com"}</span>
+          </div>
           <button className="w-auto mt-2 md:mt-0 md:ml-4 px-3 py-2 font-semibold bg-orange-500 text-white rounded hover:bg-orange-600 transition text-sm">
             Cambia password
           </button>
@@ -39,7 +41,7 @@ export default function InfoCardComp({ profile }) {
           </div>
           <div>
             <span className="font-semibold text-gray-600">Ruolo: </span>
-            <span className="text-gray-800">{userProfile?.basketrole || "Playmaker"}</span>
+            <span className="text-white bg-orange-600 py-1 px-2 rounded-2xl text-center font-semibold">{userProfile?.basketrole || "Playmaker"}</span>
           </div>
           <div>
             <span className="font-semibold text-gray-600">Migliore caratteristica: </span>
