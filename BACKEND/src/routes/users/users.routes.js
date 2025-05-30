@@ -2,6 +2,7 @@ import express from "express";
 import usersModel from "../../models/UsersSchema.js";
 import authMiddleware from "../../middlewares/auth.js";
 import upload from "../../config/multer.js";
+import friendRequestModel from "../../models/FriendReqModel.js";
 
 const router = express.Router();
 
@@ -174,18 +175,20 @@ router.patch("/:id/avatar", authMiddleware, upload.single("avatar"), async (req,
  */
 router.patch("/:id", authMiddleware, async (req, res) => {
   try {
+    const allowed = ["age", "city", "height", "basketrole", "bestskill"];
+    const update = {};
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) update[key] = req.body[key];
+    }
     const user = await usersModel.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
-      { new: true, runValidators: true }
+      { $set: update },
+      { new: true }
     );
-    if (!user) {
-      return res.status(404).json({ error: "Utente non trovato" });
-    }
-    res.json({ message: "Utente aggiornato", user });
+    if (!user) return res.status(404).json({ error: "Utente non trovato" });
+    res.json(user);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Errore nell'aggiornamento utente" });
+    res.status(500).json({ error: "Errore aggiornamento profilo" });
   }
 });
 
@@ -224,6 +227,64 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Errore durante l\'eliminazione utente' });
+  }
+});
+
+/**
+ * @openapi
+ * /users/{id}/recent-activity:
+ *   get:
+ *     summary: Ottieni le attività recenti di un utente
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *     responses:
+ *       200:
+ *         description: Attività recenti dell'utente
+ *       404:
+ *         description: Utente non trovato
+ */
+router.get("/:id/recent-activity", authMiddleware, async (req, res) => {
+  try {
+    // Eventi recenti
+    const user = await usersModel.findById(req.params.id)
+      .populate({
+        path: "userEvents",
+        select: "_id title datetime court createdAt",
+        options: { sort: { datetime: -1 }, limit: 5 }
+      })
+      .lean();
+
+    // Amici aggiunti di recente (dalle richieste accettate)
+    const friendReqs = await friendRequestModel.find({
+      status: "accepted",
+      $or: [{ from: req.params.id }, { to: req.params.id }]
+    })
+      .sort({ updatedAt: -1 })
+      .limit(5)
+      .populate([
+        { path: "from", select: "username _id avatar" },
+        { path: "to", select: "username _id avatar" }
+      ])
+      .lean();
+
+    // Ricava l'altro utente rispetto a req.params.id
+    const recentFriends = friendReqs.map(r =>
+      r.from._id.toString() === req.params.id ? r.to : r.from
+    );
+
+    res.json({
+      recentEvents: user.userEvents,
+      recentFriends
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Errore nel recupero attività recente" });
   }
 });
 

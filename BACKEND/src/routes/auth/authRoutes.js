@@ -13,8 +13,49 @@ const router = express.Router();
 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
 const FE_URL = process.env.FE_URL;
 
+/**
+ * @openapi
+ * /auth/register:
+ *   post:
+ *     summary: Registra un nuovo utente
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - email
+ *               - password
+ *               - confirmPassword
+ *               - age
+ *               - city
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               confirmPassword:
+ *                 type: string
+ *               age:
+ *                 type: integer
+ *               city:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Utente registrato con successo
+ *       400:
+ *         description: Dati mancanti o non validi
+ *       500:
+ *         description: Errore registrazione utente
+ */
 router.post('/register', uniqueUserFields, async (req, res) => {
-  console.log("BODY:", req.body);
+  // console.log("BODY:", req.body);
   const { username, email, password, confirmPassword, age, city } = req.body;
 
   // Verifica campi obbligatori
@@ -68,6 +109,37 @@ router.post('/register', uniqueUserFields, async (req, res) => {
 });
 
 
+/**
+ * @openapi
+ * /auth/login:
+ *   post:
+ *     summary: Effettua il login di un utente
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login effettuato con successo
+ *       400:
+ *         description: Email e password sono obbligatorie
+ *       401:
+ *         description: Credenziali non valide
+ *       500:
+ *         description: Errore login utente
+ */
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -98,24 +170,50 @@ router.post('/login', async (req, res) => {
 });
 
 
+/**
+ * @openapi
+ * /auth/refresh:
+ *   post:
+ *     summary: Ottieni un nuovo access token tramite refresh token
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Nuovo access token generato
+ *       401:
+ *         description: Token di refresh mancante
+ *       403:
+ *         description: Token non valido o scaduto
+ */
 router.post("/refresh", async (req, res) => {
   const { refreshToken } = req.body;
-  console.log("=== [DEBUG] /auth/refresh chiamato ===");
-  console.log("=== [DEBUG] Refresh token ricevuto dal client:", refreshToken);
+  // console.log("=== [DEBUG] /auth/refresh chiamato ===");
+  // console.log("=== [DEBUG] Refresh token ricevuto dal client:", refreshToken);
 
   if (!refreshToken)
     return res.status(401).json({ error: "Token di refresh mancante" });
 
   try {
     const decoded = jwt.verify(refreshToken, jwtRefreshKey);
-    console.log("=== [DEBUG] Decoded refresh token:", decoded);
+    // console.log("=== [DEBUG] Decoded refresh token:", decoded); 
 
     const user = await usersModel.findById(decoded.id);
-    console.log("=== [DEBUG] Utente trovato:", user ? user.email : "Nessun utente");
-    console.log("=== [DEBUG] Refresh token salvato nel DB:", user?.refreshToken);
+    // console.log("=== [DEBUG] Utente trovato:", user ? user.email : "Nessun utente");  
+    // console.log("=== [DEBUG] Refresh token salvato nel DB:", user?.refreshToken);
 
     if (!user || user.refreshToken !== refreshToken) {
-      console.log("=== [DEBUG] Token non valido o non corrispondente");
+      // console.log("=== [DEBUG] Token non valido o non corrispondente"); // OK
       return res.status(403).json({ error: "Token non valido o non corrispondente" });
     }
 
@@ -128,17 +226,32 @@ router.post("/refresh", async (req, res) => {
     user.refreshToken = newRefreshToken;
     await user.save();
 
-    console.log("=== [DEBUG] Nuovo refresh token generato:", newRefreshToken);
+    // console.log("=== [DEBUG] Nuovo refresh token generato:", newRefreshToken); 
 
     res.json({ accessToken, refreshToken: newRefreshToken });
 
   } catch (err) {
-    console.error("=== [DEBUG] Errore refresh:", err);
+    // console.error("=== [DEBUG] Errore refresh:", err); // OK
     return res.status(403).json({ error: "Token non valido o scaduto" });
   }
 });
 
 
+/**
+ * @openapi
+ * /auth/logout:
+ *   post:
+ *     summary: Effettua il logout dell'utente autenticato
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       204:
+ *         description: Logout effettuato con successo
+ *       500:
+ *         description: Errore durante il logout
+ */
 router.post("/logout", authMiddleware, async (req, res) => {
   try {
     const user = await usersModel.findById(req.user.id);
@@ -151,8 +264,32 @@ router.post("/logout", authMiddleware, async (req, res) => {
   }
 });
 
-// rotte per il recupero password
-// forgot-password: invia un'email con un link per resettare la password
+/**
+ * @openapi
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Invia una email per il reset della password
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email di reset inviata
+ *       404:
+ *         description: Utente non trovato
+ *       500:
+ *         description: Errore nel reset della password
+ */
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
@@ -189,7 +326,39 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-//rotta su cui l'utente arriva tramite il link di reset
+/**
+ * @openapi
+ * /auth/reset-password/{token}:
+ *   post:
+ *     summary: Resetta la password tramite token ricevuto via email
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Token di reset password
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password aggiornata con successo
+ *       400:
+ *         description: Token o nuova password mancanti o non validi
+ *       500:
+ *         description: Errore interno del server
+ */
 router.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;     
   const { password } = req.body;
@@ -219,6 +388,136 @@ router.post("/reset-password/:token", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore interno del server" });
+  }
+});
+
+/**
+ * @openapi
+ * /auth/change-email:
+ *   patch:
+ *     summary: Cambia l'email dell'utente autenticato
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newEmail
+ *             properties:
+ *               newEmail:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email aggiornata
+ *       400:
+ *         description: Email non valida o già in uso
+ *       404:
+ *         description: Utente non trovato
+ *       500:
+ *         description: Errore aggiornamento email
+ */
+router.patch("/change-email", authMiddleware, async (req, res) => {
+  const { newEmail } = req.body;
+  if (!newEmail || typeof newEmail !== "string") {
+    return res.status(400).json({ error: "La nuova email è obbligatoria" });
+  }
+  // Sanitize: consenti solo email valide
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(newEmail)) {
+    return res.status(400).json({ error: "Formato email non valido" });
+  }
+  try {
+    // Verifica che la nuova email non sia già in uso
+    const exists = await usersModel.findOne({ email: newEmail });
+    if (exists) return res.status(400).json({ error: "Email già in uso" });
+
+    const user = await usersModel.findByIdAndUpdate(
+      req.user.id,
+      { $set: { email: newEmail } },
+      { new: true, runValidators: true }
+    );
+    if (!user) return res.status(404).json({ error: "Utente non trovato" });
+
+    res.json({ message: "Email aggiornata", email: user.email });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore aggiornamento email" });
+  }
+});
+
+/**
+ * @openapi
+ * /auth/change-password:
+ *   patch:
+ *     summary: Cambia la password dell'utente autenticato
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password aggiornata
+ *       400:
+ *         description: Password non valida o uguale alla precedente
+ *       404:
+ *         description: Utente non trovato
+ *       500:
+ *         description: Errore aggiornamento password
+ */
+router.patch("/change-password", authMiddleware, async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (
+    !oldPassword ||
+    !newPassword ||
+    typeof oldPassword !== "string" ||
+    typeof newPassword !== "string"
+  ) {
+    return res.status(400).json({ error: "Vecchia e nuova password sono obbligatorie" });
+  }
+  // Sanitize: lunghezza minima e nessun carattere pericoloso
+  if (newPassword.length < 8) {
+    return res.status(400).json({ error: "La nuova password deve essere di almeno 8 caratteri" });
+  }
+  try {
+    const user = await usersModel.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: "Utente non trovato" });
+
+    // Verifica la vecchia password
+    const isMatch = await user.comparePassword
+      ? await user.comparePassword(oldPassword)
+      : await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) return res.status(400).json({ error: "Password attuale errata" });
+
+    // Verifica che la nuova password sia diversa dalla vecchia
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) return res.status(400).json({ error: "La nuova password deve essere diversa dalla precedente" });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: "Password aggiornata" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore aggiornamento password" });
   }
 });
 

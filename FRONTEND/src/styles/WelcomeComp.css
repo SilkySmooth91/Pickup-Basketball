@@ -26,7 +26,8 @@ h1 {
     font-family: "Notable", sans-serif;
 }
 
-h1, h2 {
+.home-welcome h1,
+.home-welcome h2 {
   text-shadow: 2px 2px 5px black;
 }
 

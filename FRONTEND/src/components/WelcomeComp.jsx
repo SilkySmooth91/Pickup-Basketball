@@ -11,11 +11,11 @@ export default function WelcomeComp() {
   return (
     <div className='h-screen flex flex-col justify-center items-center bg-[url(https://images.pexels.com/photos/680074/pexels-photo-680074.jpeg)] bg-bg-local bg-cover bg-center'>
         <div className={`mx-2 transition-all duration-800 ease-in-out ${isTitleMoved ? 'transform -translate-y-[22vh]' : ''}`}>
-          <h1 className='text-4xl font-bold text-white text-center mb-2'>
+          <h1 className='home-welcome text-4xl font-bold text-white text-center mb-2'>
             <span>Welcome to</span><br />
             Pickup Basketball!
           </h1>
-          <h2 className='text-base italic text-white text-center'>
+          <h2 className='home-welcome text-base italic text-white text-center'>
             L'App n.1 per organizzare e partecipare a partite di pickup basketball
           </h2>
         </div>

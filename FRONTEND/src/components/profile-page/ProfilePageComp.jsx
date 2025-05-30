@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { getUserProfile, updateUserAvatar } from '../../api/userApi'
+import { Navigate } from 'react-router-dom'
 import ProfileHeaderComp from './ProfileHeaderComp'
 import InfoCardComp from './InfoCardComp'
-import { Navigate } from 'react-router-dom'
+import RecentActivityComp from './RecentActivityComp'
+
 
 export default function ProfilePageComp() {
   const { accessToken, refresh, logout, user, loading } = useAuth()
@@ -24,6 +26,9 @@ export default function ProfilePageComp() {
       fetchProfile();
     }
   }, [loading, user, accessToken, refresh, logout])
+
+  // Centralizza qui il calcolo
+  const isOwner = user && profile && String(user.id) === String(profile._id);
 
   if (loading) {
     return (
@@ -60,7 +65,12 @@ export default function ProfilePageComp() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <ProfileHeaderComp profile={profile} onChangeAvatar={handleChangeAvatar} />
+      <ProfileHeaderComp
+        profile={profile}
+        isOwner={isOwner}
+        onChangeAvatar={handleChangeAvatar}
+        onProfileUpdate={setProfile}
+      />
       <input
         type="file"
         accept="image/*"
@@ -68,7 +78,8 @@ export default function ProfilePageComp() {
         ref={fileInputRef}
         onChange={handleAvatarFileChange}
       />
-      <InfoCardComp profile={profile} />
+      <InfoCardComp profile={profile} isOwner={isOwner} />
+      <RecentActivityComp userId={user.id} />
     </div>
   )
 }

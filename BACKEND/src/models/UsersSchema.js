@@ -7,7 +7,7 @@ const usersSchema = new mongoose.Schema(
     age: { type: Number, required: true, min: 13 },
     city: { type: String, required: true, trim: true },
     height: { type: Number, default: null },
-    basketrole: {type: String, default: null, enum: ['playmaker', 'guard', 'forward', 'center']},
+    basketrole: {type: String, default: null, enum: ['Playmaker', 'Guard', 'Forward', 'Center']},
     bestskill: { type: String, default: null},
     email: { type: String, required: true, unique: true },
     password: {
