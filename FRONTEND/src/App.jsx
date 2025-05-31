@@ -1,8 +1,10 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
-import ProfilePageComp from './components/profile-page/ProfilePageComp'
+import Profile from './pages/Profile'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function App() {
   const { loading } = useAuth?.() || {};
@@ -21,9 +23,11 @@ export default function App() {
   return (
     <AuthProvider>
       <Router>
+        {/* ToastContainer montato una sola volta, in alto al centro */}
+        <ToastContainer position="top-center" autoClose={3500} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/profile" element={<ProfilePageComp />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     </AuthProvider>

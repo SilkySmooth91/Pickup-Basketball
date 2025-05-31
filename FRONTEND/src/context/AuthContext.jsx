@@ -1,41 +1,38 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { loginUser, refreshToken, logoutUser } from "../api/authApi";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { refreshToken } from "../api/authApi";
 
 const AuthContext = createContext();
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
 
 export function AuthProvider({ children }) {
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(() => {
-    // Recupera user da localStorage se presente
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
   });
   const [loading, setLoading] = useState(true);
 
-  // login: salva accessToken, user e refreshToken (in localStorage)
-  const login = async ({ email, password }) => {
-    const data = await loginUser({ email, password });
-    setAccessToken(data.accessToken);
-    setUser(data.user);
-    if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
-    if (data.user) localStorage.setItem("user", JSON.stringify(data.user));
+  const login = (userData, token) => {
+    setUser(userData);
+    setAccessToken(token);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("accessToken", token);
   };
 
-  // logout: rimuove tutto e chiama API logout
-  const logout = async () => {
-    try {
-      if (accessToken) await logoutUser(accessToken);
-    } catch {}
-    setAccessToken(null);
+  const logout = () => {
     setUser(null);
-    localStorage.removeItem("refreshToken");
+    setAccessToken(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
   };
 
-  // refresh: aggiorna accessToken
   const refresh = (newAccessToken) => setAccessToken(newAccessToken);
 
-  // Al mount: se c'è un refreshToken, prova a fare il refresh automatico
+  // Al mount: refresh automatico
   useEffect(() => {
     const token = localStorage.getItem("refreshToken");
     if (!token) {
@@ -49,7 +46,6 @@ export function AuthProvider({ children }) {
           setUser(data.user);
           localStorage.setItem("user", JSON.stringify(data.user));
         }
-        // Salva SEMPRE il nuovo refreshToken
         if (data.refreshToken) {
           localStorage.setItem("refreshToken", data.refreshToken);
         }
@@ -62,13 +58,9 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, user, login, logout, refresh, loading }}
+      value={{ accessToken, user, login, logout, refresh, loading, setUser }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

@@ -8,7 +8,7 @@ import RecentActivityComp from './RecentActivityComp'
 
 
 export default function ProfilePageComp() {
-  const { accessToken, refresh, logout, user, loading } = useAuth()
+  const { accessToken, refresh, logout, user, loading, setUser } = useAuth()
   const [profile, setProfile] = useState(null)
   const [error, setError] = useState(null)
   const fileInputRef = useRef(null)
@@ -53,13 +53,15 @@ export default function ProfilePageComp() {
 
   // Upload avatar
   const handleAvatarFileChange = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+    const file = e.target.files[0];
+    if (!file) return;
     try {
-      const data = await updateUserAvatar(user.id, file, { accessToken, refresh, logout })
-      setProfile((prev) => ({ ...prev, avatar: data.avatar }))
+      const data = await updateUserAvatar(user.id, file, { accessToken, refresh, logout });
+      setProfile((prev) => ({ ...prev, avatar: data.avatar }));
+      setUser((prev) => ({ ...prev, avatar: data.avatar }));
+      localStorage.setItem("user", JSON.stringify({ ...user, avatar: data.avatar }));
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     }
   }
 

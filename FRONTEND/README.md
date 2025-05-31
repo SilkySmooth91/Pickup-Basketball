@@ -10,3 +10,9 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## features "avanzate"
+
+- Logica di refresh token per mantenere attivo il login dell'utente anche su più sessioni
+- Swagger API-doc per le rotte del backend
+- Libreria react-toastify per gestione notifiche e messaggi di errore/successo
