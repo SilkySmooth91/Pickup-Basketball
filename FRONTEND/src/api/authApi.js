@@ -25,7 +25,14 @@ export async function loginUser({ email, password }) {
     const err = await res.json();
     throw new Error(err.error || "Errore di login");
   }
-  return await res.json();
+  const data = await res.json();
+  
+  // Salva il refresh token nel localStorage
+  if (data.refreshToken) {
+    localStorage.setItem("refreshToken", data.refreshToken);
+  }
+  
+  return data;
 }
 
 // Refresh token

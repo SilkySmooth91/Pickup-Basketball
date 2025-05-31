@@ -10,14 +10,13 @@ export default function SignInComp({ isVisible, onRegister, className }) {
   const [error, setError] = useState(null)
   const { login } = useAuth()
   const navigate = useNavigate()
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
     try {
       const loginRes = await loginUser({ email, password });
-      await login(loginRes.user, loginRes.accessToken);
-      navigate("/profile")
+      await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
+      navigate("/map") // Reindirizza a /map invece di /profile
     } catch (err) {
       setError(err.message)
     }

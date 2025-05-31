@@ -1,0 +1,53 @@
+/* Z-index fixes for header dropdowns to appear above map */
+.leaflet-container {
+  z-index: 10; /* Lower than header dropdown z-index */
+}
+
+/* Ensure dropdown animations work properly */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Z-index hierarchy for components */
+:root {
+  --z-map: 10;
+  --z-search-bar: 400;
+  --z-search-results: 500;
+  --z-header: 900;
+  --z-dropdown: 1000;
+  --z-mobile-menu: 1100;
+}
+
+/* Styles for dropdown menus */
+.dropdown-menu {
+  border-radius: 0.5rem;
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+/* Special styles for mobile view */
+@media (max-width: 767px) {
+  /* Ensure the search bar doesn't block dropdowns on mobile */
+  .mobile-dropdown-active.search-bar-container {
+    z-index: 300 !important; /* Lower than dropdown z-index when dropdown is active */
+  }
+  
+  /* Ensure dropdown is always visible on mobile */
+  header .animate-fade-in {
+    right: 1rem !important; /* Override default right alignment to ensure visibility */
+    max-width: calc(100vw - 2rem); /* Prevent overflow beyond screen */
+  }
+  
+  /* Make sure the mobile menu is above everything */
+  .mobile-menu-open {
+    z-index: var(--z-mobile-menu) !important;
+  }
+}
