@@ -1,7 +1,7 @@
 import { useReducer, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FloatingLabel from '../utils/FloatingLabel'
-import { registerUser } from '../../api/authApi'
+import { loginUser, registerUser } from '../../api/authApi'
 import { useAuth } from '../../context/AuthContext'
 
 
@@ -34,8 +34,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null)
-    console.log("Submit chiamato", state); // DEBUG
+    setError(null);
     // Validazione frontend
     if (
       !state.username.trim() ||
@@ -54,7 +53,6 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       return;
     }
     try {
-      console.log("Chiamo registerUser"); // DEBUG
       await registerUser({
         ...state,
         age: ageNum,
@@ -66,7 +64,8 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       });
       dispatch({ type: 'RESET' });
       // Effettua login automatico dopo la registrazione
-      await login({ email: state.email, password: state.password });
+      const loginRes = await loginUser({ email: state.email, password: state.password });
+      await login(loginRes.user, loginRes.accessToken); // <-- Passa user e token veri!
       navigate('/profile');
     } catch (err) {
       setError(err.message || "Errore durante la registrazione");

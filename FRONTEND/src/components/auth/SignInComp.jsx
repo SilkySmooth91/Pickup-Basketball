@@ -2,6 +2,7 @@ import { useState } from 'react'
 import FloatingLabel from '../utils/FloatingLabel'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { loginUser } from '../../api/authApi';
 
 export default function SignInComp({ isVisible, onRegister, className }) {
   const [email, setEmail] = useState("")
@@ -14,7 +15,8 @@ export default function SignInComp({ isVisible, onRegister, className }) {
     e.preventDefault()
     setError(null)
     try {
-      await login({ email, password })
+      const loginRes = await loginUser({ email, password });
+      await login(loginRes.user, loginRes.accessToken);
       navigate("/profile")
     } catch (err) {
       setError(err.message)
