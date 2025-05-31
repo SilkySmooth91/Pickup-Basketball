@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBasketball, faChevronDown, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import '/src/styles/HeaderComp.css'
+import logo from '../../assets/logo.png';
 
 export default function HeaderComp() {
   const { user, accessToken, logout } = useAuth();
@@ -75,9 +76,9 @@ export default function HeaderComp() {
           >
             <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
           </button>
-          {/* Logo & Title (center) */}
-          <Link to="/" className="flex flex-raw items-center justify-center gap-3 flex-1">
-            <FontAwesomeIcon icon={faBasketball} className="text-2xl text-orange-500" />
+          {/* Logo & Title (center, mobile) */}
+          <Link to="/" className="flex flex-row items-center justify-center gap-2 flex-1">
+            <img src={logo} alt="Logo" className="h-9 w-9 object-contain select-none" style={{marginRight: 6}} />
             <span className="text-xl font-bold text-center text-orange-600 leading-none" style={{ letterSpacing: 1 }}>PickupBasketball</span>
           </Link>
           {/* Avatar & Dropdown (right) */}
@@ -117,9 +118,9 @@ export default function HeaderComp() {
 
         {/* Desktop layout */}
         <div className="hidden md:flex items-center justify-between w-full">
-          {/* Logo */}
+          {/* Logo (desktop) */}
           <Link to="/" className="flex items-center gap-2 text-orange-600 font-bold text-2xl">
-            <FontAwesomeIcon icon={faBasketball} className="text-3xl text-orange-500" />
+            <img src={logo} alt="Logo" className="h-10 w-10 object-contain select-none" style={{marginRight: 4}} />
             <span className="hidden sm:inline">PickupBasketball</span>
           </Link>
           {/* Nav links */}

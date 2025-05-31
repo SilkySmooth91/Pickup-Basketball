@@ -97,7 +97,8 @@ router.post('/register', uniqueUserFields, async (req, res) => {
         username: user.username,
         email: user.email,
         age: user.age,
-        city: user.city
+        city: user.city,
+        avatar: user.avatar || null // <-- AGGIUNTO
       },
       accessToken,
       refreshToken
@@ -159,7 +160,8 @@ router.post('/login', async (req, res) => {
     res.json({
       user: {
         id: user.id, username: user.username, email: user.email,
-        age: user.age, city: user.city
+        age: user.age, city: user.city,
+        avatar: user.avatar || null // <-- AGGIUNTO
       },
       accessToken, refreshToken
     });
@@ -228,7 +230,17 @@ router.post("/refresh", async (req, res) => {
 
     // console.log("=== [DEBUG] Nuovo refresh token generato:", newRefreshToken); 
 
-    res.json({ accessToken, refreshToken: newRefreshToken });
+    res.json({
+      accessToken, refreshToken: newRefreshToken,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        age: user.age,
+        city: user.city,
+        avatar: user.avatar || null // <-- AGGIUNTO
+      }
+    });
 
   } catch (err) {
     // console.error("=== [DEBUG] Errore refresh:", err); // OK
