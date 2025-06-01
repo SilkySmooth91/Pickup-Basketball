@@ -54,3 +54,18 @@ export async function deleteCourt(courtId, auth) {
   if (!res.ok) throw new Error("Errore nell'eliminazione campetto");
   return res.status === 204 ? true : await res.json();
 }
+
+export async function getNearbyCourts(lat, lng, distance = 5, auth) {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  // Converti km in metri per la query
+  const distanceInMeters = distance * 1000;
+  
+  const res = await fetchWithAuth(
+    `${API_URL}/courts?lat=${lat}&lng=${lng}&distance=${distanceInMeters}`,
+    {},
+    auth
+  );
+  
+  if (!res.ok) throw new Error("Errore nel recupero dei campetti vicini");
+  return await res.json();
+}

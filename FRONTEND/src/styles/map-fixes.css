@@ -1,9 +1,9 @@
-/* Z-index fixes for header dropdowns to appear above map */
+/* Correzioni per z-index affinché i dropdown dell'header appaiano sopra la mappa */
 .leaflet-container {
-  z-index: 10; /* Lower than header dropdown z-index */
+  z-index: 10; 
 }
 
-/* Ensure dropdown animations work properly */
+/* Assicura che le animazioni dei dropdown funzionino correttamente */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -14,7 +14,7 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Z-index hierarchy for components */
+/* Gerarchia degli z-index per i componenti */
 :root {
   --z-map: 10;
   --z-search-bar: 400;
@@ -24,30 +24,58 @@
   --z-mobile-menu: 1100;
 }
 
-/* Styles for dropdown menus */
+/* Stili per i menu dropdown */
 .dropdown-menu {
   border-radius: 0.5rem;
   background-color: white;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   overflow: hidden;
+  max-width: calc(100vw - 20px); /* Impedisce overflow su schermi piccoli */
 }
 
-/* Special styles for mobile view */
+@media (max-width: 640px) {
+  .relative .dropdown-menu {
+    right: 0;
+    max-width: 200px;
+    width: auto !important;
+  }
+}
+
+/* Stili per la visualizzazione mobile */
 @media (max-width: 767px) {
-  /* Ensure the search bar doesn't block dropdowns on mobile */
+  /* Assicura che la barra di ricerca non blocchi i dropdown su mobile */
   .mobile-dropdown-active.search-bar-container {
-    z-index: 300 !important; /* Lower than dropdown z-index when dropdown is active */
+    z-index: 300 !important; /* Z-index più basso di quello del dropdown quando il dropdown è attivo */
   }
   
-  /* Ensure dropdown is always visible on mobile */
-  header .animate-fade-in {
-    right: 1rem !important; /* Override default right alignment to ensure visibility */
-    max-width: calc(100vw - 2rem); /* Prevent overflow beyond screen */
+
+  header .dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    width: auto !important;
+    min-width: 160px;
   }
   
-  /* Make sure the mobile menu is above everything */
+
   .mobile-menu-open {
     z-index: var(--z-mobile-menu) !important;
   }
+}
+
+/* Migliora l'area cliccabile del pulsante di chiusura nei popup Leaflet */
+.leaflet-popup-close-button {
+  padding: 8px !important; 
+  font-size: 20px !important; 
+  width: 30px !important; 
+  height: 30px !important; 
+  line-height: 14px !important; 
+  right: 5px !important; 
+  top: 5px !important; 
+  color: #666 !important; 
+}
+
+.leaflet-popup-close-button:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important; /* Effetto hover leggero */
+  color: #333 !important; /* Colore più scuro al passaggio del mouse */
 }

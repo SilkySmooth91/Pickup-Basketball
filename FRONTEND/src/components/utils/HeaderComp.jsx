@@ -104,27 +104,22 @@ export default function HeaderComp() {
             <button
               className="flex items-center gap-2 focus:outline-none"
               onClick={() => setDropdownOpenMobile((v) => !v)}
-              aria-label="User menu"
-            >
+              aria-label="User menu">
               <img
                 src={user?.avatar || "/vite.svg"}
                 alt="avatar"
-                className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"
-              />
-              <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            </button>
+                className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>              <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
+            </button>
             {dropdownOpenMobile && (
-              <div className="fixed mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
-                zIndex: 'var(--z-dropdown)', 
-                top: '3.5rem', /* Posizionamento fisso sotto l'avatar */
-                right: '1rem'  /* Allineamento a destra con margine */
+              <div className="absolute right-0 top-10 mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
+                zIndex: 'var(--z-dropdown)'
               }}>
                 <button
                   className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
                   onClick={() => {
                     setDropdownOpenMobile(false);
                     navigate("/profile");
-                  }}
-                >
+                  }}>
                   Visualizza Profilo
                 </button>
                 <button
@@ -146,8 +141,7 @@ export default function HeaderComp() {
           </Link>
           {/* Nav links */}
           <div className="flex-1 flex justify-center">
-            {navLinks}
-          </div>
+            {navLinks}          </div>
           {/* Avatar & Dropdown (desktop) */}
           <div className="relative ml-4" ref={dropdownRef}>
             <button
@@ -162,10 +156,8 @@ export default function HeaderComp() {
               />
               <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            </button>
             {dropdownOpen && (
-              <div className="fixed mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
-                zIndex: 'var(--z-dropdown)', 
-                top: '3.5rem', /* Posizionamento fisso sotto l'avatar */
-                right: '1rem'  /* Allineamento a destra con margine */
+              <div className="absolute right-0 top-11 mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
+                zIndex: 'var(--z-dropdown)'
               }}>
                 <button
                   className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"

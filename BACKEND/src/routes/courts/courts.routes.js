@@ -96,6 +96,32 @@ router.post("/", authMiddleware, uploadGallery.array("images", 10), async (req, 
  */
 router.get("/", authMiddleware, async (req, res) => {
   try {
+    // Se ci sono coordinate e una distanza, cerca per prossimità
+    if (req.query.lat && req.query.lng && req.query.distance) {
+      const lat = parseFloat(req.query.lat);
+      const lng = parseFloat(req.query.lng);
+      const distance = parseInt(req.query.distance) || 5000; // Default 5km, in metri
+      
+      // Esegui una query geospaziale per trovare campetti vicini
+      const courts = await courtModel.find({
+        coordinates: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [lng, lat] // MongoDB usa [lng, lat]
+            },
+            $maxDistance: distance
+          }
+        }
+      });
+      
+      return res.json({
+        courts,
+        totalCourts: courts.length
+      });
+    }
+    
+    // Altrimenti usa la paginazione standard
     const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
     const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
     const skip = (page - 1) * limit;

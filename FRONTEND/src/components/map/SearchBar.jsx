@@ -131,10 +131,15 @@ export default function SearchBar({ onLocationSelect }) {
     } finally {
       setIsSearching(false);
     }
-  }
-  const handleSearch = (e) => {
+  }  const handleSearch = (e) => {
     e.preventDefault();
     if (!search) return;
+    
+    // Annulla qualsiasi timeout di ricerca in corso
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+      setTypingTimeout(null);
+    }
     
     performSearch(search, true);
     setShowResults(false);
