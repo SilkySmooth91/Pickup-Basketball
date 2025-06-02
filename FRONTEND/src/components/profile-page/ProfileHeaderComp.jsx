@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { faCalendar } from '@fortawesome/free-regular-svg-icons'
@@ -53,7 +53,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
   }
 
   // Aggiorna i dati del form se cambia il profilo
-  React.useEffect(() => {
+  useEffect(() => {
     setForm({
       age: profile?.age || '',
       city: profile?.city || '',
@@ -123,11 +123,11 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
           <div className="text-white-600 text-sm mt-1 flex gap-4 items-center">
             <span className="flex items-center mr-3">
               <FontAwesomeIcon icon={faCalendar} className="mr-2 font-thin" />
-              <span className="font-thin text-lg">{profile?.age || '--'}</span>
+              <span className="font-extralight text-lg">{profile?.age || '--'}</span>
             </span>
             <span className="flex items-center">
               <FontAwesomeIcon icon={faLocationDot} className="mr-2 font-thin" />
-              <span className="font-thin text-lg">{profile?.city || 'Città'}</span>
+              <span className="font-extralight text-lg">{profile?.city || 'Città'}</span>
             </span>
           </div>
         </div>

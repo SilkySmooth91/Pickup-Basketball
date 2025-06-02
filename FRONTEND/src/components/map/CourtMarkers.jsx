@@ -4,13 +4,17 @@ import L from 'leaflet';
 import { getNearbyCourts } from '../../api/courtApi';
 import { useAuth } from '../../context/AuthContext';
 import basketballMarker from '../../assets/basketball-marker.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 // Icona personalizzata per i marker dei campetti
 const courtIcon = new L.Icon({
   iconUrl: basketballMarker,
   iconSize: [30, 30],
   iconAnchor: [15, 30],
-  popupAnchor: [0, -30]
+  popupAnchor: [0, -30],
+  className: 'basketball-marker-icon'
 });
 
 export default function CourtMarkers({ searchedCoords }) {
@@ -19,6 +23,7 @@ export default function CourtMarkers({ searchedCoords }) {
   const [error, setError] = useState(null);
   const { accessToken } = useAuth();
   const map = useMap();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Carica i campetti solo quando ci sono coordinate di ricerca
@@ -79,33 +84,47 @@ export default function CourtMarkers({ searchedCoords }) {
           <Marker 
             key={court._id} 
             position={[lat, lng]}
-            icon={courtIcon}
-          >
+            icon={courtIcon}>
             <Popup>
-              <div className="court-popup">
-                <h3 className="font-bold text-lg text-orange-600">{court.name}</h3>
-                <p className="text-gray-600">{court.address}</p>
-                <div className="text-sm mt-2">
-                  <p><span className="font-semibold">Canestri:</span> {court.baskets}</p>
-                  <p>
-                    <span className="font-semibold">Dimensioni regolamentari:</span> 
+              <div className="court-popup p-5">
+                <h3 className="font-bold text-2xl mb-4 text-orange-600">{court.name}</h3>
+                
+                {court.images && court.images.length > 0 && (
+                  <div className="my-2">
+                    <img 
+                      src={court.images[0].url} 
+                      alt={court.name} 
+                      className="w-full h-40 object-cover rounded"/>
+                  </div>
+                )}
+                
+                <p className="text-gray-600 m-0">{court.address}</p>
+                <div className="text-base mt-2">
+                  <p className='flex flex-row justify-between'>
+                    <span className="font-semibold">Canestri:</span> {court.baskets}
+                  </p>
+                  <p className='flex flex-row justify-between'>
+                    <span className="font-semibold">Dimensioni ufficiali:</span> 
                     {court.officialsize ? ' Sì' : ' No'}
                   </p>
-                  <p>
+                  <p className='flex flex-row justify-between'>
                     <span className="font-semibold">Illuminazione notturna:</span> 
                     {court.nightlights ? ' Sì' : ' No'}
                   </p>
                 </div>
-                {court.images && court.images.length > 0 && (
-                  <div className="mt-2">
-                    <img 
-                      src={court.images[0].url} 
-                      alt={court.name} 
-                      className="w-full h-32 object-cover rounded"
-                    />
+                <div className="w-full flex justify-center mt-4">
+                  <div className="relative inline-block">
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-md p-[1px]"></div>
+                    <button
+                      className="relative py-3 px-4 rounded-md bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-normal transition-colors duration-200 flex items-center justify-center gap-2"
+                      onClick={() => navigate(`/court/${court._id}`)}
+                    >
+                      <FontAwesomeIcon icon={faInfoCircle} className="w-4 h-4" />
+                      Dettagli Campetto
+                    </button>
                   </div>
-                )}
-              </div>
+                </div>
+                </div>
             </Popup>
           </Marker>
         );

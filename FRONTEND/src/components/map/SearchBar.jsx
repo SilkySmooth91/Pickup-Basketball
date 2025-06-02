@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 export default function SearchBar({ onLocationSelect }) {
   const [search, setSearch] = useState("");
@@ -7,7 +9,7 @@ export default function SearchBar({ onLocationSelect }) {
   const [showResults, setShowResults] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [mobileDropdownActive, setMobileDropdownActive] = useState(false);
-  // Monitor if any dropdown is active
+  // Controlla se il dropdown è aperto per modificare lo z-index della barra di ricerca
   useEffect(() => {
     // Flag per gestire il rilevamento dei dropdown
     const handleBodyClick = (e) => {
@@ -135,7 +137,7 @@ export default function SearchBar({ onLocationSelect }) {
     e.preventDefault();
     if (!search) return;
     
-    // Annulla qualsiasi timeout di ricerca in corso
+  
     if (typingTimeout) {
       clearTimeout(typingTimeout);
       setTypingTimeout(null);
@@ -176,33 +178,37 @@ export default function SearchBar({ onLocationSelect }) {
       setShowResults(false);
     }
   };  return (
-    <div className={`fixed left-1/2 transform -translate-x-1/2 search-bar-container ${mobileDropdownActive ? 'mobile-dropdown-active' : ''}`} style={{ top: '4rem', zIndex: 'var(--z-search-bar)' }}>
+    <div className={`fixed left-1/2 transform -translate-x-1/2 search-bar-container ${mobileDropdownActive ? 'mobile-dropdown-active' : ''}`} style={{ top: '4rem', zIndex: 'var(--z-search-bar)', marginBottom: 0 }}>
       <div className="relative">
         <form
           onSubmit={handleSearch}
-          className="bg-white shadow-xl rounded-xl flex items-center p-2 gap-2 border border-orange-200 mx-4"
-          style={{ width: '90vw', maxWidth: '28rem' }}
+          className="bg-white shadow-xl rounded-3xl flex items-center p-2 gap-2 border border-orange-200 mx-4"
+          style={{ width: '90vw', maxWidth: '28rem', marginBottom: 0 }}
         >
           <input
             type="text"
             placeholder="Cerca una località..."
             value={search}
             onChange={handleInputChange}
-            className="flex-1 border border-orange-300 rounded p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-orange-400"
+            className="flex-1 border border-orange-300 rounded-3xl p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
           <button 
             type="submit" 
-            className="bg-orange-500 text-white px-3 py-2 text-sm sm:text-base rounded hover:bg-orange-600 transition whitespace-nowrap"
-          >
-            {isSearching ? "..." : "Cerca"}
+            className="relative py-3 px-3 rounded-full
+                      bg-gradient-to-r from-orange-500 to-red-500
+                      hover:from-orange-600 hover:to-red-600
+                      text-white font-normal
+                      transition-colors duration-200
+                      flex items-center justify-center gap-2">
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            {isSearching ? "..." : ""}
           </button>
         </form>
         
         {showResults && (
           <div 
-            className="absolute left-4 right-4 bg-white shadow-xl rounded-b-xl border border-orange-200 max-h-60 overflow-y-auto"
-            style={{ top: 'calc(100% - 5px)', zIndex: 'var(--z-search-results)' }}
-          >
+            className="absolute left-4 right-4 bg-white shadow-xl rounded-xl mt-2 border border-orange-200 max-h-60 overflow-y-auto"
+            style={{ top: 'calc(100% - 5px)', zIndex: 'var(--z-search-results)' }}>
             {searchResults.map((result, index) => (
               <div
                 key={index}

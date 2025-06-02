@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import './styles/App.css'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import Profile from './pages/Profile'
 import MainMap from './pages/MainMap'
+import CourtInfo from './pages/CourtInfo';
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+
 
 // Componente per proteggere le rotte autenticate
 function ProtectedRoute({ children }) {
@@ -77,10 +79,9 @@ function AppRoutes() {
         {/* Rotte protette (richiedono autenticazione) */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />
-        
+        <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
         {/* Rotte pubbliche (reindirizzano se autenticati) */}
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
-        
         {/* Fallback per rotte sconosciute */}
         <Route path="*" element={<FallbackRedirect />} />
       </Routes>

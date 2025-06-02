@@ -79,3 +79,26 @@
   background-color: rgba(0, 0, 0, 0.05) !important; /* Effetto hover leggero */
   color: #333 !important; /* Colore più scuro al passaggio del mouse */
 }
+
+.leaflet-container {
+  font-family: "Inter", sans-serif !important;
+}
+
+.leaflet-popup-content p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.leaflet-popup-content button {
+  font-size: 14px;
+}
+
+.basketball-marker-icon {
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.4));
+  transition: all 0.2s ease;
+}
+
+.basketball-marker-icon:hover {
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.5));
+  transform: translateY(-3px);
+}
