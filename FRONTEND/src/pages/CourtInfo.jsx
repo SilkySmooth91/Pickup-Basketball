@@ -31,11 +31,6 @@ export default function CourtInfo() {
     fetchCourt();
   }, [id, accessToken]);
 
-  function handleUploadClick() {
-    // Qui puoi aprire una modale o navigare alla pagina di upload immagini
-    alert('Funzionalità di caricamento immagini non ancora implementata');
-  }
-
   return (
     <>
       <HeaderComp />
@@ -50,7 +45,18 @@ export default function CourtInfo() {
               <CourtImageCarousel 
                 images={court.images || []} 
                 courtName={court.name} 
-                onUploadClick={handleUploadClick}/>
+                courtId={court._id}
+                onUploadSuccess={() => {
+                  // Refetch court data to update images after upload
+                  setLoading(true);
+                  setError(null);
+                  fetchWithAuth(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/courts/${court._id}`, {}, { accessToken })
+                    .then(res => res.ok ? res.json() : Promise.reject())
+                    .then(data => setCourt(data))
+                    .catch(() => setError('Impossibile aggiornare le immagini'))
+                    .finally(() => setLoading(false));
+                }}
+              />
             </div>
             {/* Dati campetto */}
             <div className="bg-white rounded shadow p-4">

@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { fetchWithAuth } from '../../context/fetchWithAuth';
+import { useAuth } from '../../context/AuthContext';
 
-export default function CourtImageCarousel({ images = [], courtName = '', onUploadClick }) {
+export default function CourtImageCarousel({ images = [], courtName = '', onUploadSuccess, courtId }) {
   const [imgIndex, setImgIndex] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef();
+  const { accessToken } = useAuth();
 
   function nextImg() {
     if (!images.length) return;
@@ -14,14 +19,54 @@ export default function CourtImageCarousel({ images = [], courtName = '', onUplo
     setImgIndex((prev) => (prev - 1 + images.length) % images.length);
   }
 
+  async function handleFileChange(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length || !courtId) return;
+    setUploading(true);
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const formData = new FormData();
+      files.forEach(f => formData.append('images', f));
+      const res = await fetchWithAuth(
+        `${API_URL}/courts/${courtId}/images`,
+        {
+          method: 'POST',
+          body: formData
+        },
+        { accessToken }
+      );
+      if (!res.ok) throw new Error('Errore durante il caricamento delle immagini');
+      if (onUploadSuccess) onUploadSuccess();
+    } catch (err) {
+      alert('Errore durante il caricamento delle immagini');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
+  function openFileDialog() {
+    if (fileInputRef.current) fileInputRef.current.click();
+  }
+
   return (
     <div className="relative w-full max-w-2x1 flex flex-col items-center">
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileChange}
+        disabled={uploading}
+      />
       <button
-        onClick={onUploadClick}
-        className="absolute top-2 right-2 z-10 py-2 px-3 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-normal text-base hover:from-orange-600 hover:to-red-600 transition-colors shadow">
-            <FontAwesomeIcon icon={faArrowUpFromBracket} className='mr-2' />
-            Carica immagini
-        </button>
+        onClick={openFileDialog}
+        disabled={uploading}
+        className="absolute top-2 right-2 z-10 py-2 px-3 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-normal text-base hover:from-orange-600 hover:to-red-600 transition-colors shadow flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+        <FontAwesomeIcon icon={faArrowUpFromBracket} className='mr-2' />
+        {uploading ? 'Caricamento...' : 'Carica immagini'}
+      </button>
       {images.length > 0 ? (
         <>
           <img
@@ -38,7 +83,7 @@ export default function CourtImageCarousel({ images = [], courtName = '', onUplo
           </div>
         </>
       ) : (
-        <div className="w-full h-64 flex flex-col items-center justify-center bg-gray-100 rounded shadow mb-2">
+        <div className="w-full h-136 flex flex-col items-center justify-center bg-gray-100 rounded shadow mb-2">
           <span className="text-gray-500 mb-4">Non ci sono ancora immagini per questo campetto</span>
         </div>
       )}
