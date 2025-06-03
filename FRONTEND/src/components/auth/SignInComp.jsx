@@ -54,13 +54,12 @@ export default function SignInComp({ isVisible, onRegister, className }) {
           </button>
           <button
             type="button"
-            className="transition duration-300 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-4 rounded-3xl flex items-center mt-3 w-full justify-center shadow-sm"
+            className="transition duration-300 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-3 rounded-3xl flex items-center mt-3 w-full justify-center shadow-sm"
             style={{ maxWidth: 200 }}
             onClick={(e) => {
               e.preventDefault()
               // Handle Google Sign-In here
-            }}
-          >
+            }}>
             <svg className="w-5 h-5 mr-2" viewBox="0 0 48 48">
               <g>
                 <path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.86-6.86C36.68 2.09 30.7 0 24 0 14.82 0 6.73 5.06 2.69 12.44l7.98 6.2C12.13 13.13 17.61 9.5 24 9.5z"/>
