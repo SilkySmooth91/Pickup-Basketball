@@ -2,4 +2,9 @@
 
 body {
   font-family: "Inter", sans-serif !important;
+  background-color: #fef4f0;
+}
+
+.home-welcome-bg {
+  background: url('https://images.pexels.com/photos/680074/pexels-photo-680074.jpeg') center center/cover no-repeat;
 }

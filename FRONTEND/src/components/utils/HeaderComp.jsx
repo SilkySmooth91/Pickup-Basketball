@@ -114,16 +114,15 @@ export default function HeaderComp() {
               <div className="absolute right-0 top-10 mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
                 zIndex: 'var(--z-dropdown)'
               }}>
-                <button
-                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
-                  onClick={() => {
-                    setDropdownOpenMobile(false);
-                    navigate("/profile");
-                  }}>
+                <Link
+                  to="/profile"
+                  className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
+                  onClick={() => setDropdownOpenMobile(false)}
+                >
                   Visualizza Profilo
-                </button>
+                </Link>
                 <button
-                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
+                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
                   onClick={handleLogout}>
                   Logout
                 </button>
@@ -159,17 +158,15 @@ export default function HeaderComp() {
               <div className="absolute right-0 top-11 mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
                 zIndex: 'var(--z-dropdown)'
               }}>
-                <button
-                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    navigate("/profile");
-                  }}
+                <Link
+                  to="/profile"
+                  className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
+                  onClick={() => setDropdownOpen(false)}
                 >
                   Visualizza Profilo
-                </button>
+                </Link>
                 <button
-                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
+                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
                   onClick={handleLogout}>
                   Logout
                 </button>

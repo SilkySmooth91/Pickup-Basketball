@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom'
 import ProfileHeaderComp from './ProfileHeaderComp'
 import InfoCardComp from './InfoCardComp'
 import RecentActivityComp from './RecentActivityComp'
+import PageContainer from '../utils/PageContainer'
 
 
 export default function ProfilePageComp() {
@@ -66,7 +67,7 @@ export default function ProfilePageComp() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <PageContainer>
       <ProfileHeaderComp
         profile={profile}
         isOwner={isOwner}
@@ -82,6 +83,6 @@ export default function ProfilePageComp() {
       />
       <InfoCardComp profile={profile} isOwner={isOwner} />
       <RecentActivityComp userId={user.id} />
-    </div>
+    </PageContainer>
   )
 }

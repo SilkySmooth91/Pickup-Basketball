@@ -50,7 +50,7 @@ export default function CourtImageCarousel({ images = [], courtName = '', onUplo
   }
 
   return (
-    <div className="relative w-full max-w-2x1 flex flex-col items-center">
+    <div className="carousel relative w-full flex flex-col items-center">
       <input
         type="file"
         accept="image/*"
@@ -63,27 +63,29 @@ export default function CourtImageCarousel({ images = [], courtName = '', onUplo
       <button
         onClick={openFileDialog}
         disabled={uploading}
-        className="absolute top-2 right-2 z-10 py-2 px-3 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-normal text-base hover:from-orange-600 hover:to-red-600 transition-colors shadow flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+        className="absolute top-2 right-2 z-10 py-2 px-3 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-normal text-base hover:from-orange-600 hover:to-red-600 transition-colors shadow flex items-center gap-2 disabled:opacity-60 cursor-pointer">
         <FontAwesomeIcon icon={faArrowUpFromBracket} className='mr-2' />
         {uploading ? 'Caricamento...' : 'Carica immagini'}
       </button>
       {images.length > 0 ? (
         <>
-          <img
-            src={images[imgIndex].url}
-            alt={courtName}
-            className="w-full h-136 object-cover rounded shadow mb-2"
-          />
-          <div className="flex justify-between w-full absolute top-1/2 left-0 px-2 -translate-y-1/2">
-            <button onClick={prevImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">&#8592;</button>
-            <button onClick={nextImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">&#8594;</button>
+          <div className="w-full aspect-[16/9] relative mb-2">
+            <img
+              src={images[imgIndex].url}
+              alt={courtName}
+              className="absolute inset-0 w-full h-full object-cover rounded shadow"
+            />
+            <div className="flex justify-between w-full absolute top-1/2 left-0 px-2 -translate-y-1/2 z-10">
+              <button onClick={prevImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">&#8592;</button>
+              <button onClick={nextImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">&#8594;</button>
+            </div>
           </div>
           <div className="text-center text-xs text-gray-500 mt-1">
             {imgIndex + 1} / {images.length}
           </div>
         </>
       ) : (
-        <div className="w-full h-136 flex flex-col items-center justify-center bg-gray-100 rounded shadow mb-2">
+        <div className="w-full aspect-[16/9] flex flex-col items-center justify-center bg-gray-100 rounded shadow mb-2 relative">
           <span className="text-gray-500 mb-4">Non ci sono ancora immagini per questo campetto</span>
         </div>
       )}
