@@ -90,8 +90,7 @@ export default function HeaderComp() {
           <button
             className="flex items-center text-2xl text-orange-500 focus:outline-none"
             onClick={() => setMobileMenuOpen((v) => !v)}
-            aria-label="Apri menu"
-          >
+            aria-label="Apri menu">
             <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
           </button>
           {/* Logo & Title (center, mobile) */}
@@ -108,7 +107,8 @@ export default function HeaderComp() {
               <img
                 src={user?.avatar || "/vite.svg"}
                 alt="avatar"
-                className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>              <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
+                className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>              
+                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
             </button>
             {dropdownOpenMobile && (
               <div className="absolute right-0 top-10 mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
@@ -117,8 +117,7 @@ export default function HeaderComp() {
                 <Link
                   to="/profile"
                   className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
-                  onClick={() => setDropdownOpenMobile(false)}
-                >
+                  onClick={() => setDropdownOpenMobile(false)}>
                   Visualizza Profilo
                 </Link>
                 <button
@@ -144,16 +143,15 @@ export default function HeaderComp() {
           {/* Avatar & Dropdown (desktop) */}
           <div className="relative ml-4" ref={dropdownRef}>
             <button
-              className="flex items-center gap-2 focus:outline-none"
+              className="flex items-center gap-2 focus:outline-none cursor-pointer"
               onClick={() => setDropdownOpen((v) => !v)}
-              aria-label="User menu"
-            >
+              aria-label="User menu">
               <img
                 src={user?.avatar || "/vite.svg"}
                 alt="avatar"
-                className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"
-              />
-              <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            </button>
+                className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>
+              <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
+            </button>
             {dropdownOpen && (
               <div className="absolute right-0 top-11 mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
                 zIndex: 'var(--z-dropdown)'
@@ -161,8 +159,7 @@ export default function HeaderComp() {
                 <Link
                   to="/profile"
                   className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
-                  onClick={() => setDropdownOpen(false)}
-                >
+                  onClick={() => setDropdownOpen(false)}>
                   Visualizza Profilo
                 </Link>
                 <button
@@ -181,16 +178,14 @@ export default function HeaderComp() {
             ${mobileMenuOpen ? 'opacity-100 pointer-events-auto mobile-menu-open' : 'opacity-0 pointer-events-none'}
           `}
           style={{ zIndex: 'var(--z-mobile-menu)' }}
-          onClick={() => setMobileMenuOpen(false)}
-        >
+          onClick={() => setMobileMenuOpen(false)}>
           <div
             className={`
               absolute top-0 left-0 w-3/4 max-w-xs h-full bg-white shadow-lg p-6 flex flex-col gap-4
               transition-transform duration-300
               ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
             `}
-            onClick={e => e.stopPropagation()}
-          >
+            onClick={e => e.stopPropagation()}>
             {navLinks}
           </div>
         </div>

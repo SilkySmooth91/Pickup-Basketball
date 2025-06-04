@@ -21,6 +21,8 @@ const googleStrategy = new GoogleStrategy({
           username: user.username,
           email: user.email
         });
+        user.refreshToken = tokens.refreshToken;
+        await user.save();
         return done(null, tokens);
       } else {
         const newUser = new usersModel({
@@ -38,7 +40,8 @@ const googleStrategy = new GoogleStrategy({
           username: createdUser.username,
           email: createdUser.email
         });
-
+        createdUser.refreshToken = tokens.refreshToken;
+        await createdUser.save();
         return done(null, tokens);
       }
     } catch (err) {

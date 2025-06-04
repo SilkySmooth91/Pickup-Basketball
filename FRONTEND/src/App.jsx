@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage'
 import Profile from './pages/Profile'
 import MainMap from './pages/MainMap'
 import CourtInfo from './pages/CourtInfo';
+import GoogleCallback from './pages/GoogleCallback';
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -82,6 +83,7 @@ function AppRoutes() {
         <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
         {/* Rotte pubbliche (reindirizzano se autenticati) */}
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
+        <Route path="/google-callback" element={<GoogleCallback />} />
         {/* Fallback per rotte sconosciute */}
         <Route path="*" element={<FallbackRedirect />} />
       </Routes>

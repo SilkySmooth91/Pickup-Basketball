@@ -8,10 +8,14 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import uniqueUserFields from "../../middlewares/uniqueUserFields.js";
+import passport from "passport";
+import googleStrategy from "../../auth/strategies/googleOAuth.js";
 
 const router = express.Router();
 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
 const FE_URL = process.env.FE_URL;
+
+passport.use(googleStrategy);
 
 /**
  * @openapi
@@ -533,5 +537,22 @@ router.patch("/change-password", authMiddleware, async (req, res) => {
   }
 });
 
+// === GOOGLE OAUTH ROUTES ===
+router.get("/google", passport.authenticate("google", {
+  scope: ["profile", "email"],
+  session: false
+}));
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false, failureRedirect: FE_URL + "/?google=fail" }),
+  (req, res) => {
+    // I token sono in req.user (vedi googleOAuth.js)
+    // Redirigi al FE con i token come query string
+    const { accessToken, refreshToken } = req.user;
+    const redirectUrl = `${FE_URL}/google-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    res.redirect(redirectUrl);
+  }
+);
 
 export default router;

@@ -4,8 +4,8 @@ const usersSchema = new mongoose.Schema(
   {
     refreshToken: { type: String, default: null },
     username: { type: String, required: true, trim: true },
-    age: { type: Number, required: true, min: 13 },
-    city: { type: String, required: true, trim: true },
+    age: { type: Number, min: 13 },
+    city: { type: String, trim: true }, 
     height: { type: Number, default: null },
     basketrole: {type: String, default: null, enum: ['Playmaker', 'Guard', 'Forward', 'Center']},
     bestskill: { type: String, default: null},

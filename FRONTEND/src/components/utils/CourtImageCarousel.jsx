@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faAnglesLeft, faAnglesRight, faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { fetchWithAuth } from '../../context/fetchWithAuth';
 import { useAuth } from '../../context/AuthContext';
 
@@ -76,8 +76,12 @@ export default function CourtImageCarousel({ images = [], courtName = '', onUplo
               className="absolute inset-0 w-full h-full object-cover rounded shadow"
             />
             <div className="flex justify-between w-full absolute top-1/2 left-0 px-2 -translate-y-1/2 z-10">
-              <button onClick={prevImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">&#8592;</button>
-              <button onClick={nextImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">&#8594;</button>
+              <button onClick={prevImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">
+                <FontAwesomeIcon icon={faAnglesLeft} />
+              </button>
+              <button onClick={nextImg} className="bg-white/80 hover:bg-white text-xl rounded-full px-3 py-1 shadow">
+                <FontAwesomeIcon icon={faAnglesRight} />
+              </button>
             </div>
           </div>
           <div className="text-center text-xs text-gray-500 mt-1">

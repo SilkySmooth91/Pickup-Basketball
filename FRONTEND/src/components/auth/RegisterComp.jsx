@@ -40,15 +40,13 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       !state.username.trim() ||
       !state.email.trim() ||
       !state.password.trim() ||
-      !state.confirmPassword.trim() ||
-      !state.age.trim() ||
-      !state.city.trim()
+      !state.confirmPassword.trim()
     ) {
-      setError("Tutti i campi sono obbligatori");
+      setError("I campi contrassegnati con * sono obbligatori");
       return;
     }
     const ageNum = Number(state.age);
-    if (isNaN(ageNum) || ageNum < 13) {
+    if (state.age && (isNaN(ageNum) || ageNum < 13)) {
       setError("L'età deve essere un numero valido (minimo 13)");
       return;
     }
@@ -87,7 +85,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
           <FloatingLabel
             id="nome-giocatore"
             type="text"
-            label="Username"
+            label="Username *"
             className="flex-1"
             value={state.username}
             onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'username', value: e.target.value })}
@@ -95,7 +93,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
           <FloatingLabel
             id="email"
             type="email"
-            label="Email"
+            label="Email *"
             className="flex-1"
             value={state.email}
             onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'email', value: e.target.value })}
@@ -105,7 +103,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
           <FloatingLabel
             id="password"
             type="password"
-            label="Password"
+            label="Password *"
             className="flex-1"
             value={state.password}
             onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'password', value: e.target.value })}
@@ -113,7 +111,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
           <FloatingLabel
             id="confirm-password"
             type="password"
-            label="Conferma Password"
+            label="Conferma Password *"
             className="flex-1"
             value={state.confirmPassword}
             onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'confirmPassword', value: e.target.value })}
