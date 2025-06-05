@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import { fetchWithAuth } from '../../context/fetchWithAuth';
+import EventDetailsModal from './EventDetailsModal';
 
-export default function UpcomingEvents({ courtId, refreshTrigger }) {
-  const [events, setEvents] = useState([]);
+export default function UpcomingEvents({ courtId, refreshTrigger }) {  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { accessToken } = useAuth();
+  const [selectedEventId, setSelectedEventId] = useState(null);
   
   const fetchEvents = async () => {
     if (!courtId) return;
@@ -61,14 +62,17 @@ export default function UpcomingEvents({ courtId, refreshTrigger }) {
         </div>
         <div className="bg-white rounded-b-lg shadow p-4">
           {loading && <p>Caricamento eventi...</p>}
-          {error && <p className="text-red-500">{error}</p>}          
-          {!loading && !error && (
+          {error && <p className="text-red-500">{error}</p>}            {!loading && !error && (
             events.length === 0 ? (
               <p className="text-gray-500 py-2">Non ci sono ancora eventi in programma</p>
             ) : (
               <ul className="divide-y divide-orange-100">
                 {events.map(event => (
-                  <li key={event._id} className="py-3 hover:bg-orange-50 transition-colors">
+                  <li 
+                    key={event._id} 
+                    className="py-3 hover:bg-orange-50 transition-colors cursor-pointer"
+                    onClick={() => setSelectedEventId(event._id)}
+                  >
                     <div className="font-semibold text-orange-700">{event.title}</div>
                     <div className="text-gray-600 text-sm">
                       <FontAwesomeIcon icon={faCalendarAlt} className="mr-1 text-orange-500" />{' '}
@@ -83,6 +87,14 @@ export default function UpcomingEvents({ courtId, refreshTrigger }) {
             )
           )}
         </div>
+        
+        {selectedEventId && (
+          <EventDetailsModal 
+            eventId={selectedEventId}
+            onClose={() => setSelectedEventId(null)}
+            onEventUpdated={() => fetchEvents()}
+          />
+        )}
     </div>
   );
 }

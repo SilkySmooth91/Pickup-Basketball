@@ -79,6 +79,7 @@ function AppRoutes() {
       <Routes>
         {/* Rotte protette (richiedono autenticazione) */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />
         <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
         {/* Rotte pubbliche (reindirizzano se autenticati) */}

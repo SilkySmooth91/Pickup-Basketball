@@ -1,17 +1,32 @@
-export default function FloatingLabel({ id, type, label, value, onChange }) {
+export default function FloatingLabel({ id, type, label, value, onChange, asTextarea, rows, disabled }) {
   return (
     <div className="relative mb-4">
-      <input
-        type={type}
-        id={id}
-        placeholder=" "
-        className="block w-full p-2 border border-gray-300 rounded peer"
-        value={value}
-        onChange={e => {
-          onChange(e);
-        }}
-        autoComplete="off"
-      />
+      {asTextarea ? (
+        <textarea
+          id={id}
+          placeholder=" "
+          className="block w-full p-2 border border-gray-300 rounded peer min-h-[100px] resize-y"
+          value={value}
+          onChange={e => {
+            onChange(e);
+          }}
+          rows={rows || 4}
+          disabled={disabled}
+        />
+      ) : (
+        <input
+          type={type}
+          id={id}
+          placeholder=" "
+          className="block w-full p-2 border border-gray-300 rounded peer"
+          value={value}
+          onChange={e => {
+            onChange(e);
+          }}
+          autoComplete="off"
+          disabled={disabled}
+        />
+      )}
       <label
         htmlFor={id}
         className="absolute text-sm text-gray-500 duration-300 

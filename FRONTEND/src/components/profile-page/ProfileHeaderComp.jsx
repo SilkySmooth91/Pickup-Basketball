@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { faCalendar } from '@fortawesome/free-regular-svg-icons'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
@@ -62,7 +62,6 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
       bestskill: profile?.bestskill || ''
     })
   }, [profile])
-
   // Logica invio richiesta amicizia
   const handleAddFriend = async () => {
     try {
@@ -72,7 +71,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Authorization va gestita a livello superiore se serve
+            "Authorization": `Bearer ${accessToken}`
           },
           body: JSON.stringify({ to: profile._id })
         }
@@ -135,8 +134,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
         {isOwner ? (
           <button
             className="w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
-            onClick={() => setShowModal(true)}
-          >
+            onClick={() => setShowModal(true)}>
             <FontAwesomeIcon icon={faGear} className='mr-3' />
             Modifica profilo
           </button>
@@ -144,8 +142,8 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
           <button
             className="w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
             onClick={handleAddFriend}
-            disabled={friendReqSent}
-          >
+            disabled={friendReqSent}>
+            <FontAwesomeIcon icon={faUserPlus} className='mr-3' />
             {friendReqSent ? "Richiesta inviata" : "Aggiungi amico"}
           </button>
         )}

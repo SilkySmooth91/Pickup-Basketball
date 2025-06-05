@@ -32,11 +32,11 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Impostiamo la data minima (oggi)
+  
   const [minDateTime, setMinDateTime] = useState('');
 
   useEffect(() => {
-    // Impostiamo la data minima come oggi, formattata per l'input datetime-local
+    // Imposta la data minima come oggi, formattata per l'input datetime-local
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -133,8 +133,7 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
         )}
         
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <FloatingLabel
+          <div className="space-y-4">            <FloatingLabel
               id="event-title"
               type="text"
               label="Titolo evento *"
@@ -150,6 +149,8 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
               value={state.description}
               onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'description', value: e.target.value })}
               disabled={loading}
+              asTextarea={true}
+              rows={5}
             />
             
             <div className="mb-4">

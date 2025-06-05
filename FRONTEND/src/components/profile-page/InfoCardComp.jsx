@@ -5,14 +5,15 @@ import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
+import FriendsModalComp from './FriendsModalComp';
 
 export default function InfoCardComp({ profile, isOwner }) {
   const [showModal, setShowModal] = useState(false);
+  const [showFriendsModal, setShowFriendsModal] = useState(false);
   const [form, setForm] = useState({ old: '', pwd: '', repeat: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { accessToken } = useAuth();
-
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleSubmit = async e => {
@@ -85,14 +86,15 @@ export default function InfoCardComp({ profile, isOwner }) {
           <FontAwesomeIcon icon={faTrophy} className="text-orange-500 text-3xl mb-2" />
           <div className="text-3xl font-bold text-black">{profile?.userEvents?.length ?? 0}</div>
           <div className="text-gray-600 text-base mt-1 text-center">Partecipazioni a eventi</div>
-        </div>
-        {/* Card amici */}
-        <div className="flex-1 bg-white rounded-lg shadow-xl p-4 flex flex-col items-center min-w-[120px] border-orange-500 border border-l-6">
+        </div>        {/* Card amici */}
+        <div 
+          className="flex-1 bg-white rounded-lg shadow-xl p-4 flex flex-col items-center min-w-[120px] border-orange-500 border border-l-6 cursor-pointer hover:bg-orange-50 transition"
+          onClick={() => setShowFriendsModal(true)}
+        >
           <FontAwesomeIcon icon={faUserGroup} className="text-orange-500 text-3xl mb-2" />
           <div className="text-3xl font-bold text-black">{profile?.friendsCount ?? 0}</div>
           <div className="text-gray-600 text-base mt-1 text-center">Amici</div>
-        </div>
-      </div>
+        </div>      </div>
 
       {/* MODALE CAMBIO PASSWORD */}
       {showModal && (
@@ -112,6 +114,9 @@ export default function InfoCardComp({ profile, isOwner }) {
           </div>
         </div>
       )}
+
+      {/* MODALE AMICI */}
+      <FriendsModalComp isOpen={showFriendsModal} onClose={() => setShowFriendsModal(false)} isOwner={isOwner} />
     </div>
   );
 }

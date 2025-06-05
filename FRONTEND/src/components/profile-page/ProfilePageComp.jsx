@@ -8,17 +8,23 @@ import RecentActivityComp from './RecentActivityComp'
 import PageContainer from '../utils/PageContainer'
 
 
-export default function ProfilePageComp() {
+export default function ProfilePageComp({ userId }) {
   const { accessToken, refresh, logout, user, loading, setUser } = useAuth()
   const [profile, setProfile] = useState(null)
   const [error, setError] = useState(null)
   const fileInputRef = useRef(null)
 
   useEffect(() => {
-    if (!loading && user?.id) {
+    if (!loading) {
       const fetchProfile = async () => {
         try {
-          const data = await getUserProfile(user.id, { accessToken, refresh, logout });
+          // Usa l'ID utente passato come prop, altrimenti usa l'ID dell'utente autenticato
+          const profileId = userId || user?.id;
+          if (!profileId) {
+            setError("ID utente non valido");
+            return;
+          }
+          const data = await getUserProfile(profileId, { accessToken, refresh, logout });
           setProfile(data);
         } catch (err) {
           setError(err.message);
@@ -26,7 +32,7 @@ export default function ProfilePageComp() {
       };
       fetchProfile();
     }
-  }, [loading, user, accessToken, refresh, logout])
+  }, [loading, user, userId, accessToken, refresh, logout])
 
   // Centralizza qui il calcolo
   const isOwner = user && profile && String(user.id) === String(profile._id);

@@ -54,7 +54,7 @@ router.post("/requests", authMiddleware, validateFriendRequest, async (req, res)
 
 // Visualizza richieste ricevute
 router.get("/requests/received", authMiddleware, async (req, res) => {
-  const requests = await friendRequestModel.find({ to: req.user.id, status: "pending" }).populate("from", "username");
+  const requests = await friendRequestModel.find({ to: req.user.id, status: "pending" }).populate("from", "username email avatar");
   res.json(requests);
 });
 
@@ -150,8 +150,7 @@ router.post("/requests/:id/reject", authMiddleware, async (req, res) => {
 
 // Lista amici attuali ordinati per username
 router.get("/", authMiddleware, async (req, res) => {
-  try {
-    // Trova tutte le richieste accettate dove l'utente è coinvolto
+  try {    // Trova tutte le richieste accettate dove l'utente è coinvolto
     const requests = await friendRequestModel.find({
       status: "accepted",
       $or: [
@@ -159,8 +158,8 @@ router.get("/", authMiddleware, async (req, res) => {
         { to: req.user.id }
       ]
     }).populate([
-      { path: "from", select: "username" },
-      { path: "to", select: "username" }
+      { path: "from", select: "username email avatar" },
+      { path: "to", select: "username email avatar" }
     ]);
 
     // Ricava la lista degli amici (l'altro utente rispetto a req.user.id)
