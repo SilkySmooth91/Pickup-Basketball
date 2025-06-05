@@ -12,8 +12,8 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner }) {
   const [friendRequests, setFriendRequests] = useState([]);
   const [loadingFriends, setLoadingFriends] = useState(false);
   const { accessToken, refresh } = useAuth();
-
- 
+  
+  // Fetch friends and friend requests
   useEffect(() => {
     if (isOpen) {
       fetchFriendsData();

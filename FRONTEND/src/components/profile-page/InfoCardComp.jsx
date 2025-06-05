@@ -81,12 +81,12 @@ export default function InfoCardComp({ profile, isOwner }) {
 
       {/* Colonna delle due card piccole */}
       <div className="flex flex-row md:flex-col gap-4 w-full md:w-1/4">
-        {/* Card eventi */}
-        <div className="flex-1 flex flex-col items-center bg-white rounded-lg shadow-xl p-4 min-w-[120px] border-orange-500 border border-l-6">
+        {/* Card eventi */}        <div className="flex-1 flex flex-col items-center bg-white rounded-lg shadow-xl p-4 min-w-[120px] border-orange-500 border border-l-6">
           <FontAwesomeIcon icon={faTrophy} className="text-orange-500 text-3xl mb-2" />
           <div className="text-3xl font-bold text-black">{profile?.userEvents?.length ?? 0}</div>
           <div className="text-gray-600 text-base mt-1 text-center">Partecipazioni a eventi</div>
-        </div>        {/* Card amici */}
+        </div>
+        {/* Card amici */}
         <div 
           className="flex-1 bg-white rounded-lg shadow-xl p-4 flex flex-col items-center min-w-[120px] border-orange-500 border border-l-6 cursor-pointer hover:bg-orange-50 transition"
           onClick={() => setShowFriendsModal(true)}
@@ -94,7 +94,8 @@ export default function InfoCardComp({ profile, isOwner }) {
           <FontAwesomeIcon icon={faUserGroup} className="text-orange-500 text-3xl mb-2" />
           <div className="text-3xl font-bold text-black">{profile?.friendsCount ?? 0}</div>
           <div className="text-gray-600 text-base mt-1 text-center">Amici</div>
-        </div>      </div>
+        </div>
+      </div>
 
       {/* MODALE CAMBIO PASSWORD */}
       {showModal && (
