@@ -103,6 +103,24 @@ router.post("/requests/:id/accept", authMiddleware, async (req, res) => {
   if (!request || request.to.toString() !== req.user.id) return res.status(404).json({ error: "Richiesta non trovata" });
   request.status = "accepted";
   await request.save();
+
+  // Aggiorna entrambi gli utenti aggiungendoli ai rispettivi array friends
+  const fromUser = await usersModel.findById(request.from);
+  const toUser = await usersModel.findById(request.to);
+  let updated = false;
+  if (fromUser && !fromUser.friends.includes(request.to)) {
+    fromUser.friends.push(request.to);
+    updated = true;
+  }
+  if (toUser && !toUser.friends.includes(request.from)) {
+    toUser.friends.push(request.from);
+    updated = true;
+  }
+  if (updated) {
+    await fromUser.save();
+    await toUser.save();
+  }
+
   res.json({ message: "Richiesta accettata" });
 });
 
@@ -134,6 +152,41 @@ router.post("/requests/:id/reject", authMiddleware, async (req, res) => {
   request.status = "rejected";
   await request.save();
   res.json({ message: "Richiesta rifiutata" });
+});
+
+/**
+ * @openapi
+ * /friends/{userId}:
+ *   get:
+ *     summary: Ottieni la lista degli amici di un utente specifico
+ *     tags:
+ *       - Friends
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *     responses:
+ *       200:
+ *         description: Lista amici dell'utente
+ *       404:
+ *         description: Utente non trovato
+ */
+
+// Lista amici di un utente specifico (per /friends/:userId)
+router.get("/:userId", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await usersModel.findById(userId).populate("friends", "username email avatar");
+    if (!user) return res.status(404).json({ error: "Utente non trovato" });
+    const friends = user.friends || [];
+    friends.sort((a, b) => a.username.localeCompare(b.username));
+    res.json(friends);
+  } catch (err) {
+    res.status(500).json({ error: "Errore nel recupero amici" });
+  }
 });
 
 /**

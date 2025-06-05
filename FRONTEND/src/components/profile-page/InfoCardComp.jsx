@@ -65,7 +65,7 @@ export default function InfoCardComp({ profile, isOwner }) {
           <div className="flex flex-col gap-2 mt-2">
             <div>
               <span className="font-semibold text-gray-600">Altezza: </span>
-              <span className="text-gray-800">{profile?.height || "185 cm"} cm</span>
+              <span className="text-gray-800">{profile?.height || "185 cm"}</span>
             </div>
             <div>
               <span className="font-semibold text-gray-600">Ruolo: </span>
@@ -117,7 +117,7 @@ export default function InfoCardComp({ profile, isOwner }) {
       )}
 
       {/* MODALE AMICI */}
-      <FriendsModalComp isOpen={showFriendsModal} onClose={() => setShowFriendsModal(false)} isOwner={isOwner} />
+      <FriendsModalComp isOpen={showFriendsModal} onClose={() => setShowFriendsModal(false)} isOwner={isOwner} profileId={profile._id} />
     </div>
   );
 }

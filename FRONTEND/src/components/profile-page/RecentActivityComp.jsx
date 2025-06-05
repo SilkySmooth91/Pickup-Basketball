@@ -43,8 +43,8 @@ export default function RecentActivityComp({ userId }) {
             {activity.recentFriends.length === 0 && (
               <li className="text-gray-400">Nessun amico aggiunto di recente</li>
             )}
-            {activity.recentFriends.map(friend => (
-              <li key={friend._id}>{friend.username}</li>
+            {activity.recentFriends.map((friend, idx) => (
+              <li key={friend._id + '-' + idx}>{friend.username}</li>
             ))}
           </ul>
         </div>

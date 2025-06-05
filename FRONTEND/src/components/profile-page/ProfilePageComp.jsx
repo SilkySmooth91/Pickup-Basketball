@@ -88,7 +88,7 @@ export default function ProfilePageComp({ userId }) {
         onChange={handleAvatarFileChange}
       />
       <InfoCardComp profile={profile} isOwner={isOwner} />
-      <RecentActivityComp userId={user.id} />
+      <RecentActivityComp userId={profile._id} />
     </PageContainer>
   )
 }

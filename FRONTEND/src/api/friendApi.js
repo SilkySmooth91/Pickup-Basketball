@@ -1,8 +1,9 @@
 import { fetchWithAuth } from "../context/fetchWithAuth";
 
-export async function getFriends(auth) {
+export async function getFriends(userId, auth) {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
-  const res = await fetchWithAuth(`${API_URL}/friends`, {}, auth);
+  const url = userId ? `${API_URL}/friends/${userId}` : `${API_URL}/friends`;
+  const res = await fetchWithAuth(url, {}, auth);
   if (!res.ok) throw new Error("Errore nel recupero amici");
   return await res.json();
 }

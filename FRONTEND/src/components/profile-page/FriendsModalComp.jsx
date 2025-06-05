@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { getFriends, getReceivedFriendRequests, acceptFriendRequest, rejectFriendRequest } from '../../api/friendApi';
 import { useAuth } from '../../context/AuthContext';
 
-export default function FriendsModalComp({ isOpen, onClose, isOwner }) {
+export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }) {
   const [activeTab, setActiveTab] = useState('friends');
   const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
@@ -18,17 +18,18 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner }) {
     if (isOpen) {
       fetchFriendsData();
     }
-  }, [isOpen, accessToken]);
+  }, [isOpen, accessToken, profileId, isOwner]);
 
   const fetchFriendsData = async () => {
-    if (!accessToken) return;
+    if (!accessToken || !profileId) return;
     setLoadingFriends(true);
     try {
-      const [friendsData, requestsData] = await Promise.all([
-        getFriends({ accessToken, refresh }),
-        getReceivedFriendRequests({ accessToken, refresh })
-      ]);
-      console.log("Friend requests data:", requestsData);
+      let friendsData = [];
+      let requestsData = [];
+      friendsData = await getFriends(profileId, { accessToken, refresh });
+      if (isOwner) {
+        requestsData = await getReceivedFriendRequests({ accessToken, refresh });
+      }
       setFriends(friendsData);
       setFriendRequests(requestsData);
     } catch (err) {

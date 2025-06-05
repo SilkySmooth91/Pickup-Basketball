@@ -80,7 +80,7 @@ router.get("/:id", authMiddleware, async (req, res) => {
       })
       .populate({
         path: "friends",
-        select: "_id username email",
+        select: "_id username email avatar",
       })
       .lean(); // Restituisce un oggetto JS semplice
 

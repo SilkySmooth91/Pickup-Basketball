@@ -19,7 +19,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [friendReqSent, setFriendReqSent] = useState(false)
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth(); // <-- fix: aggiungi user
 
   // Aggiorna i campi del form
   const handleChange = e => {
@@ -82,6 +82,9 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
     }
   };
 
+  // Determina se sono già amici
+  const isFriend = profile?.friends?.some(f => f._id === user?.id) || false;
+
   return (
     <>
       <div className="
@@ -137,6 +140,14 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
             onClick={() => setShowModal(true)}>
             <FontAwesomeIcon icon={faGear} className='mr-3' />
             Modifica profilo
+          </button>
+        ) : isFriend ? (
+          <button
+            className="w-auto mt-4 md:mt-0 md:mr-5 bg-green-500 text-white font-semibold px-5 py-2 rounded-md shadow cursor-default"
+            disabled
+          >
+            <FontAwesomeIcon icon={faCheck} className='mr-3' />
+            Siete amici
           </button>
         ) : (
           <button
