@@ -99,11 +99,29 @@ router.get("/requests/sent", authMiddleware, async (req, res) => {
 
 // Accetta una richiesta
 router.post("/requests/:id/accept", authMiddleware, async (req, res) => {
-  const request = await friendRequestModel.findById(req.params.id);
-  if (!request || request.to.toString() !== req.user.id) return res.status(404).json({ error: "Richiesta non trovata" });
-  request.status = "accepted";
-  await request.save();
-  res.json({ message: "Richiesta accettata" });
+  try {
+    const request = await friendRequestModel.findById(req.params.id);
+    if (!request || request.to.toString() !== req.user.id) {
+      return res.status(404).json({ error: "Richiesta non trovata" });
+    }
+    
+    // Aggiorna lo status della richiesta
+    request.status = "accepted";
+    await request.save();
+    
+    // Aggiungi l'amicizia nei profili di entrambi gli utenti
+    await usersModel.findByIdAndUpdate(request.from, {
+      $addToSet: { friends: request.to }
+    });
+    await usersModel.findByIdAndUpdate(request.to, {
+      $addToSet: { friends: request.from }
+    });
+    
+    res.json({ message: "Richiesta accettata" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nell'accettare la richiesta" });
+  }
 });
 
 /**
@@ -150,7 +168,8 @@ router.post("/requests/:id/reject", authMiddleware, async (req, res) => {
 
 // Lista amici attuali ordinati per username
 router.get("/", authMiddleware, async (req, res) => {
-  try {    // Trova tutte le richieste accettate dove l'utente è coinvolto
+  try {
+    // Trova tutte le richieste accettate dove l'utente è coinvolto
     const requests = await friendRequestModel.find({
       status: "accepted",
       $or: [
@@ -198,7 +217,7 @@ router.get("/", authMiddleware, async (req, res) => {
  *         description: Parametro di ricerca mancante
  */
 
-// Ricerca utenti per username (case-insensitive, escluso se stessi)
+
 router.get("/search", authMiddleware, async (req, res) => {
   try {
     const { q } = req.query;
@@ -213,6 +232,103 @@ router.get("/search", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore nella ricerca utenti" });
+  }
+});
+
+/**
+ * @openapi
+ * /friends/{userId}:
+ *   get:
+ *     summary: Ottieni la lista degli amici di un utente specifico
+ *     tags:
+ *       - Friends
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente di cui ottenere gli amici
+ *     responses:
+ *       200:
+ *         description: Lista amici dell'utente
+ *       500:
+ *         description: Errore nel recupero amici
+ */
+
+// Lista amici di un utente specifico
+router.get("/:userId", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await usersModel.findById(userId).populate("friends", "username email avatar");
+    const friends = user.friends || [];
+    friends.sort((a, b) => a.username.localeCompare(b.username));
+    res.json(friends);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nel recupero amici" });
+  }
+});
+
+/**
+ * @openapi
+ * /friends/status/{userId}:
+ *   get:
+ *     summary: Verifica lo stato di amicizia con un utente specifico
+ *     tags:
+ *       - Friends
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente da verificare
+ *     responses:
+ *       200:
+ *         description: Stato amicizia verificato
+ *       500:
+ *         description: Errore verifica stato amicizia
+ */
+
+// Verifica stato amicizia con un utente specifico
+router.get("/status/:userId", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (userId === req.user.id) return res.json({ status: "self" });
+    
+    // Controlla se sono già amici
+    const friendship = await friendRequestModel.findOne({
+      status: "accepted",
+      $or: [
+        { from: req.user.id, to: userId },
+        { from: userId, to: req.user.id }
+      ]
+    });
+    if (friendship) return res.json({ status: "friends" });
+    
+    // Controlla richiesta pendente
+    const pendingRequest = await friendRequestModel.findOne({
+      status: "pending",
+      $or: [
+        { from: req.user.id, to: userId },
+        { from: userId, to: req.user.id }
+      ]
+    });
+    if (pendingRequest) {
+      return res.json({ 
+        status: "pending", 
+        direction: pendingRequest.from.toString() === req.user.id ? "sent" : "received" 
+      });
+    }
+    
+    res.json({ status: "none" });
+  } catch (err) {
+    res.status(500).json({ error: "Errore verifica stato amicizia" });
   }
 });
 
