@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClose, faCalendarAlt, faLock, faLockOpen, faPen, faUserPlus, faUserMinus, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faCalendarAlt, faLock, faLockOpen, faPen, faUserPlus, faUserMinus, faUsers, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import { joinEvent, leaveEvent } from '../../api/eventApi';
 import { getEventWithUserDetails } from './EventDetailsModalService';
@@ -97,12 +97,21 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
           <div className="py-10 text-center text-red-500">{error}</div>
         ) : event ? (
           <>
-            <div className="flex items-center gap-2 mb-4">
-              <FontAwesomeIcon 
-                icon={event.isprivate ? faLock : faLockOpen} 
-                className={event.isprivate ? "text-orange-600" : "text-green-600"} 
-              />
-              <h2 className="text-2xl text-orange-600 font-semibold">{event.title}</h2>
+            <div className="flex items-center gap-2 mb-4 justify-between">
+              <div className="flex items-center gap-2">
+                <FontAwesomeIcon 
+                  icon={event.isprivate ? faLock : faLockOpen} 
+                  className={event.isprivate ? "text-orange-600" : "text-green-600"} 
+                />
+                <h2 className="text-2xl text-orange-600 font-semibold">{event.title}</h2>
+              </div>
+              <button
+                className="ml-2 mr-2 px-3 py-2 rounded-md bg-gradient-to-r from-orange-400 to-red-500 text-white shadow transition hover:scale-105 hover:from-orange-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                title="Dettagli evento"
+                aria-label="Dettagli evento"
+                onClick={() => navigate(`/events/${event._id}`)}>
+                <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />
+              </button>
             </div>
             
             <div className="text-gray-600 mb-4 flex items-center gap-2">

@@ -8,6 +8,7 @@ import GoogleCallback from './pages/GoogleCallback';
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import EventDetailsPage from './pages/EventDetailsPage'
 
 
 // Componente per proteggere le rotte autenticate
@@ -82,9 +83,11 @@ function AppRoutes() {
         <Route path="/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />
         <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
+        <Route path="/event/:id" element={<ProtectedRoute><EventDetailsPage /></ProtectedRoute>} />
         {/* Rotte pubbliche (reindirizzano se autenticati) */}
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
         <Route path="/google-callback" element={<GoogleCallback />} />
+        <Route path="/events/:eventId" element={<EventDetailsPage />} />
         {/* Fallback per rotte sconosciute */}
         <Route path="*" element={<FallbackRedirect />} />
       </Routes>
