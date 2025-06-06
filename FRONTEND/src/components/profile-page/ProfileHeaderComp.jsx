@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faUserPlus, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { faCalendar } from '@fortawesome/free-regular-svg-icons'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
@@ -136,22 +136,21 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
         {/* Bottone modifica profilo o aggiungi amico */}
         {isOwner ? (
           <button
-            className="w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
+            className="cursor-pointer w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
             onClick={() => setShowModal(true)}>
             <FontAwesomeIcon icon={faGear} className='mr-3' />
             Modifica profilo
           </button>
         ) : isFriend ? (
           <button
-            className="w-auto mt-4 md:mt-0 md:mr-5 bg-green-500 text-white font-semibold px-5 py-2 rounded-md shadow cursor-default"
-            disabled
-          >
+            className="w-auto mt-4 md:mt-0 md:mr-5 bg-green-100 text-green-800 font-semibold border border-green-700 px-5 py-2 rounded-md shadow cursor-default"
+            disabled>
             <FontAwesomeIcon icon={faCheck} className='mr-3' />
             Siete amici
           </button>
         ) : (
           <button
-            className="w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
+            className="cursor-pointer w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
             onClick={handleAddFriend}
             disabled={friendReqSent}>
             <FontAwesomeIcon icon={faUserPlus} className='mr-3' />
