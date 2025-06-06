@@ -174,7 +174,19 @@ router.get("/court/:courtId", authMiddleware, async (req, res) => {
  */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
-    const event = await eventModel.findById(req.params.id);
+    const event = await eventModel.findById(req.params.id)
+      .populate({
+        path: "court",
+        select: "name address images"
+      })
+      .populate({
+        path: "creator",
+        select: "username avatar"
+      })
+      .populate({
+        path: "participants",
+        select: "username avatar"
+      });
     if (!event) {
       return res.status(404).json({ error: "Evento non trovato" });
     }
