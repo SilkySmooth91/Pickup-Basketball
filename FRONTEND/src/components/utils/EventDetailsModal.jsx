@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose, faCalendarAlt, faLock, faLockOpen, faPen, faUserPlus, faUserMinus, faUsers, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
-import { joinEvent, leaveEvent } from '../../api/eventApi';
+import { joinEvent, leaveEvent, updateEvent } from '../../api/eventApi';
 import { getEventWithUserDetails } from './EventDetailsModalService';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import FloatingLabel from './FloatingLabel';
 
 export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) {
   const { user, accessToken } = useAuth();
@@ -12,6 +14,15 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    description: '',
+    datetime: '',
+    maxplayers: '',
+    isprivate: false
+  });
+  const [editError, setEditError] = useState(null);
   const navigate = useNavigate();
 
   // Verifica se l'utente corrente è il creatore dell'evento
@@ -39,11 +50,22 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
     
     fetchEventDetails();
   }, [eventId, accessToken]);
+  
+  useEffect(() => {
+    if (event) {
+      setEditForm({
+        title: event.title || '',
+        description: event.description || '',
+        datetime: event.datetime ? event.datetime.slice(0, 16) : '',
+        maxplayers: event.maxplayers || '',
+        isprivate: !!event.isprivate
+      });
+    }
+  }, [eventId, accessToken, event]);
+
   const handleParticipation = async () => {
     if (!event || actionLoading) return;
-    
     setActionLoading(true);
-    
     try {
       const action = isParticipant ? leaveEvent : joinEvent;
       const result = await action(event._id, { accessToken });
@@ -65,6 +87,30 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
         : "Errore durante l'iscrizione all'evento");
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleEditChange = e => {
+    const { name, value, type, checked } = e.target;
+    setEditForm(f => ({
+      ...f,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleEditSubmit = async e => {
+    e.preventDefault();
+    setEditError(null);
+    try {
+      const updated = await updateEvent(event._id, {
+        ...editForm,
+        maxplayers: Number(editForm.maxplayers)
+      }, { accessToken });
+      setEvent(updated);
+      setEditMode(false);
+      if (typeof onEventUpdated === 'function') onEventUpdated(updated);
+    } catch (err) {
+      setEditError(err.message || "Errore durante l'aggiornamento dell'evento");
     }
   };
 
@@ -158,13 +204,62 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                 Dettagli
               </button>
               {isCreator ? (
-                <button 
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 border border-orange-600 rounded-md hover:bg-orange-50 transition"
-                  onClick={() => {/* TODO: Implementare funzionalità di modifica */}}
-                >
-                  <FontAwesomeIcon icon={faPen} />
-                  Modifica
-                </button>
+                editMode ? (
+                  <form onSubmit={handleEditSubmit} className="flex flex-col gap-2 w-full">
+                    <FloatingLabel
+                      id="edit-title"
+                      type="text"
+                      label="Titolo evento"
+                      value={editForm.title}
+                      onChange={e => handleEditChange({ target: { name: 'title', value: e.target.value, type: 'text' } })}
+                    />
+                    <FloatingLabel
+                      id="edit-description"
+                      asTextarea
+                      label="Descrizione"
+                      value={editForm.description}
+                      onChange={e => handleEditChange({ target: { name: 'description', value: e.target.value, type: 'textarea' } })}
+                      rows={3}
+                    />
+                    <FloatingLabel
+                      id="edit-datetime"
+                      type="datetime-local"
+                      label="Data e ora"
+                      value={editForm.datetime}
+                      onChange={e => handleEditChange({ target: { name: 'datetime', value: e.target.value, type: 'datetime-local' } })}
+                    />
+                    <FloatingLabel
+                      id="edit-maxplayers"
+                      type="number"
+                      label="Numero massimo giocatori"
+                      value={editForm.maxplayers}
+                      onChange={e => handleEditChange({ target: { name: 'maxplayers', value: e.target.value, type: 'number' } })}
+                    />
+                    <label className="flex items-center gap-2 mb-2">
+                      <input
+                        type="checkbox"
+                        name="isprivate"
+                        checked={editForm.isprivate}
+                        onChange={handleEditChange}
+                        className="accent-orange-600"
+                      />
+                      Evento privato
+                    </label>
+                    {editError && <div className="text-red-500 text-sm mb-2">{editError}</div>}
+                    <div className="flex gap-2 mt-2">
+                      <button type="submit" className="bg-orange-500 text-white px-4 py-2 rounded font-semibold hover:bg-orange-600 transition">Salva</button>
+                      <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded font-semibold hover:bg-gray-300 transition" onClick={() => setEditMode(false)}>Annulla</button>
+                    </div>
+                  </form>
+                ) : (
+                  <button 
+                    className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 border border-orange-600 rounded-md hover:bg-orange-50 transition"
+                    onClick={() => setEditMode(true)}
+                  >
+                    <FontAwesomeIcon icon={faPen} />
+                    Modifica
+                  </button>
+                )
               ) : (
                 <button 
                   className={`flex items-center gap-2 px-4 py-2 rounded-md transition ${
@@ -173,14 +268,18 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                       : 'bg-green-50 text-green-600 border border-green-600 hover:bg-green-100'
                   }`}
                   onClick={handleParticipation}
-                  disabled={actionLoading || (event.participants?.length >= event.maxplayers && !isParticipant)}
+                  disabled={
+                    actionLoading ||
+                    (event.participants?.length >= event.maxplayers && !isParticipant) ||
+                    (event.isprivate && !isCreator) // BLOCCA partecipazione se l'evento è privato.
+                  }
                 >
                   <FontAwesomeIcon icon={isParticipant ? faUserMinus : faUserPlus} />
                   {actionLoading 
                     ? 'Attendere...' 
                     : isParticipant 
                       ? 'Annulla partecipazione' 
-                      : 'Partecipa'}
+                      : event.isprivate ? 'Solo su invito' : 'Partecipa'}
                 </button>
               )}
             </div>

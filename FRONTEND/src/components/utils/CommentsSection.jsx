@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getComments, addComment } from '../../api/commentApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faComments } from '@fortawesome/free-regular-svg-icons';
+import FloatingLabel from './FloatingLabel';
 
 export default function CommentsSection({ targetId, targetType }) {
   const { user, accessToken } = useAuth();
@@ -91,13 +92,16 @@ export default function CommentsSection({ targetId, targetType }) {
         )}
         {user && (
           <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-4 !mb-4">
-            <textarea
-              className="border rounded p-2 text-sm resize-none focus:border-orange-700"
-              rows={2}
-              placeholder="Aggiungi un commento..."
+            <FloatingLabel
+              id="comment-textarea"
+              asTextarea
+              label="Aggiungi un commento..."
               value={newComment}
               onChange={e => setNewComment(e.target.value)}
-              disabled={submitting}/>
+              rows={2}
+              disabled={submitting}
+              className="text-sm"
+            />
             <button
               type="submit"
               className="self-end bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-3 rounded-md font-semibold text-base hover:from-orange-600 hover:to-red-600 transition disabled:cursor-not-allowed"

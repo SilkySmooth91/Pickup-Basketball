@@ -16,14 +16,20 @@ export function AuthProvider({ children }) {
     return stored ? JSON.parse(stored) : null;
   });
   const [loading, setLoading] = useState(true);
+  const [fromRegister, setFromRegister] = useState(false);
 
-  const login = (userData, token, refreshTokenValue) => {
+  const login = (userData, token, refreshTokenValue, options = {}) => {
     setUser(userData);
     setAccessToken(token);
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("accessToken", token);
     if (refreshTokenValue) {
       localStorage.setItem("refreshToken", refreshTokenValue);
+    }
+    if (options.fromRegister) {
+      setFromRegister(true);
+    } else {
+      setFromRegister(false);
     }
   };
 
@@ -84,7 +90,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, user, login, logout, refresh, loading, setUser }}
+      value={{ accessToken, user, login, logout, refresh, loading, setUser, fromRegister, setFromRegister }}
     >
       {children}
     </AuthContext.Provider>

@@ -10,6 +10,8 @@ import { faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import CommentsSection from '../components/utils/CommentsSection';
+import EditEventModal from '../components/utils/EditEventModal';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 export default function EventDetailsPage() {
   const { eventId } = useParams();
@@ -19,6 +21,7 @@ export default function EventDetailsPage() {
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [showAllParticipants, setShowAllParticipants] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const isCreator = user && event?.creator?._id === user.id;
   const isParticipant = user && event?.participants?.some(p => p._id === user.id);
 
@@ -62,6 +65,13 @@ export default function EventDetailsPage() {
     }
   };
 
+  const handleEditModalClose = (updatedEvent) => {
+    setShowEditModal(false);
+    if (updatedEvent) {
+      setEvent(prev => ({ ...prev, ...updatedEvent }));
+    }
+  };
+
   if (loading) return <div className="p-8 text-center">Caricamento...</div>;
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
   if (!event) return null;
@@ -76,6 +86,16 @@ export default function EventDetailsPage() {
             {/* Header immagine + titolo + organizzatore */}
             <div className="relative h-70 flex flex-col justify-end" style={{background: event.court?.images?.[0]?.url ? `url(${event.court.images[0].url}) center/cover no-repeat` : '#f3f3f3'}}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0" />
+              {/* Pulsante modifica SOLO per il creatore, in alto a destra sopra l'immagine */}
+              {isCreator && (
+                <button
+                  className="absolute top-3 right-3 z-20 bg-white text-orange-600 border border-orange-600 rounded-lg p-2 shadow hover:bg-orange-50 transition"
+                  title="Modifica evento"
+                  onClick={() => setShowEditModal(true)}>
+                  <FontAwesomeIcon icon={faPen} className="mr-2" />
+                  Modifica
+                </button>
+              )}
               <div className="relative z-10 p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <h2 className="text-3xl font-bold text-white drop-shadow">{event.title}</h2>
@@ -163,7 +183,7 @@ export default function EventDetailsPage() {
                   disabled={
                     actionLoading ||
                     (event.maxplayers && event.participants?.length >= event.maxplayers && !isParticipant) ||
-                    (event.isprivate && !isCreator)
+                    (event.isprivate && !isCreator) // BLOCCA partecipazione se l'evento è privato
                   }
                 >
                   <FontAwesomeIcon icon={isParticipant ? faUserMinus : faUserPlus} />
@@ -171,7 +191,7 @@ export default function EventDetailsPage() {
                     ? 'Attendere...'
                     : isParticipant
                       ? 'Annulla partecipazione'
-                      : event.isprivate ? 'Evento privato' : 'Partecipa'}
+                      : event.isprivate ? 'Solo su invito' : 'Partecipa'}
                 </button>
               )}
             </div>
@@ -205,6 +225,12 @@ export default function EventDetailsPage() {
           <CommentsSection targetId={eventId} targetType="Events" />
         </div>
       </PageContainer>
+      <EditEventModal
+        eventId={eventId}
+        isOpen={showEditModal}
+        onClose={handleEditModalClose}
+        onEventUpdated={setEvent}
+      />
     </>
   );
 }

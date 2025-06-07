@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import FloatingLabel from '../utils/FloatingLabel'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -9,15 +9,26 @@ export default function SignInComp({ isVisible, onRegister, className }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState(null)
-  const { login } = useAuth()
+  const { login, fromRegister, setFromRegister } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (fromRegister) {
+      navigate('/profile', { replace: true })
+      setFromRegister(false)
+    }
+  }, [fromRegister, navigate, setFromRegister])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
     try {
       const loginRes = await loginUser({ email, password });
       await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
-      navigate("/map") // Reindirizza a /map invece di /profile
+      // Se non è login post-registrazione, reindirizza a /map
+      if (!fromRegister) {
+        navigate("/map")
+      }
     } catch (err) {
       setError(err.message)
     }

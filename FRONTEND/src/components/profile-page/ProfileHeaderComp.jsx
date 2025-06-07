@@ -111,8 +111,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
                 shadow hover:bg-gray-100 transition
                 md:bottom-0 md:right-0 md:p-2 md:w-11 md:h-11
               "
-              title="Cambia avatar"
-            >
+              title="Cambia avatar">
               <FontAwesomeIcon icon={faPen} className="w-4 h-4 md:w-5 md:h-5 text-red-400" />
             </button>
           )}

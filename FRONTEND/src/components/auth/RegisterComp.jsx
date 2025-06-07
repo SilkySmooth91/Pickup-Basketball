@@ -60,10 +60,11 @@ export default function RegisterComp({ isVisible, onBack, className }) {
         confirmPassword: state.confirmPassword,
         city: state.city.trim()
       });
-      dispatch({ type: 'RESET' });      // Effettua login automatico dopo la registrazione
+      dispatch({ type: 'RESET' });
+      // Effettua login automatico dopo la registrazione
       const loginRes = await loginUser({ email: state.email, password: state.password });
-      await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
-      navigate('/profile');
+      // Passa fromRegister: true per distinguere il login post-registrazione
+      await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken, { fromRegister: true });
     } catch (err) {
       setError(err.message || "Errore durante la registrazione");
     }
