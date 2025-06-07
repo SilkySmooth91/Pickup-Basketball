@@ -9,6 +9,7 @@ import { joinEvent, leaveEvent, getEventById } from '../api/eventApi';
 import { faUserPlus, faUserMinus } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import CommentsSection from '../components/utils/CommentsSection';
 
 export default function EventDetailsPage() {
   const { eventId } = useParams();
@@ -17,6 +18,7 @@ export default function EventDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showAllParticipants, setShowAllParticipants] = useState(false);
   const isCreator = user && event?.creator?._id === user.id;
   const isParticipant = user && event?.participants?.some(p => p._id === user.id);
 
@@ -176,18 +178,31 @@ export default function EventDetailsPage() {
           </div>
           {/* Colonna partecipanti */}
           <div className="w-full md:w-1/5 bg-white rounded-lg shadow-xl p-4 flex flex-col gap-2 h-fit self-start mt-6 md:mt-0">
-            {<div className="font-semibold text-orange-700 mb-2">Partecipanti</div>}
+            <div className="font-semibold text-orange-700 mb-2">Partecipanti</div>
             {event.participants?.length > 0 ? (
-              event.participants.map(p => (
-                <div key={p._id} className="flex items-center gap-2 cursor-pointer hover:bg-orange-50 rounded p-1 transition" onClick={() => window.location.href = `/profile/${p._id}` }>
-                  <img src={p.avatar || '/vite.svg'} alt={p.username} className="w-8 h-8 rounded-full object-cover border-2 border-orange-600" />
-                  <span className="font-medium text-gray-700">{p.username}</span>
-                </div>
-              ))
+              <>
+                {(showAllParticipants ? event.participants : event.participants.slice(0, 9)).map(p => (
+                  <div key={p._id} className="flex items-center gap-2 cursor-pointer hover:bg-orange-50 rounded p-1 transition" onClick={() => window.location.href = `/profile/${p._id}` }>
+                    <img src={p.avatar || '/vite.svg'} alt={p.username} className="w-8 h-8 rounded-full object-cover border-2 border-orange-600" />
+                    <span className="font-medium text-gray-700">{p.username}</span>
+                  </div>
+                ))}
+                {event.participants.length > 9 && (
+                  <button
+                    className="text-xs text-orange-600 font-semibold mt-1 px-2 py-1 rounded hover:bg-orange-100 transition self-start border border-orange-200"
+                    onClick={() => setShowAllParticipants(v => !v)}>
+                    {showAllParticipants ? 'Nascondi' : `Espandi (+${event.participants.length - 9})`}
+                  </button>
+                )}
+              </>
             ) : (
               <span className="text-gray-400 text-sm">Nessun partecipante</span>
             )}
           </div>
+        </div>
+        {/* Sezione commenti */}
+        <div className="mt-8">
+          <CommentsSection targetId={eventId} targetType="Events" />
         </div>
       </PageContainer>
     </>

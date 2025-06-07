@@ -24,7 +24,7 @@ export default function SignInComp({ isVisible, onRegister, className }) {
   }
 
   return (
-    <div className={`absolute transition-all duration-1000 ease-in-out transform ${
+    <div className={`absolute top-75 transition-all duration-1000 ease-in-out transform ${
       isVisible 
         ? 'opacity-100 scale-100 translate-y-0' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
@@ -50,11 +50,11 @@ export default function SignInComp({ isVisible, onRegister, className }) {
           onChange={e => setPassword(e.target.value)}
         />
         <div className='flex flex-col justify-center items-center'>
-          <button className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-1'>
+          <button className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-1 cursor-pointer'>
             Accedi
           </button>
           <GoogleLoginButton
-            className="transition duration-300 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-3 rounded-3xl flex items-center mt-3 w-full justify-center shadow-sm"
+            className="transition duration-300 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-3 rounded-3xl flex items-center mt-3 w-full justify-center shadow-sm cursor-pointer"
             style={{ maxWidth: 200 }}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 48 48">
@@ -75,8 +75,7 @@ export default function SignInComp({ isVisible, onRegister, className }) {
                 e.preventDefault()
                 onRegister()
               }}
-              className='transition duration-500 text-red-300 hover:text-red-500'
-            >
+              className='transition duration-500 text-red-300 hover:text-red-500 p-2 cursor-pointer hover:bg-red-50/50 rounded-3xl'>
               Registrati
             </button>
           </div>

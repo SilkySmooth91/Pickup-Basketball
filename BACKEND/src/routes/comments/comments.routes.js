@@ -76,8 +76,9 @@ router.post("/", authMiddleware, async (req, res) => {
 router.get("/:target/:targetid", async (req, res) => {
   try {
     const { target, targetid } = req.params;
-    const comments = await commentModel.find({ target, targetid }).populate("author", "username");
-    res.json(comments);
+    const comments = await commentModel.find({ target, targetid }).populate("author", "username avatar");
+    // Restituisci sempre 200, anche se l'array è vuoto
+    return res.status(200).json(comments);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore recupero commenti" });

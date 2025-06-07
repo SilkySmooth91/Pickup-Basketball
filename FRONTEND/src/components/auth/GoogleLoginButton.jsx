@@ -1,6 +1,3 @@
-// Componente GoogleLoginButton.jsx
-import React from "react";
-
 export default function GoogleLoginButton({ className = "", children }) {
   const handleGoogleLogin = () => {
     // L'endpoint del backend che avvia l'OAuth flow
@@ -12,8 +9,7 @@ export default function GoogleLoginButton({ className = "", children }) {
     <button
       type="button"
       className={className}
-      onClick={handleGoogleLogin}
-    >
+      onClick={handleGoogleLogin}>
       {children}
     </button>
   );

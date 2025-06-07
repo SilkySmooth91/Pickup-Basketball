@@ -10,12 +10,12 @@ export default function WelcomeComp() {
 
   return (
     <div className='h-screen flex flex-col justify-center items-center bg-[url(https://images.pexels.com/photos/680074/pexels-photo-680074.jpeg)] bg-bg-local bg-cover bg-center'>
-        <div className={`mx-2 transition-all duration-800 ease-in-out ${isTitleMoved ? 'transform -translate-y-[22vh]' : ''}`}>
-          <h1 className='home-welcome text-4xl font-bold text-white text-center mb-2'>
+        <div className={`mx-2 transition-all duration-800 ease-in-out ${isTitleMoved ? 'transform -translate-y-[24vh]' : ''}`}>
+          <h1 className='home-welcome text-4xl font-bold text-white text-center mb-2 text-shadow-lg'>
             <span>Welcome to</span><br />
             Pickup Basketball!
           </h1>
-          <h2 className='home-welcome text-base italic text-white text-center'>
+          <h2 className='home-welcome text-base italic text-white text-center text-shadow-lg'>
             L'App n.1 per organizzare e partecipare a partite di pickup basketball
           </h2>
         </div>
@@ -47,7 +47,7 @@ export default function WelcomeComp() {
               setIsLogin(true)
               setIsTitleMoved(true)
             }}
-            className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-4 px-4 rounded-full flex items-center mt-4 hvr-icon-bob'>
+            className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-4 px-4 rounded-full flex items-center mt-4 hvr-icon-bob cursor-pointer'>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 hvr-icon">
               <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 18.75 7.5-7.5 7.5 7.5" />
               <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 7.5-7.5 7.5 7.5" />

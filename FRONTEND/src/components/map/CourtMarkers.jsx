@@ -5,7 +5,7 @@ import { getNearbyCourts } from '../../api/courtApi';
 import { useAuth } from '../../context/AuthContext';
 import basketballMarker from '../../assets/basketball-marker.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle, faLocationDot, faLocationPin } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
 // Icona personalizzata per i marker dei campetti
@@ -97,8 +97,10 @@ export default function CourtMarkers({ searchedCoords }) {
                       className="w-full h-40 object-cover rounded"/>
                   </div>
                 )}
-                
-                <p className="text-gray-600 m-0">{court.address}</p>
+                <div className='flex items-center text-gray-600 mb-2'>
+                  <FontAwesomeIcon icon={faLocationDot} className="text-orange-500 mr-2" />
+                  <p className="text-gray-600 m-0">{court.address}</p>
+                </div>
                 <div className="text-base mt-2">
                   <p className='flex flex-row justify-between'>
                     <span className="font-semibold">Canestri:</span> {court.baskets}

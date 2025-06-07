@@ -105,13 +105,6 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                 />
                 <h2 className="text-2xl text-orange-600 font-semibold">{event.title}</h2>
               </div>
-              <button
-                className="ml-2 mr-2 px-3 py-2 rounded-md bg-gradient-to-r from-orange-400 to-red-500 text-white shadow transition hover:scale-105 hover:from-orange-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                title="Dettagli evento"
-                aria-label="Dettagli evento"
-                onClick={() => navigate(`/events/${event._id}`)}>
-                <FontAwesomeIcon icon={faCircleInfo} className="text-lg" />
-              </button>
             </div>
             
             <div className="text-gray-600 mb-4 flex items-center gap-2">
@@ -154,7 +147,16 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
               )}
             </div>
             
-            <div className="border-t pt-4 mt-4 flex justify-end gap-2">
+            <div className="border-t pt-4 mt-4 flex justify-between gap-2">
+              <button
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-orange-400 to-red-500 text-white shadow transition hover:scale-105 hover:from-orange-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                title="Dettagli evento"
+                aria-label="Dettagli evento"
+                onClick={() => navigate(`/events/${event._id}`)}
+              >
+                <FontAwesomeIcon icon={faCircleInfo} className="text-lg mr-2" />
+                Dettagli
+              </button>
               {isCreator ? (
                 <button 
                   className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 border border-orange-600 rounded-md hover:bg-orange-50 transition"

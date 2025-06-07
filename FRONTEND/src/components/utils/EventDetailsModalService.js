@@ -14,23 +14,35 @@ export async function getEventWithUserDetails(eventId, auth) {
   try {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     
-    // Raccoglie tutti gli ID utente unici
+    // Raccoglie tutti gli ID utente unici, gestendo sia oggetti che ID
+    const extractId = (u) => (typeof u === 'object' && u !== null ? u._id : u);
     const userIds = new Set([
-      eventData.creator, 
-      ...(eventData.participants || [])
+      extractId(eventData.creator),
+      ...((eventData.participants || []).map(extractId))
     ].filter(Boolean));
     
-    // Recupera i dettagli per ogni utente
-    const userDetailsPromises = Array.from(userIds).map(userId => 
-      fetch(`${API_URL}/users/${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${auth.accessToken}`
-        }
-      }).then(res => {
+    // Recupera i dettagli per ogni utente solo se non già oggetto completo
+    const userDetailsPromises = Array.from(userIds).map(async userId => {
+      // Se già presente come oggetto completo tra creator o participants, usalo
+      const existing =
+        (typeof eventData.creator === 'object' && eventData.creator && eventData.creator._id === userId)
+          ? eventData.creator
+        : (eventData.participants || []).find(p => typeof p === 'object' && p && p._id === userId);
+      if (existing && existing.username) return existing;
+      try {
+        const res = await fetch(`${API_URL}/users/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        });
         if (!res.ok) throw new Error(`Errore nel recupero utente ${userId}`);
-        return res.json();
-      })
-    );
+        return await res.json();
+      } catch (err) {
+        console.error(`Errore nel recupero utente ${userId}:`, err);
+        // Restituisci un oggetto utente "placeholder" con solo l'ID
+        return { _id: userId, username: 'Utente sconosciuto', avatar: '', error: true };
+      }
+    });
     
     const usersData = await Promise.all(userDetailsPromises);
     
@@ -43,10 +55,8 @@ export async function getEventWithUserDetails(eventId, auth) {
 
     const populateEvent = {
       ...eventData,
-      creator: usersMap[eventData.creator] || { _id: eventData.creator },
-      participants: (eventData.participants || []).map(participantId => 
-        usersMap[participantId] || { _id: participantId }
-      )
+      creator: usersMap[extractId(eventData.creator)] || { _id: extractId(eventData.creator) },
+      participants: (eventData.participants || []).map(p => usersMap[extractId(p)] || { _id: extractId(p) })
     };
     
     return populateEvent;

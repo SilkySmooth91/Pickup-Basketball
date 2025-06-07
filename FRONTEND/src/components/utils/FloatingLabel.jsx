@@ -1,11 +1,11 @@
-export default function FloatingLabel({ id, type, label, value, onChange, asTextarea, rows, disabled }) {
+export default function FloatingLabel({ id, type, label, value, onChange, asTextarea, rows, disabled, className }) {
   return (
     <div className="relative mb-4">
       {asTextarea ? (
         <textarea
           id={id}
           placeholder=" "
-          className="block w-full p-2 border border-gray-300 rounded peer min-h-[100px] resize-y"
+          className={`block w-full p-2 border border-gray-300 rounded peer min-h-[100px] resize-y focus:outline-none focus:ring-2 focus:ring-orange-600 ${className || ''}`}
           value={value}
           onChange={e => {
             onChange(e);
@@ -18,7 +18,7 @@ export default function FloatingLabel({ id, type, label, value, onChange, asText
           type={type}
           id={id}
           placeholder=" "
-          className="block w-full p-2 border border-gray-300 rounded peer"
+          className={`block w-full p-2 border border-gray-300 rounded peer focus:outline-none focus:ring-2 focus:ring-orange-600 ${className || ''}`}
           value={value}
           onChange={e => {
             onChange(e);

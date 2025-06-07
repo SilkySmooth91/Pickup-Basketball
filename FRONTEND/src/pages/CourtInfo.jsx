@@ -11,6 +11,7 @@ import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import UpcomingEvents from '../components/utils/UpcomingEvents';
 import EditCourtModal from '../components/utils/EditCourtModal';
 import CreateEventModal from '../components/utils/CreateEventModal';
+import CommentsSection from '../components/utils/CommentsSection';
 
 export default function CourtInfo() {  const { id } = useParams();
   const navigate = useNavigate();
@@ -166,6 +167,11 @@ export default function CourtInfo() {  const { id } = useParams();
             }}
           />
         )}
+        <div className="mt-8">
+          {court && (
+            <CommentsSection targetId={court._id} targetType="Courts" />
+          )}
+        </div>
       </PageContainer>
     </>
   );

@@ -63,7 +63,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       dispatch({ type: 'RESET' });      // Effettua login automatico dopo la registrazione
       const loginRes = await loginUser({ email: state.email, password: state.password });
       await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
-      navigate('/map');
+      navigate('/profile');
     } catch (err) {
       setError(err.message || "Errore durante la registrazione");
     }
@@ -88,16 +88,14 @@ export default function RegisterComp({ isVisible, onBack, className }) {
             label="Username *"
             className="flex-1"
             value={state.username}
-            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'username', value: e.target.value })}
-          />
+            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'username', value: e.target.value })}/>
           <FloatingLabel
             id="email"
             type="email"
             label="Email *"
             className="flex-1"
             value={state.email}
-            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'email', value: e.target.value })}
-          />
+            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'email', value: e.target.value })}/>
         </div>
         <div className="flex gap-4">
           <FloatingLabel
@@ -106,16 +104,14 @@ export default function RegisterComp({ isVisible, onBack, className }) {
             label="Password *"
             className="flex-1"
             value={state.password}
-            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'password', value: e.target.value })}
-          />
+            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'password', value: e.target.value })}/>
           <FloatingLabel
             id="confirm-password"
             type="password"
             label="Conferma Password *"
             className="flex-1"
             value={state.confirmPassword}
-            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'confirmPassword', value: e.target.value })}
-          />
+            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'confirmPassword', value: e.target.value })}/>
         </div>
         <div className="flex gap-4 mb-0">
           <FloatingLabel
@@ -124,21 +120,19 @@ export default function RegisterComp({ isVisible, onBack, className }) {
             label="La città dove giochi"
             className="flex-1"
             value={state.city}
-            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'city', value: e.target.value })}
-          />
+            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'city', value: e.target.value })}/>
           <FloatingLabel
             id="età-giocatore"
             type="text"
             label="La tua età"
             className="flex-1"
             value={state.age}
-            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'age', value: e.target.value })}
-          />
+            onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'age', value: e.target.value })}/>
         </div>
         <div className='flex flex-col justify-center items-center'>
           <button
             type="submit"
-            className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-4'>
+            className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-4 cursor-pointer'>
             Registrati
           </button>
           <div className='flex justify-start items-center mt-1 gap-2'>
@@ -149,8 +143,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
                 e.preventDefault()
                 onBack()
               }}
-              className='transition duration-500 text-red-300 hover:text-red-500'
-            >
+              className='transition duration-500 text-red-300 hover:text-red-500 p-2 cursor-pointer hover:bg-red-50/50 rounded-3xl'>
               Torna al login
             </button>
           </div>

@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom'
 import ProfileHeaderComp from './ProfileHeaderComp'
 import InfoCardComp from './InfoCardComp'
 import RecentActivityComp from './RecentActivityComp'
+import CommentsSection from '../utils/CommentsSection'
 import PageContainer from '../utils/PageContainer'
 
 
@@ -89,6 +90,7 @@ export default function ProfilePageComp({ userId }) {
       />
       <InfoCardComp profile={profile} isOwner={isOwner} />
       <RecentActivityComp userId={profile._id} />
+      <CommentsSection targetId={profile._id} targetType="Users" />
     </PageContainer>
   )
 }
