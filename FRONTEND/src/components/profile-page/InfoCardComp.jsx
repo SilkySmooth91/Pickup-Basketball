@@ -6,6 +6,7 @@ import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import FriendsModalComp from './FriendsModalComp';
+import LoadingSpinner from '../../components/utils/LoadingSpinner';
 
 export default function InfoCardComp({ profile, isOwner }) {
   const [showModal, setShowModal] = useState(false);
@@ -105,11 +106,15 @@ export default function InfoCardComp({ profile, isOwner }) {
             <h2 className="text-xl font-bold mb-4 text-orange-600">Cambia password</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <input type="password" name="old" placeholder="Vecchia password" value={form.old} onChange={handleChange} className="border rounded px-2 py-1" required />
-              <input type="password" name="pwd" placeholder="Nuova password" value={form.pwd} onChange={handleChange} className="border rounded px-2 py-1" required />
-              <input type="password" name="repeat" placeholder="Ripeti nuova password" value={form.repeat} onChange={handleChange} className="border rounded px-2 py-1" required />
+              <input type="password" name="pwd" placeholder="Nuova password" value={form.pwd} onChange={handleChange} className="border rounded px-2 py-1" required />              <input type="password" name="repeat" placeholder="Ripeti nuova password" value={form.repeat} onChange={handleChange} className="border rounded px-2 py-1" required />
               {error && <div className="text-red-500 text-sm">{error}</div>}
               <button type="submit" className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition" disabled={loading}>
-                {loading ? "Salvataggio..." : "Salva"}
+                {loading ? (
+                  <>
+                    <LoadingSpinner />
+                    Salvataggio...
+                  </>
+                ) : "Salva"}
               </button>
             </form>
           </div>

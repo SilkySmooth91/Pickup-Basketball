@@ -7,6 +7,7 @@ import basketballMarker from '../../assets/basketball-marker.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faLocationDot, faLocationPin } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../../components/utils/LoadingSpinner';
 
 // Icona personalizzata per i marker dei campetti
 const courtIcon = new L.Icon({

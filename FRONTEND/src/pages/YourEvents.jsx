@@ -5,6 +5,7 @@ import HeaderComp from "../components/utils/HeaderComp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faMapMarkerAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 import { getUserEvents } from "../api/userApi";
+import LoadingSpinner from '../components/utils/LoadingSpinner';
 
 export default function YourEvents() {
   const { user, accessToken } = useAuth();
@@ -69,17 +70,14 @@ export default function YourEvents() {
       <HeaderComp />
       <div className="container mx-auto px-4 py-8">
         <div className="w-full max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4">
-            <div className="bg-gradient-to-r from-orange-100 to-red-200 rounded-t-lg p-4 flex items-center">
+          <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4">            <div className="bg-gradient-to-r from-orange-100 to-red-200 rounded-t-lg p-4 flex items-center">
               <FontAwesomeIcon icon={faCalendarAlt} className="text-xl text-orange-500" />
               <h2 className="font-semibold text-2xl ml-3">I tuoi eventi</h2>
-            </div>            <div className="p-6">
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-orange-500 mb-2"></div>
-                  <p>Caricamento eventi...</p>
-                </div>
-              ) : error ? (
+            </div>
+              <div className="p-6">
+                {loading ? (
+                  <LoadingSpinner />
+                ) : error ? (
                 <div className="text-center text-red-500 py-8">
                   <p>{error}</p>
                   <button 

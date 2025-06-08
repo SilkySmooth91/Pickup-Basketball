@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { updateEvent, getEventById } from '../../api/eventApi';
 import FloatingLabel from './FloatingLabel';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function EditEventModal({ eventId, isOpen, onClose, onEventUpdated }) {
   const { accessToken } = useAuth();
@@ -67,10 +68,9 @@ export default function EditEventModal({ eventId, isOpen, onClose, onEventUpdate
         <button
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
           onClick={() => onClose()}
-        >×</button>
-        <h2 className="text-xl font-bold mb-4 text-orange-600">Modifica evento</h2>
+        >×</button>        <h2 className="text-xl font-bold mb-4 text-orange-600">Modifica evento</h2>
         {loading ? (
-          <div className="py-10 text-center text-gray-500">Caricamento dettagli...</div>
+          <LoadingSpinner />
         ) : (
           <form onSubmit={handleEditSubmit} className="flex flex-col gap-2 w-full">
             <FloatingLabel

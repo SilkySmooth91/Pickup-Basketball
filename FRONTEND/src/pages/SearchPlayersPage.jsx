@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { sendFriendRequest, getFriends } from "../api/friendApi";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../components/utils/LoadingSpinner";
 
 export default function SearchPlayersPage() {  const { accessToken, user } = useAuth();
   const navigate = useNavigate();
@@ -101,9 +102,8 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
               value={query}
               onChange={e => setQuery(e.target.value)}
               className="flex-1 border border-orange-300 rounded-3xl p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-orange-400"/>
-          </form>
-        </div>        <div className="w-full max-w-md mt-4 space-y-3 px-4">
-          {loading && <div className="text-center text-orange-500">Caricamento...</div>}
+          </form>        </div>        <div className="w-full max-w-md mt-4 space-y-3 px-4">
+          {loading && <LoadingSpinner />}
           {error && <div className="text-center text-red-500">{error}</div>}
           
           {/* Debug info */}

@@ -12,6 +12,7 @@ import UpcomingEvents from '../components/utils/UpcomingEvents';
 import EditCourtModal from '../components/utils/EditCourtModal';
 import CreateEventModal from '../components/utils/CreateEventModal';
 import CommentsSection from '../components/utils/CommentsSection';
+import LoadingSpinner from '../components/utils/LoadingSpinner';
 
 export default function CourtInfo() {  const { id } = useParams();
   const navigate = useNavigate();
@@ -69,10 +70,9 @@ export default function CourtInfo() {  const { id } = useParams();
           courtId={court?._id}
           onUploadSuccess={() => fetchCourt()}
         />
-        <div className="mt-8 flex flex-col md:flex-row gap-6">
-          {/* Card informazioni campetto */}
+        <div className="mt-8 flex flex-col md:flex-row gap-6">          {/* Card informazioni campetto */}
           <div className="bg-white rounded-lg shadow-xl min-w-[260px] border-orange-500 border-l-6 flex-1">
-            {loading && <p>Caricamento...</p>}
+            {loading && <LoadingSpinner />}
             {error && <p className="text-red-500">{error}</p>}
             {court && (
               <div className="bg-white rounded shadow p-4">

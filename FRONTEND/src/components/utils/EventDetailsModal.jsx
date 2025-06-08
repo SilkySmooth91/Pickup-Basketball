@@ -7,6 +7,7 @@ import { getEventWithUserDetails } from './EventDetailsModalService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FloatingLabel from './FloatingLabel';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) {
   const { user, accessToken } = useAuth();
@@ -136,9 +137,8 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
         >
           <FontAwesomeIcon icon={faClose} className="text-xl" />
         </button>
-        
-        {loading ? (
-          <div className="py-10 text-center text-gray-500">Caricamento dettagli...</div>
+          {loading ? (
+          <LoadingSpinner />
         ) : error ? (
           <div className="py-10 text-center text-red-500">{error}</div>
         ) : event ? (

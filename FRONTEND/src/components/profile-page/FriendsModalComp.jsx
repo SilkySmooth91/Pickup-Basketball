@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getFriends, getReceivedFriendRequests, acceptFriendRequest, rejectFriendRequest } from '../../api/friendApi';
 import { useAuth } from '../../context/AuthContext';
+import LoadingSpinner from '../../components/utils/LoadingSpinner';
 
 export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }) {
   const [activeTab, setActiveTab] = useState('friends');
@@ -96,11 +97,10 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
           )}
         </div>
         
-        {/* Lista amici */}
-        {activeTab === 'friends' && (
+        {/* Lista amici */}        {activeTab === 'friends' && (
           <div className="space-y-4">
             {loadingFriends ? (
-              <div className="text-center py-4">Caricamento...</div>
+              <LoadingSpinner />
             ) : friends.length === 0 ? (
               <div className="text-center py-4 text-gray-500">Nessun amico da mostrare</div>
             ) : (
@@ -130,11 +130,10 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
           </div>
         )}
         
-        {/* Lista richieste */}
-        {activeTab === 'requests' && isOwner && (
+        {/* Lista richieste */}        {activeTab === 'requests' && isOwner && (
           <div className="space-y-4">
             {loadingFriends ? (
-              <div className="text-center py-4">Caricamento...</div>
+              <LoadingSpinner />
             ) : friendRequests.length === 0 ? (
               <div className="text-center py-4 text-gray-500">Nessuna richiesta di amicizia</div>
             ) : (

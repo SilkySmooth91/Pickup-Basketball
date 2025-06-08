@@ -4,6 +4,7 @@ import { fetchWithAuth } from '../../context/fetchWithAuth';
 import FloatingLabel from './FloatingLabel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function EditCourtModal({ court, onClose, onUpdate }) {
   const { accessToken } = useAuth();
@@ -181,11 +182,12 @@ export default function EditCourtModal({ court, onClose, onUpdate }) {
             <button
               type="submit"
               className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-md shadow-sm hover:from-orange-600 hover:to-red-600 transition-colors"
-              disabled={loading || Object.keys(changedFields).length === 0}
-            >
+              disabled={loading || Object.keys(changedFields).length === 0}            >
               {loading ? 'Salvataggio...' : 'Salva modifiche'}
             </button>
           </div>
+          
+          {loading && <LoadingSpinner />}
           
           {Object.keys(changedFields).length > 0 && (
             <div className="mt-4 text-sm text-gray-600">

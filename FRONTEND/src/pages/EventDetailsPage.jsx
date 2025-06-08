@@ -12,6 +12,7 @@ import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import CommentsSection from '../components/utils/CommentsSection';
 import EditEventModal from '../components/utils/EditEventModal';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from '../components/utils/LoadingSpinner';
 
 export default function EventDetailsPage() {
   const { eventId } = useParams();
@@ -71,8 +72,7 @@ export default function EventDetailsPage() {
       setEvent(prev => ({ ...prev, ...updatedEvent }));
     }
   };
-
-  if (loading) return <div className="p-8 text-center">Caricamento...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
   if (!event) return null;
 

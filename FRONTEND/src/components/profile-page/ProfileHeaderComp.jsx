@@ -5,6 +5,7 @@ import { faCalendar } from '@fortawesome/free-regular-svg-icons'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from "../../context/AuthContext";
+import LoadingSpinner from '../../components/utils/LoadingSpinner';
 
 export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, onProfileUpdate }) {
   const avatarUrl = profile?.avatar || '/vite.svg'
@@ -232,14 +233,18 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
                   onChange={handleChange}
                   className="border rounded px-2 py-1 mt-1"
                 />
-              </label>
-              {error && <div className="text-red-500">{error}</div>}
+              </label>              {error && <div className="text-red-500">{error}</div>}
               <button
                 type="submit"
                 className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition"
                 disabled={loading}
               >
-                {loading ? "Salvataggio..." : "Salva modifiche"}
+                {loading ? (
+                  <>
+                    <LoadingSpinner />
+                    Salvataggio...
+                  </>
+                ) : "Salva modifiche"}
               </button>
             </form>
           </div>

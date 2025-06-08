@@ -4,6 +4,7 @@ import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import { fetchWithAuth } from '../../context/fetchWithAuth';
 import EventDetailsModal from './EventDetailsModal';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function UpcomingEvents({ courtId, refreshTrigger }) {  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,10 +59,9 @@ export default function UpcomingEvents({ courtId, refreshTrigger }) {  const [ev
             <FontAwesomeIcon icon={faCalendarAlt} className="text-orange-600" />
             Prossimi eventi
             {loading && <span className="ml-2 text-sm text-orange-400">(Aggiornamento...)</span>}
-          </h3>
-        </div>
+          </h3>        </div>
         <div className="bg-white rounded-b-lg shadow p-4">
-          {loading && <p>Caricamento eventi...</p>}
+          {loading && <LoadingSpinner />}
           {error && <p className="text-red-500">{error}</p>}            {!loading && !error && (
             events.length === 0 ? (
               <p className="text-gray-500 py-2">Non ci sono ancora eventi in programma</p>
