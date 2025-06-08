@@ -13,6 +13,7 @@ import EditCourtModal from '../components/utils/EditCourtModal';
 import CreateEventModal from '../components/utils/CreateEventModal';
 import CommentsSection from '../components/utils/CommentsSection';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
+import Footer from '../components/utils/Footer';
 
 export default function CourtInfo() {  const { id } = useParams();
   const navigate = useNavigate();
@@ -43,9 +44,10 @@ export default function CourtInfo() {  const { id } = useParams();
   useEffect(() => {
     fetchCourt();
   }, [id, accessToken]);  return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <HeaderComp />
-      <PageContainer>
+      <div className="flex-grow">
+        <PageContainer>
         <button 
           onClick={() => {
             // Controllo se ci sono coordinate salvate
@@ -171,8 +173,9 @@ export default function CourtInfo() {  const { id } = useParams();
           {court && (
             <CommentsSection targetId={court._id} targetType="Courts" />
           )}
-        </div>
-      </PageContainer>
-    </>
+        </div>      </PageContainer>
+      </div>
+      <Footer />
+    </div>
   );
 }

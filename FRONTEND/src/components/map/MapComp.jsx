@@ -59,19 +59,16 @@ export default function MapComp({ searchedCoords, locationName, onMapClick }) {
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34]
-  });
-
-  return (
+  });  return (
     <MapContainer 
       center={center} 
       zoom={13}
-      style={{ height: 'calc(100% - 1.5rem)', width: '100%', marginBottom: '1.5rem' }}
-      className="absolute inset-0"
+      style={{ height: '100vh', width: '100%' }}
+      className="leaflet-container"
       zoomControl={false}
-      // Add tabIndex to ensure it doesn't interfere with dropdown navigation
       containerProps={{
         tabIndex: -1,
-        'aria-hidden': 'true' // This helps with accessibility and event bubbling
+        'aria-hidden': 'true'
       }}
     >
       <TileLayer

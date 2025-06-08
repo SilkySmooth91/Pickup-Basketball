@@ -15,6 +15,9 @@ dist-ssr
 # Environment variables
 .env
 
+# Security reports
+security-audit-report.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

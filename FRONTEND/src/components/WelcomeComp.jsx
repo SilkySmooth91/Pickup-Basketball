@@ -7,9 +7,8 @@ export default function WelcomeComp() {
   const [isTitleMoved, setIsTitleMoved] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
   const [isRegistering, setIsRegistering] = useState(false)
-
   return (
-    <div className='h-screen flex flex-col justify-center items-center bg-[url(https://images.pexels.com/photos/680074/pexels-photo-680074.jpeg)] bg-bg-local bg-cover bg-center'>
+    <div className='h-screen w-full flex flex-col justify-center items-center bg-[url(https://res.cloudinary.com/dyg6giw5q/image/upload/v1749401570/market-square-the-pass_xbyjvl.jpg)] bg-bg-local bg-cover bg-center bg-fixed'>
         <div className={`mx-2 transition-all duration-800 ease-in-out ${isTitleMoved ? 'transform -translate-y-[24vh]' : ''}`}>
           <h1 className='home-welcome text-4xl font-bold text-white text-center mb-2 text-shadow-lg'>
             <span>Welcome to</span><br />

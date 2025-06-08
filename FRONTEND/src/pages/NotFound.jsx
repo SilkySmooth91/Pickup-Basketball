@@ -2,12 +2,13 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBasketball, faArrowLeft, faHome } from '@fortawesome/free-solid-svg-icons';
 import HeaderComp from '../components/utils/HeaderComp';
+import Footer from '../components/utils/Footer';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <HeaderComp />
-      <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center">
+      <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center flex-grow">
         <div className="w-full max-w-4xl mx-auto text-center">
           <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4 py-12 px-8">
             <div className="animate-bounce mb-8">
@@ -41,10 +42,10 @@ export default function NotFound() {
                 <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
                 Torna indietro
               </button>
-            </div>
-          </div>
+            </div>          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

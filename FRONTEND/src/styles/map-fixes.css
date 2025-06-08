@@ -1,6 +1,85 @@
 /* Correzioni per z-index affinché i dropdown dell'header appaiano sopra la mappa */
 .leaflet-container {
-  z-index: 10; 
+  z-index: 1; 
+  height: 100vh !important;
+  width: 100% !important;
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Stili specifici per la pagina mappa */
+.map-page {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.map-page-header {
+  position: relative;
+  z-index: 1000;
+}
+
+.map-page-footer {
+  position: fixed;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none; /* Permette i click sulla mappa sotto */
+}
+
+.map-page-footer footer {
+  background: transparent !important;
+  padding: 0 1rem;
+}
+
+.map-page-footer > * {
+  pointer-events: auto; /* Riabilita i click sul contenuto del footer */
+}
+
+/* Stili specifici per la HomePage */
+.home-page {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.home-page-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.home-page-footer {
+  position: fixed;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none; /* Permette i click sullo sfondo sotto */
+}
+
+.home-page-footer footer {
+  background: transparent !important;
+  padding: 0 1rem;
+}
+
+.home-page-footer > * {
+  pointer-events: auto; /* Riabilita i click sul contenuto del footer */
+}
+
+/* Assicura che la mappa occupi tutto lo spazio disponibile */
+.leaflet-container, .leaflet-map-pane {
+  height: 100% !important;
+  width: 100% !important;
 }
 
 /* Assicura che le animazioni dei dropdown funzionino correttamente */

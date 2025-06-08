@@ -32,7 +32,7 @@ export default function SignInComp({ isVisible, onRegister, className }) {
   }
 
   return (
-    <div className={`absolute top-75 transition-all duration-1000 ease-in-out transform ${
+    <div className={`absolute top-75 md:top-85 transition-all duration-1000 ease-in-out transform ${
       isVisible 
         ? 'opacity-100 scale-100 translate-y-0' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
@@ -48,23 +48,20 @@ export default function SignInComp({ isVisible, onRegister, className }) {
           type="email" 
           label="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
+          onChange={e => setEmail(e.target.value)}/>
         <FloatingLabel 
           id="signin-password" 
           type="password" 
           label="Password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
+          onChange={e => setPassword(e.target.value)}/>
         <div className='flex flex-col justify-center items-center'>
           <button className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-1 cursor-pointer'>
             Accedi
           </button>
           <GoogleLoginButton
             className="transition duration-300 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-3 rounded-3xl flex items-center mt-3 w-full justify-center shadow-sm cursor-pointer"
-            style={{ maxWidth: 200 }}
-          >
+            style={{ maxWidth: 200 }}>
             <svg className="w-5 h-5 mr-2" viewBox="0 0 48 48">
               <g>
                 <path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.86-6.86C36.68 2.09 30.7 0 24 0 14.82 0 6.73 5.06 2.69 12.44l7.98 6.2C12.13 13.13 17.61 9.5 24 9.5z"/>

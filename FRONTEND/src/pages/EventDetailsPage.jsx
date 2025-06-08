@@ -13,6 +13,7 @@ import CommentsSection from '../components/utils/CommentsSection';
 import EditEventModal from '../components/utils/EditEventModal';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
+import Footer from '../components/utils/Footer';
 
 export default function EventDetailsPage() {
   const { eventId } = useParams();
@@ -75,12 +76,12 @@ export default function EventDetailsPage() {
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
   if (!event) return null;
-
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <HeaderComp />
-      <PageContainer>
-        <div className="flex gap-6 flex-row flex-wrap md:flex-nowrap">
+      <div className="flex-grow">
+        <PageContainer>
+          <div className="flex gap-6 flex-row flex-wrap md:flex-nowrap">
           {/* Card evento principale */}
           <div className="bg-white rounded-lg shadow-xl min-w-[260px] border-orange-500 border-l-6 flex-1 p-0 overflow-hidden">
             {/* Header immagine + titolo + organizzatore */}
@@ -217,8 +218,7 @@ export default function EventDetailsPage() {
               <span className="text-gray-400 text-sm">Nessun partecipante</span>
             )}
           </div>
-        </div>
-        {/* Sezione commenti */}
+        </div>        {/* Sezione commenti */}
         <div className="mt-8">
           <CommentsSection targetId={eventId} targetType="Events" />
         </div>
@@ -227,8 +227,10 @@ export default function EventDetailsPage() {
         eventId={eventId}
         isOpen={showEditModal}
         onClose={handleEditModalClose}
-        onEventUpdated={setEvent}
+        onEventUpdated={setEvent} 
       />
-    </>
+      </div>
+      <Footer />
+    </div>
   );
 }

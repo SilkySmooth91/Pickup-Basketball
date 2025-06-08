@@ -3,13 +3,13 @@ import { faUsers, faMapLocationDot, faCalendarCheck, faComments } from '@fortawe
 import logo from '../assets/logo.png';
 import BugReportForm from '../components/utils/BugReportForm';
 import FeatureCard from '../components/utils/FeatureCard';
+import Footer from '../components/utils/Footer';
 
 export default function AboutPage() {
   
   return (
-    <div className="min-h-screen bg-gray-100">
-      <HeaderComp />
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col bg-gray-100">      <HeaderComp />
+      <div className="container mx-auto px-4 py-8 flex-grow">
         <div className="w-full max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4 overflow-hidden">                
             {/* Header */}
@@ -68,20 +68,13 @@ export default function AboutPage() {
                   <li>Cerca eventi esistenti a cui partecipare o crea il tuo</li>
                   <li>Trova altri giocatori e aggiungili come amici</li>
                   <li>Organizza partite e divertiti!</li>
-                </ol>              
-              </div>
-                {/* Form segnalazione bug */}
-              <BugReportForm />
-            </div>
-            
-            {/* Footer */}
-            <div className="bg-gray-50 p-6 border-t border-gray-200">
-              <p className="text-center text-gray-500">
-                &copy; {new Date().getFullYear()} Pickup Basketball. Tutti i diritti riservati.
-              </p>
+                </ol>                </div>
+                {/* Form segnalazione bug */}              <BugReportForm />
             </div>
           </div>
         </div>
-      </div>    </div>
+      </div>
+      <Footer />
+    </div>
   );
 }

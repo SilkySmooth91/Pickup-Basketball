@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/* Stili per l'immagine di sfondo nella home page */
+.h-screen.w-full {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Assicura che i testi e i pulsanti siano ben visibili sopra lo sfondo */
+.home-welcome h1,
+.home-welcome h2 {
+  text-shadow: 2px 2px 5px black;
+  z-index: 10;
+  position: relative;
+}
+
 /*Media queries mobile*/
 @media screen and (max-width: 768px) {
     h1 > span {

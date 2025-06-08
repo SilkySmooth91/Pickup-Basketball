@@ -8,6 +8,7 @@ import { faUserPlus, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { sendFriendRequest, getFriends } from "../api/friendApi";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
+import Footer from '../components/utils/Footer';
 
 export default function SearchPlayersPage() {  const { accessToken, user } = useAuth();
   const navigate = useNavigate();
@@ -89,11 +90,10 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
       toast.error(err?.message || "Errore invio richiesta");
     }
   };
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <HeaderComp />
-      <div className="flex flex-col items-center mt-8">
+      <div className="flex-grow flex flex-col items-center mt-8">
         <div className="w-full max-w-md px-4">
           <form className="bg-white shadow-xl rounded-full flex items-center p-2 gap-2 !mb-4 border border-orange-200">
             <input
@@ -173,10 +173,10 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
             );
           })}
           {!loading && query.length >= 3 && results.length === 0 && !error && (
-            <div className="text-center text-gray-400">Nessun giocatore trovato</div>
-          )}
+            <div className="text-center text-gray-400">Nessun giocatore trovato</div>          )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

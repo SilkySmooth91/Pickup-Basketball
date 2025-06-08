@@ -1,6 +1,7 @@
 import HeaderComp from '../components/utils/HeaderComp';
 import MapComp from '../components/map/MapComp';
 import SearchBar from '../components/map/SearchBar';
+import Footer from '../components/utils/Footer';
 import { useState, useEffect } from 'react';
 
 export default function MainMap() {
@@ -29,21 +30,24 @@ export default function MainMap() {
     setLocationName("");
     localStorage.setItem('mapCoords', JSON.stringify(coords));
     localStorage.setItem('mapLocationName', "");
-  };
-  
-  return (
-    <div className="h-screen flex flex-col">
-      <HeaderComp />
-      <div className="relative flex-1">
-        <SearchBar onLocationSelect={handleLocationSelect} />
-        
-        <div className="absolute inset-0">
-          <MapComp 
-            searchedCoords={searchedCoords} 
-            locationName={locationName}
-            onMapClick={handleMapClick} 
-          />
-        </div>
+  };  return (
+    <div className="map-page">
+      <div className="map-page-header">
+        <HeaderComp />
+      </div>
+      
+      <SearchBar onLocationSelect={handleLocationSelect} />
+      
+      <div className="w-full h-full">
+        <MapComp 
+          searchedCoords={searchedCoords} 
+          locationName={locationName}
+          onMapClick={handleMapClick} 
+        />
+      </div>
+      
+      <div className="map-page-footer">
+        <Footer />
       </div>
     </div>
   );
