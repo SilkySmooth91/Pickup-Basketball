@@ -11,8 +11,10 @@ import 'react-toastify/dist/ReactToastify.css'
 import EventDetailsPage from './pages/EventDetailsPage'
 import SearchPlayersPage from './pages/SearchPlayersPage'
 import YourEvents from './pages/YourEvents'
-import { ProtectedRoute, PublicRoute, FallbackRedirect } from './components/auth/RouteGuards'
+import { ProtectedRoute, PublicRoute } from './components/auth/RouteGuards'
 import LoadingSpinner from './components/utils/LoadingSpinner'
+import NotFound from './pages/NotFound'
+import AboutPage from './pages/AboutPage'
 
 export default function App() {
   return (
@@ -38,17 +40,16 @@ function AppRoutes() {
         {/* Rotte protette (richiedono autenticazione) */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />        
-        <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />
-        <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
+        <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />        <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
         <Route path="/event/:id" element={<ProtectedRoute><EventDetailsPage /></ProtectedRoute>} />
         <Route path="/events" element={<ProtectedRoute><YourEvents /></ProtectedRoute>} />
         <Route path="/players" element={<ProtectedRoute><SearchPlayersPage /></ProtectedRoute>} />
+        <Route path="/about" element={<AboutPage />} />
         {/* Rotte pubbliche (reindirizzano se autenticati) */}
-        <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
-        <Route path="/google-callback" element={<GoogleCallback />} />
+        <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />        <Route path="/google-callback" element={<GoogleCallback />} />
         <Route path="/events/:eventId" element={<EventDetailsPage />} />
-        {/* Fallback per rotte sconosciute */}
-        <Route path="*" element={<FallbackRedirect />} />
+        {/* Pagina 404 per rotte sconosciute */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

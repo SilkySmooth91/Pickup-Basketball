@@ -42,11 +42,10 @@ export default function YourEvents() {
 
     if (accessToken && user) {
       fetchUserEvents();
-    }
-  }, [accessToken, user, page]);
+    }  }, [accessToken, user, page]);
 
   const handleEventClick = (eventId) => {
-    navigate(`/event/${eventId}`);
+    navigate(`/events/${eventId}`);
   };
 
   const formatDate = (dateString) => {
@@ -70,7 +69,8 @@ export default function YourEvents() {
       <HeaderComp />
       <div className="container mx-auto px-4 py-8">
         <div className="w-full max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4">            <div className="bg-gradient-to-r from-orange-100 to-red-200 rounded-t-lg p-4 flex items-center">
+          <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4">            
+            <div className="bg-gradient-to-r from-orange-100 to-red-200 rounded-t-lg p-4 flex items-center">
               <FontAwesomeIcon icon={faCalendarAlt} className="text-xl text-orange-500" />
               <h2 className="font-semibold text-2xl ml-3">I tuoi eventi</h2>
             </div>
@@ -82,8 +82,7 @@ export default function YourEvents() {
                   <p>{error}</p>
                   <button 
                     onClick={() => window.location.reload()} 
-                    className="mt-2 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
-                  >
+                    className="mt-2 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
                     Riprova
                   </button>
                 </div>
@@ -126,8 +125,7 @@ export default function YourEvents() {
                             page === 1
                               ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                               : "bg-orange-500 text-white hover:bg-orange-600"
-                          }`}
-                        >
+                          }`}>
                           Precedente
                         </button>
                         
@@ -142,8 +140,7 @@ export default function YourEvents() {
                             page === totalPages
                               ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                               : "bg-orange-500 text-white hover:bg-orange-600"
-                          }`}
-                        >
+                          }`}>
                           Successiva
                         </button>
                       </nav>
