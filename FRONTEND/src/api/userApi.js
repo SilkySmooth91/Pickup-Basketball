@@ -16,6 +16,18 @@ export async function getUserProfile(userId, auth) {
   return await res.json();
 }
 
+// Recupera eventi di un utente
+export async function getUserEvents(userId, page = 1, limit = 10, auth) {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  const res = await fetchWithAuth(
+    `${API_URL}/users/${userId}/events?page=${page}&limit=${limit}`, 
+    {}, 
+    auth
+  );
+  if (!res.ok) throw new Error("Errore nel recupero degli eventi dell'utente");
+  return await res.json();
+}
+
 // Aggiorna utente
 export async function updateUserProfile(userId, data, auth) {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";

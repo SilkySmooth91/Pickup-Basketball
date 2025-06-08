@@ -182,7 +182,7 @@ export default function SearchBar({ onLocationSelect }) {
       <div className="relative">
         <form
           onSubmit={handleSearch}
-          className="bg-white shadow-xl rounded-3xl flex items-center p-2 gap-2 border border-orange-200 mx-4"
+          className="bg-white shadow-xl rounded-full flex items-center p-2 gap-2 border border-orange-200 mx-4"
           style={{ width: '90vw', maxWidth: '28rem', marginBottom: 0 }}
         >
           <input

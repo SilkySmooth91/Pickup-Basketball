@@ -3,6 +3,7 @@ import usersModel from "../../models/UsersSchema.js";
 import authMiddleware from "../../middlewares/auth.js";
 import upload from "../../config/multer.js";
 import friendRequestModel from "../../models/FriendReqModel.js";
+import eventModel from "../../models/EventsSchema.js";
 
 const router = express.Router();
 
@@ -285,6 +286,84 @@ router.get("/:id/recent-activity", authMiddleware, async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: "Errore nel recupero attività recente" });
+  }
+});
+
+/**
+ * @openapi
+ * /users/{id}/events:
+ *   get:
+ *     summary: Ottieni gli eventi a cui un utente partecipa
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Numero della pagina
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Numero di eventi per pagina
+ *     responses:
+ *       200:
+ *         description: Lista eventi dell'utente
+ *       404:
+ *         description: Utente non trovato
+ */
+router.get("/:id/events", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+    const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
+    const skip = (page - 1) * limit;
+
+    // Verifico che l'utente esista
+    const userExists = await usersModel.exists({ _id: userId });
+    if (!userExists) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    // Trova eventi in cui l'utente è partecipante o creatore
+    const [events, total] = await Promise.all([
+      eventModel.find({
+        $or: [
+          { creator: userId },
+          { participants: userId }
+        ]
+      })
+        .populate({
+          path: "court",
+          select: "name address images"
+        })
+        .sort({ datetime: 1 })
+        .skip(skip)
+        .limit(limit),
+      eventModel.countDocuments({
+        $or: [
+          { creator: userId },
+          { participants: userId }
+        ]
+      })
+    ]);
+
+    res.json({
+      events,
+      page,
+      totalPages: Math.ceil(total / limit),
+      totalEvents: total
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nel recupero eventi dell'utente" });
   }
 });
 

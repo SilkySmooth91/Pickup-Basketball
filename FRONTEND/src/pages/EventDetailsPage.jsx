@@ -86,10 +86,10 @@ export default function EventDetailsPage() {
             {/* Header immagine + titolo + organizzatore */}
             <div className="relative h-70 flex flex-col justify-end" style={{background: event.court?.images?.[0]?.url ? `url(${event.court.images[0].url}) center/cover no-repeat` : '#f3f3f3'}}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0" />
-              {/* Pulsante modifica SOLO per il creatore, in alto a destra sopra l'immagine */}
+              {/* Pulsante modifica SOLO per il creatore*/}
               {isCreator && (
                 <button
-                  className="absolute top-3 right-3 z-20 bg-white text-orange-600 border border-orange-600 rounded-lg p-2 shadow hover:bg-orange-50 transition"
+                  className="absolute top-3 right-3 z-20 bg-white text-orange-600 rounded-lg p-2 shadow-xl hover:bg-gray-100 transition cursor-pointer"
                   title="Modifica evento"
                   onClick={() => setShowEditModal(true)}>
                   <FontAwesomeIcon icon={faPen} className="mr-2" />
@@ -102,8 +102,7 @@ export default function EventDetailsPage() {
                   <FontAwesomeIcon 
                     icon={event.isprivate ? faLock : faLockOpen} 
                     className={event.isprivate ? "text-orange-600" : "text-green-500"} 
-                    title={event.isprivate ? 'Evento privato' : 'Evento pubblico'}
-                  />
+                    title={event.isprivate ? 'Evento privato' : 'Evento pubblico'}/>
                 </div>
                 {event.creator && (
                   <div className="flex items-center gap-2">
@@ -142,7 +141,7 @@ export default function EventDetailsPage() {
                 </div>
                 {/* Indirizzo */}
                 <div className="flex items-center text-sm">
-                  <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center px-3 py-2 mr-2">
+                  <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center px-4 py-2 mr-2">
                     <FontAwesomeIcon icon={faMapMarkerAlt} className="text-orange-600 text-xl" />
                   </div>
                   <div className="flex flex-col justify-center items-start">
@@ -184,8 +183,7 @@ export default function EventDetailsPage() {
                     actionLoading ||
                     (event.maxplayers && event.participants?.length >= event.maxplayers && !isParticipant) ||
                     (event.isprivate && !isCreator) // BLOCCA partecipazione se l'evento è privato
-                  }
-                >
+                  }>
                   <FontAwesomeIcon icon={isParticipant ? faUserMinus : faUserPlus} />
                   {actionLoading
                     ? 'Attendere...'

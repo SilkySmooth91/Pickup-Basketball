@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getComments, addComment } from '../../api/commentApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faComments } from '@fortawesome/free-regular-svg-icons';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import FloatingLabel from './FloatingLabel';
 
 export default function CommentsSection({ targetId, targetType }) {
@@ -12,14 +13,17 @@ export default function CommentsSection({ targetId, targetType }) {
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalComments, setTotalComments] = useState(0);  useEffect(() => {
     const fetchComments = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await getComments(targetId, targetType, { accessToken });
-        setComments(data);
+        const data = await getComments(targetId, targetType, { accessToken }, currentPage, 10);
+        setComments(data.comments);
+        setTotalPages(data.totalPages);
+        setTotalComments(data.totalComments);
       } catch (err) {
         if (err.message && err.message.includes('404')) {
           setError('Errore nel caricamento dei commenti');
@@ -27,23 +31,27 @@ export default function CommentsSection({ targetId, targetType }) {
           setError('Errore sconosciuto nel caricamento dei commenti');
         }
         setComments([]);
+        setTotalPages(1);
+        setTotalComments(0);
       } finally {
         setLoading(false);
       }
     };
     fetchComments();
-  }, [targetId, targetType, accessToken]);
-
-  const handleSubmit = async (e) => {
+  }, [targetId, targetType, accessToken, currentPage]);  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
     setSubmitting(true);
     try {
       await addComment(targetId, targetType, newComment, { accessToken });
       setNewComment('');
-      // Refetch comments
-      const data = await getComments(targetId, targetType, { accessToken });
-      setComments(data);
+      // Dopo aver aggiunto un commento, torniamo alla prima pagina per mostrare il nuovo commento
+      setCurrentPage(1);
+      // Refetch comments della prima pagina
+      const data = await getComments(targetId, targetType, { accessToken }, 1, 10);
+      setComments(data.comments);
+      setTotalPages(data.totalPages);
+      setTotalComments(data.totalComments);
     } catch (err) {
       setError('Errore durante l\'invio del commento');
     } finally {
@@ -63,8 +71,7 @@ export default function CommentsSection({ targetId, targetType }) {
         ) : error ? (
           <div className="text-red-500">{error}</div>
         ) : (
-          <ul className="space-y-3 mb-4">
-            {comments.length === 0 ? (
+          <ul className="space-y-3 mb-4">            {comments.length === 0 ? (
               <li className="text-gray-400 text-sm">Non ci sono ancora commenti. Aggiungine uno!</li>
             ) : (
               comments.map((c) => (
@@ -90,6 +97,37 @@ export default function CommentsSection({ targetId, targetType }) {
             )}
           </ul>
         )}
+        
+        {/* Paginazione */}
+        {!loading && !error && totalPages > 1 && (
+          <div className="flex items-center justify-between my-4 text-sm">
+            <div className="text-gray-500">
+              {totalComments > 0 ? `${totalComments} commenti totali` : 'Nessun commento'}
+            </div>
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className={`p-2 rounded ${currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-orange-500 hover:bg-orange-100'}`}
+                aria-label="Pagina precedente"
+              >
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </button>
+              <span className="text-gray-700">
+                Pagina {currentPage} di {totalPages}
+              </span>
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className={`p-2 rounded ${currentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-orange-500 hover:bg-orange-100'}`}
+                aria-label="Pagina successiva"
+              >
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+            </div>
+          </div>
+        )}
+        
         {user && (
           <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-4 !mb-4">
             <FloatingLabel
@@ -104,7 +142,7 @@ export default function CommentsSection({ targetId, targetType }) {
             />
             <button
               type="submit"
-              className="self-end bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-3 rounded-md font-semibold text-base hover:from-orange-600 hover:to-red-600 transition disabled:cursor-not-allowed"
+              className="self-end bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-3 rounded-md font-semibold text-base hover:from-orange-600 hover:to-red-600 transition disabled:cursor-not-allowed cursor-pointer"
               disabled={submitting || !newComment.trim()}>
               <FontAwesomeIcon icon={faComment} className='mr-2'/>
               {submitting ? 'Invio...' : 'Invia commento'}

@@ -15,10 +15,10 @@ export async function addComment(targetId, targetType, text, auth) {
   return await res.json();
 }
 
-export async function getComments(targetId, targetType, auth) {
+export async function getComments(targetId, targetType, auth, page = 1, limit = 10) {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
   const res = await fetchWithAuth(
-    `${API_URL}/comments/${targetType}/${targetId}`,
+    `${API_URL}/comments/${targetType}/${targetId}?page=${page}&limit=${limit}`,
     {},
     auth
   );

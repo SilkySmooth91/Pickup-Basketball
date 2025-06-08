@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBasketball, faChevronDown, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faBars, faTimes, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import '/src/styles/HeaderComp.css'
 import logo from '../../assets/logo.png';
+import { faUser } from "@fortawesome/free-regular-svg-icons";
 
 export default function HeaderComp() {
   const { user, accessToken, logout } = useAuth();
@@ -71,7 +72,7 @@ export default function HeaderComp() {
         <Link to="/map" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Mappa</Link>
       </li>
       <li className="inline-block">
-        <Link to="/events" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Eventi vicino a te</Link>
+        <Link to="/events" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>I tuoi eventi</Link>
       </li>
       <li className="inline-block">
         <Link to="/players" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Cerca giocatori</Link>
@@ -118,11 +119,13 @@ export default function HeaderComp() {
                   to="/profile"
                   className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
                   onClick={() => setDropdownOpenMobile(false)}>
-                  Visualizza Profilo
+                  <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
+                  Profilo
                 </Link>
                 <button
                   className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
                   onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-orange-600" />
                   Logout
                 </button>
               </div>
@@ -160,11 +163,13 @@ export default function HeaderComp() {
                   to="/profile"
                   className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
                   onClick={() => setDropdownOpen(false)}>
-                  Visualizza Profilo
+                  <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
+                  Profilo
                 </Link>
                 <button
                   className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
                   onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-orange-600" />
                   Logout
                 </button>
               </div>

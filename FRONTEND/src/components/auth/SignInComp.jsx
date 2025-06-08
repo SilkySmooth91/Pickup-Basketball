@@ -20,17 +20,14 @@ export default function SignInComp({ isVisible, onRegister, className }) {
   }, [fromRegister, navigate, setFromRegister])
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
     try {
       const loginRes = await loginUser({ email, password });
       await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
-      // Se non è login post-registrazione, reindirizza a /map
-      if (!fromRegister) {
-        navigate("/map")
-      }
+      navigate("/map");
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     }
   }
 

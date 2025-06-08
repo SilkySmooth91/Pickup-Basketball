@@ -63,8 +63,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       dispatch({ type: 'RESET' });
       // Effettua login automatico dopo la registrazione
       const loginRes = await loginUser({ email: state.email, password: state.password });
-      // Passa fromRegister: true per distinguere il login post-registrazione
-      await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken, { fromRegister: true });
+      await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
     } catch (err) {
       setError(err.message || "Errore durante la registrazione");
     }

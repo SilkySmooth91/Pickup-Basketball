@@ -68,17 +68,45 @@ router.post("/", authMiddleware, async (req, res) => {
  *         schema:
  *           type: string
  *         description: ID del target
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Numero della pagina
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Numero di commenti per pagina
  *     responses:
  *       200:
- *         description: Lista commenti
+ *         description: Lista commenti paginata
  */
 // Ottieni tutti i commenti per un target
 router.get("/:target/:targetid", async (req, res) => {
   try {
     const { target, targetid } = req.params;
-    const comments = await commentModel.find({ target, targetid }).populate("author", "username avatar");
-    // Restituisci sempre 200, anche se l'array è vuoto
-    return res.status(200).json(comments);
+    const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+    const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
+    const skip = (page - 1) * limit;
+    
+    // Conta il numero totale di commenti
+    const totalComments = await commentModel.countDocuments({ target, targetid });
+    
+    // Ottieni i commenti per la pagina corrente, ordinati dal più recente
+    const comments = await commentModel.find({ target, targetid })
+      .populate("author", "username avatar")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    
+    // Restituisci i dati della pagina e il totale
+    return res.status(200).json({
+      comments,
+      page,
+      totalPages: Math.ceil(totalComments / limit),
+      totalComments
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore recupero commenti" });
