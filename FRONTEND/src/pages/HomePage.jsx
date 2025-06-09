@@ -4,12 +4,12 @@ import '../styles/map-fixes.css'
 
 export default function HomePage() {
   return (
-    <div className="home-page">
+    <div className="home-page">      
       <div className="home-page-content">
         <WelcomeComp />
       </div>
       <div className="home-page-footer">
-        <Footer />
+        <Footer showAboutLink={true} />
       </div>
     </div>
   )
