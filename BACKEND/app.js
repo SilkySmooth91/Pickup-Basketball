@@ -17,7 +17,15 @@ dotenv.config();
 const app = express();
 passport.use("google", googleStrategy);
 
-app.use(cors());
+// Configurazione CORS per permettere richieste solo dal frontend
+const corsOptions = {
+  origin: process.env.FE_URL || 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/auth", authRoutes);

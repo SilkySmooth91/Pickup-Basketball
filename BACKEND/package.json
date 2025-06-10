@@ -2,10 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.js",
-  "type": "module",
-  "scripts": {
+  "type": "module",  "scripts": {
     "test": "vitest",
-    "start": "nodemon src/index.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [
     "basketball",

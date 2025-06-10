@@ -14,6 +14,8 @@ dist-ssr
 
 # Environment variables
 .env
+.env.*
+!.env.example
 
 # Security reports
 security-audit-report.txt
