@@ -42,7 +42,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       !state.password.trim() ||
       !state.confirmPassword.trim()
     ) {
-      toast.error("I campi contrassegnati con * sono obbligatori");
+      toast.error("I campi contrassegnati con * sono obbligatori"); 
       return;
     }
     const ageNum = Number(state.age);
