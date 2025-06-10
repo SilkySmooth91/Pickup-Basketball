@@ -26,7 +26,7 @@ function CustomZoomControl() {
     }    
     // Create zoom control with desktop position
     const zoomControl = new L.Control.Zoom({
-      position: window.innerWidth < 640 ? 'bottomleft' : 'bottomleft'
+      position: 'bottomleft'
     });
     zoomControl.addTo(map);
     
