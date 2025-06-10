@@ -19,9 +19,9 @@ passport.use("google", googleStrategy);
 
 // Configurazione CORS per permettere richieste solo dal frontend
 const corsOptions = {
-  origin: process.env.FE_URL || 'http://localhost:5173',
+  origin: [process.env.FE_URL, 'http://localhost:5173', 'https://pickup-basketball.vercel.app'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
