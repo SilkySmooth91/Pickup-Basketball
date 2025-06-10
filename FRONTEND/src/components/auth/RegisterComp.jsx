@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import FloatingLabel from '../utils/FloatingLabel'
 import { loginUser, registerUser } from '../../api/authApi'
 import { useAuth } from '../../context/AuthContext'
+import { toast } from 'react-toastify'
 
 
 const initialState = {
@@ -28,13 +29,12 @@ function reducer(state, action) {
 
 export default function RegisterComp({ isVisible, onBack, className }) {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [error, setError] = useState(null)
   const navigate = useNavigate()
   const { login } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    
     // Validazione frontend
     if (
       !state.username.trim() ||
@@ -42,12 +42,12 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       !state.password.trim() ||
       !state.confirmPassword.trim()
     ) {
-      setError("I campi contrassegnati con * sono obbligatori");
+      toast.error("I campi contrassegnati con * sono obbligatori");
       return;
     }
     const ageNum = Number(state.age);
     if (state.age && (isNaN(ageNum) || ageNum < 13)) {
-      setError("L'età deve essere un numero valido (minimo 13)");
+      toast.error("L'età deve essere un numero valido (minimo 13)");
       return;
     }
     try {
@@ -60,26 +60,21 @@ export default function RegisterComp({ isVisible, onBack, className }) {
         confirmPassword: state.confirmPassword,
         city: state.city.trim()
       });
+      toast.success("Registrazione completata con successo!");
       dispatch({ type: 'RESET' });
       // Effettua login automatico dopo la registrazione
       const loginRes = await loginUser({ email: state.email, password: state.password });
       await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
     } catch (err) {
-      setError(err.message || "Errore durante la registrazione");
+      toast.error(err.message || "Errore durante la registrazione");
     }
-  };
-  return (
+  };  return (
     <div className={`flex justify-center absolute left-0 right-0 mx-auto max-w-md transition-all duration-1000 ease-in-out transform z-10 ${
       isVisible 
         ? 'opacity-100 scale-100 translate-y-0' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
     } ${className}`}>
       <form className="space-y-4 px-2 sm:px-0" onSubmit={handleSubmit}>
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2 text-center">
-            {error}
-          </div>
-        )}
         <div className="flex gap-4">
           <FloatingLabel
             id="nome-giocatore"

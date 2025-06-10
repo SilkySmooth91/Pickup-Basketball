@@ -4,23 +4,24 @@ import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../../api/authApi';
 import GoogleLoginButton from './GoogleLoginButton'
+import { toast } from 'react-toastify'
 
 export default function SignInComp({ isVisible, onRegister, className }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState(null)
   const { login } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    
     try {
       const loginRes = await loginUser({ email, password });
       await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
+      toast.success("Login effettuato con successo!");
       navigate("/map");
     } catch (err) {
-      setError(err.message);
+      toast.error(err.message || "Errore durante il login");
     }
   }
   return (
@@ -28,13 +29,7 @@ export default function SignInComp({ isVisible, onRegister, className }) {
       isVisible 
         ? 'opacity-100 scale-100 translate-y-0 z-10' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none z-0'
-    } ${className}`}>
-      <form className='bg-none p-6 text-black' onSubmit={handleSubmit}>
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-2 text-center">
-            {error}
-          </div>
-        )}
+    } ${className}`}>      <form className='bg-none p-6 text-black' onSubmit={handleSubmit}>
         <FloatingLabel 
           id="signin-email" 
           type="email" 

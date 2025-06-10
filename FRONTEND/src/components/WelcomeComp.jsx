@@ -2,6 +2,8 @@ import { useState } from 'react'
 import '/src/styles/WelcomeComp.css'
 import SignInComp from './auth/SignInComp'
 import RegisterComp from './auth/RegisterComp'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function WelcomeComp() {
   const [isTitleMoved, setIsTitleMoved] = useState(false)
@@ -59,9 +61,20 @@ export default function WelcomeComp() {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 hvr-icon">
               <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 18.75 7.5-7.5 7.5 7.5" />
               <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 7.5-7.5 7.5 7.5" />
-            </svg>
-          </button>
+            </svg>          </button>
         </div>
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
     </div>
   )
 }
