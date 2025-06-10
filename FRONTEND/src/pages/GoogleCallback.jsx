@@ -14,8 +14,7 @@ export default function GoogleCallback() {
     if (accessToken && refreshToken) {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      // (Opzionale) fetch user info, oppure reindirizza subito
-      // navigate("/profile");
+      // (Opzionale) fetch user info, oppure reindirizza subit
       window.location.href = "/profile";
     } else {
       navigate("/?google=fail");

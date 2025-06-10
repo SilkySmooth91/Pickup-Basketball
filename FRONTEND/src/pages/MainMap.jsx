@@ -3,6 +3,8 @@ import MapComp from '../components/map/MapComp';
 import SearchBar from '../components/map/SearchBar';
 import Footer from '../components/utils/Footer';
 import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 export default function MainMap() {
   // Recupera le coordinate e il nome della posizione salvati, o usa null come default
@@ -37,14 +39,19 @@ export default function MainMap() {
       </div>
       
       <SearchBar onLocationSelect={handleLocationSelect} />
-      
-      <div className="w-full h-full">
+        <div className="w-full h-full">
         <MapComp 
           searchedCoords={searchedCoords} 
           locationName={locationName}
-          onMapClick={handleMapClick} 
-        />
+          onMapClick={handleMapClick} />
       </div>
+      
+      <button 
+        onClick={() => window.location.href = "/add-court"}
+        className="add-court-button">
+        <FontAwesomeIcon icon={faPlus} />
+        <span className="hidden sm:inline">Non trovi il campetto che cerchi? Aggiungilo!</span>
+      </button>
       
       <div className="map-page-footer">
         <Footer />

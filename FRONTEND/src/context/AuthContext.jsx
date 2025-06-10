@@ -7,8 +7,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }) {
-  const [accessToken, setAccessToken] = useState(() => {
+export function AuthProvider({ children }) {  const [accessToken, setAccessToken] = useState(() => {
     return localStorage.getItem("accessToken") || null;
   });
   const [user, setUser] = useState(() => {
@@ -16,20 +15,14 @@ export function AuthProvider({ children }) {
     return stored ? JSON.parse(stored) : null;
   });
   const [loading, setLoading] = useState(true);
-  const [fromRegister, setFromRegister] = useState(false);
 
-  const login = (userData, token, refreshTokenValue, options = {}) => {
+  const login = (userData, token, refreshTokenValue) => {
     setUser(userData);
     setAccessToken(token);
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("accessToken", token);
     if (refreshTokenValue) {
       localStorage.setItem("refreshToken", refreshTokenValue);
-    }
-    if (options.fromRegister) {
-      setFromRegister(true);
-    } else {
-      setFromRegister(false);
     }
   };
 
@@ -87,10 +80,9 @@ export function AuthProvider({ children }) {
       })
       .finally(() => setLoading(false));
   }, []);
-
   return (
     <AuthContext.Provider
-      value={{ accessToken, user, login, logout, refresh, loading, setUser, fromRegister, setFromRegister }}
+      value={{ accessToken, user, login, logout, refresh, loading, setUser }}
     >
       {children}
     </AuthContext.Provider>

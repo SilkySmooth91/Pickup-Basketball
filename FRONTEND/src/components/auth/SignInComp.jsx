@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import FloatingLabel from '../utils/FloatingLabel'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
@@ -9,15 +9,8 @@ export default function SignInComp({ isVisible, onRegister, className }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState(null)
-  const { login, fromRegister, setFromRegister } = useAuth()
+  const { login } = useAuth()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (fromRegister) {
-      navigate('/profile', { replace: true })
-      setFromRegister(false)
-    }
-  }, [fromRegister, navigate, setFromRegister])
 
   const handleSubmit = async (e) => {
     e.preventDefault();

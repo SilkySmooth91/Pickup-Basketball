@@ -41,6 +41,42 @@
   pointer-events: auto; /* Riabilita i click sul contenuto del footer */
 }
 
+@media (max-width: 640px) {
+  .map-page-footer {
+    /* Riduci l'altezza del footer su mobile */
+    bottom: 0.5rem;
+  }
+}
+
+/* Stile per il pulsante 'aggiungi campetto' */
+.add-court-button {
+  position: fixed;
+  bottom: 5rem; /* Sopra il footer */
+  right: 1.5rem;
+  z-index: 1000;
+  background: linear-gradient(to right, #f97316, #ef4444);
+  color: white;
+  border-radius: 9999px;
+  padding: 1.1rem 1.1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .add-court-button {
+    bottom: 10.5rem; /* Aumenta la distanza dal fondo su mobile */
+  }
+}
+
+.add-court-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(to right, #ea580c, #dc2626);
+}
+
 /* Stili specifici per la HomePage */
 .home-page {
   position: relative;
@@ -125,7 +161,7 @@
 @media (max-width: 767px) {
   /* Assicura che la barra di ricerca non blocchi i dropdown su mobile */
   .mobile-dropdown-active.search-bar-container {
-    z-index: 300 !important; /* Z-index più basso di quello del dropdown quando il dropdown è attivo */
+    z-index: 300 !important; 
   }
   
 
@@ -142,7 +178,7 @@
   }
 }
 
-/* Migliora l'area cliccabile del pulsante di chiusura nei popup Leaflet */
+
 .leaflet-popup-close-button {
   padding: 8px !important; 
   font-size: 20px !important; 
@@ -155,8 +191,8 @@
 }
 
 .leaflet-popup-close-button:hover {
-  background-color: rgba(0, 0, 0, 0.05) !important; /* Effetto hover leggero */
-  color: #333 !important; /* Colore più scuro al passaggio del mouse */
+  background-color: rgba(0, 0, 0, 0.05) !important; 
+  color: #333 !important; 
 }
 
 .leaflet-container {
@@ -180,4 +216,18 @@
 .basketball-marker-icon:hover {
   filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.5));
   transform: translateY(-3px);
+}
+
+
+.leaflet-control-zoom {
+  z-index: 1000 !important;
+  margin-top: 60px !important;
+  margin-bottom: 80px !important;
+}
+
+@media (max-width: 640px) {
+  .leaflet-control-zoom {
+    margin-top: 0 !important;
+    margin-bottom: 160px !important;
+  }
 }

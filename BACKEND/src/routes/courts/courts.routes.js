@@ -49,20 +49,33 @@ const uploadGallery = multer({ storage: uploadCover.storage });
 router.post("/", authMiddleware, uploadGallery.array("images", 10), async (req, res) => {
   try {
     const { name, address, coordinates, baskets, officialsize, nightlights } = req.body;
+    
     if (!name || !address || !coordinates || !baskets || officialsize === undefined || nightlights === undefined) {
       return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
     }
-    let images = [];
+    
+    // Converte le stringhe in booleani
+    const isOfficialSize = officialsize === "true" || officialsize === true;
+    const hasNightLights = nightlights === "true" || nightlights === true;
+    
+    // Parse coordinates
+    let parsedCoordinates;
+    try {
+      parsedCoordinates = typeof coordinates === 'string' ? JSON.parse(coordinates) : coordinates;
+    } catch (e) {
+      console.error("Errore nel parsing delle coordinate:", e);
+      return res.status(400).json({ error: "Formato coordinate non valido" });
+    }let images = [];
     if (req.files && req.files.length > 0) {
       images = req.files.map(f => ({ url: f.path, public_id: f.filename }));
     }
     const court = await courtModel.create({
       name,
       address,
-      coordinates,
-      baskets,
-      officialsize,
-      nightlights,
+      coordinates: parsedCoordinates,
+      baskets: Number(baskets),
+      officialsize: isOfficialSize,
+      nightlights: hasNightLights,
       images
     });
     res.status(201).json(court);

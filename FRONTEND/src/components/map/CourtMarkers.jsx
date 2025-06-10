@@ -5,9 +5,9 @@ import { getNearbyCourts } from '../../api/courtApi';
 import { useAuth } from '../../context/AuthContext';
 import basketballMarker from '../../assets/basketball-marker.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle, faLocationDot, faLocationPin } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import LoadingSpinner from '../../components/utils/LoadingSpinner';
+
 
 // Icona personalizzata per i marker dei campetti
 const courtIcon = new L.Icon({
@@ -52,10 +52,9 @@ export default function CourtMarkers({ searchedCoords }) {
             // Calcola i bounds per includere tutti i punti
             const bounds = L.latLngBounds(points);
             
-            // Aggiungi un padding per una migliore visualizzazione
             map.fitBounds(bounds, {
               padding: [50, 50],
-              maxZoom: 15 // Limita lo zoom massimo
+              maxZoom: 15
             });
           }
         })
