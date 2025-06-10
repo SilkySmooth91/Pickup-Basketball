@@ -68,9 +68,8 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       setError(err.message || "Errore durante la registrazione");
     }
   };
-
   return (
-    <div className={`flex justify-center absolute left-0 right-0 top-75 sm:top-1/2 sm:-translate-y-1/2 mx-auto max-w-md transition-all duration-1000 ease-in-out transform z-10 ${
+    <div className={`flex justify-center absolute left-0 right-0 mx-auto max-w-md transition-all duration-1000 ease-in-out transform z-10 ${
       isVisible 
         ? 'opacity-100 scale-100 translate-y-0' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'

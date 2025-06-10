@@ -23,12 +23,11 @@ export default function SignInComp({ isVisible, onRegister, className }) {
       setError(err.message);
     }
   }
-
   return (
-    <div className={`absolute top-75 md:top-85 transition-all duration-1000 ease-in-out transform ${
+    <div className={`absolute left-0 right-0 mx-auto max-w-md transition-all duration-1000 ease-in-out transform ${
       isVisible 
-        ? 'opacity-100 scale-100 translate-y-0' 
-        : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
+        ? 'opacity-100 scale-100 translate-y-0 z-10' 
+        : 'opacity-0 scale-95 -translate-y-4 pointer-events-none z-0'
     } ${className}`}>
       <form className='bg-none p-6 text-black' onSubmit={handleSubmit}>
         {error && (
