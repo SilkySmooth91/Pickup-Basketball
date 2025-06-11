@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus, faCheck } from "@fortawesome/free-solid-svg-icons";
-import { sendFriendRequest, getFriends } from "../api/friendApi";
+import { sendFriendRequest, getFriends, getSentFriendRequests } from "../api/friendApi";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
 import Footer from '../components/utils/Footer';
@@ -18,6 +18,7 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
   const [error, setError] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [friends, setFriends] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]);
   useEffect(() => {
     if (query.length < 3) {
       setResults([]);
@@ -67,12 +68,23 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
       }, 400)
     );
   }, [query, accessToken, user]);
-
   useEffect(() => {
     if (!accessToken || !user) return;
     getFriends(null, { accessToken })
       .then(friendsList => setFriends(friendsList.map(f => f._id)))
       .catch(() => setFriends([]));
+    
+    // Carica anche le richieste di amicizia inviate
+    getSentFriendRequests({ accessToken })
+      .then(requests => {
+        // Estrai gli ID degli utenti a cui sono state inviate richieste
+        const sentRequestIds = requests.map(req => req.to._id || req.to);
+        setSentRequests(sentRequestIds);
+      })
+      .catch(err => {
+        console.error("Errore nel caricamento delle richieste inviate:", err);
+        setSentRequests([]);
+      });
   }, [accessToken, user]);  const handleAddFriend = async (userId) => {
     const currentUserId = user?.id ? String(user.id) : user?._id ? String(user._id) : "";
     const targetUserId = String(userId || "");
@@ -83,12 +95,72 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
       return;
     }
     
+    // Mostra un toast di caricamento
+    const toastId = toast.loading("Invio richiesta in corso...");
+      // Imposta un timeout per assicurarsi che il toast non rimanga visibile troppo a lungo
+    const timeoutId = setTimeout(() => {
+      toast.update(toastId, {
+        render: "Richiesta inviata. Aggiorna la pagina per vedere lo stato aggiornato.",
+        type: "info",
+        isLoading: false,
+        autoClose: 5000,
+        closeOnClick: true
+      });
+      
+      // Aggiorna comunque l'UI per dare feedback all'utente
+      updateUIAfterRequest(userId);
+    }, 5000);
+    
     try {
-      await sendFriendRequest(userId, { accessToken });
-      toast.success("Richiesta inviata!");
+      const response = await sendFriendRequest(userId, { accessToken });
+      
+      // Cancella il timeout perché abbiamo ottenuto una risposta
+      clearTimeout(timeoutId);
+        // Aggiorna il toast con un messaggio di successo
+      toast.update(toastId, {
+        render: "Richiesta di amicizia inviata con successo!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true
+      });
+      
+      // Aggiorna l'UI
+      updateUIAfterRequest(userId);
+      
+      // Aggiorna anche la lista delle richieste inviate
+      setSentRequests(prev => [...prev, userId]);
     } catch (err) {
-      toast.error(err?.message || "Errore invio richiesta");
+      // Cancella il timeout perché abbiamo ottenuto una risposta (anche se è un errore)
+      clearTimeout(timeoutId);
+      
+      let errorMessage = "Errore durante l'invio della richiesta di amicizia";
+      
+      // Gestione errori più dettagliata
+      if (err?.response?.status === 409) {
+        errorMessage = "Richiesta di amicizia già inviata o già amici";
+        // Considera la richiesta come inviata anche in caso di errore 409
+        updateUIAfterRequest(userId);
+        setSentRequests(prev => [...prev, userId]);
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+        toast.update(toastId, {
+        render: errorMessage,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true
+      });
     }
+  };
+  
+  // Funzione di supporto per aggiornare l'UI dopo l'invio di una richiesta
+  const updateUIAfterRequest = (userId) => {
+    const updatedResults = results.map(r => 
+      r._id === userId ? { ...r, requestSent: true } : r
+    );
+    setResults(updatedResults);
   };
   return (
     <div className="min-h-screen flex flex-col">
@@ -120,9 +192,10 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
               
               // Se l'utente corrente non ha ID o gli ID sono diversi, mostra il risultato
               return !currentUserId || resultUserId !== currentUserId;
-            })
+            })            
             .map(userResult => {
             const isFriend = friends.includes(userResult._id);
+            const isRequestSent = sentRequests.includes(userResult._id) || userResult.requestSent;
             return (
               <div key={userResult._id} className="bg-white shadow-xl rounded-xl p-4 flex items-center gap-4 border border-orange-100">
                 <img
@@ -154,6 +227,16 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
                           disabled>
                           <FontAwesomeIcon icon={faCheck} />
                           <span>Amico</span>
+                        </button>
+                      );
+                    } else if (isRequestSent) {
+                      return (
+                        <button
+                          type="button"
+                          className="ml-2 py-2 px-3 rounded-full bg-blue-100 text-blue-700 border border-blue-400 flex items-center gap-2 cursor-default"
+                          disabled>
+                          <FontAwesomeIcon icon={faCheck} />
+                          <span>Richiesta inviata</span>
                         </button>
                       );
                     } else {
