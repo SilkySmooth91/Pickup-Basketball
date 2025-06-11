@@ -4,7 +4,8 @@ import { faTrophy } from "@fortawesome/free-solid-svg-icons";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { useAuth } from '../../context/AuthContext';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import FriendsModalComp from './FriendsModalComp';
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
 import FloatingLabel from '../utils/FloatingLabel';
@@ -16,33 +17,59 @@ export default function InfoCardComp({ profile, isOwner }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { accessToken } = useAuth();
-  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-  const handleSubmit = async e => {
+  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
+    
+    // Validazioni
     if (form.pwd !== form.repeat) {
       setError('Le password non coincidono');
       toast.error('Le password non coincidono');
       return;
     }
+    
     if (form.old === form.pwd) {
       setError('La nuova password deve essere diversa dalla vecchia');
       toast.error('La nuova password deve essere diversa dalla vecchia');
       return;
     }
+    
     setLoading(true);
+    
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/change-password`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
-        body: JSON.stringify({ oldPassword: form.old, newPassword: form.pwd })
+        headers: { 
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${accessToken}` 
+        },
+        body: JSON.stringify({ 
+          oldPassword: form.old, 
+          newPassword: form.pwd 
+        })
       });
+      
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Errore');
-      toast.success('Password aggiornata con successo!');
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Errore durante il cambio password');
+      }
+      
+      // Se arriviamo qui, tutto è andato bene
+      console.log("Password aggiornata con successo!");
+      toast.success('Password aggiornata con successo!', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+      
       setShowModal(false);
       setForm({ old: '', pwd: '', repeat: '' });
     } catch (err) {
+      console.error("Errore cambio password:", err.message);
       setError(err.message);
       toast.error(err.message || 'Si è verificato un errore durante il cambio password');
     } finally {
@@ -147,10 +174,22 @@ export default function InfoCardComp({ profile, isOwner }) {
             </form>
           </div>
         </div>
-      )}
-
-      {/* MODALE AMICI */}
+      )}      {/* MODALE AMICI */}
       <FriendsModalComp isOpen={showFriendsModal} onClose={() => setShowFriendsModal(false)} isOwner={isOwner} profileId={profile._id} />
+      
+      {/* ToastContainer locale per assicurarsi che i toast siano visibili */}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
