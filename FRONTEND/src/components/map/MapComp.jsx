@@ -17,69 +17,7 @@ function MapFlyTo({ coords }) {
   return null;
 }
 
-function CustomZoomControl() {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (map.zoomControl) {
-      map.zoomControl.remove();
-    }    
-    // Create zoom control with desktop position
-    const zoomControl = new L.Control.Zoom({
-      position: 'bottomleft'
-    });
-    zoomControl.addTo(map);
-    
-    const zoomInButton = document.querySelector('.leaflet-control-zoom-in');
-    const zoomOutButton = document.querySelector('.leaflet-control-zoom-out');
-    
-    if (zoomInButton && zoomOutButton) {
-      // Apply higher z-index to the zoom controls
-      const zoomContainer = zoomInButton.parentElement;
-      if (zoomContainer) {
-        zoomContainer.style.zIndex = 1000;
-        // Aggiungi spazio dal basso su mobile
-        if (window.innerWidth < 640) {
-          zoomContainer.style.marginBottom = '80px';
-        }
-      }
-    }
-    
-    const handleResize = () => {
-      zoomControl.remove();
-
-      // Update position based on screen size
-      const newZoomControl = new L.Control.Zoom({
-        position: window.innerWidth < 640 ? 'bottomleft' : 'topright'
-      });
-      
-      newZoomControl.addTo(map);
-        // Re-apply z-index fix after resize
-      const newZoomInButton = document.querySelector('.leaflet-control-zoom-in');
-      if (newZoomInButton) {
-        const newZoomContainer = newZoomInButton.parentElement;
-        if (newZoomContainer) {
-          newZoomContainer.style.zIndex = 1000;
-          // Aggiorna il margine in base alla dimensione dello schermo
-          if (window.innerWidth < 640) {
-            newZoomContainer.style.marginBottom = '80px';
-          } else {
-            newZoomContainer.style.marginBottom = '0';
-          }
-        }
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (map && zoomControl) zoomControl.remove();
-    };
-  }, [map]);
-  
-  return null;
-}
+// CustomZoomControl è stato rimosso per disabilitare completamente i controlli di zoom
 
 export default function MapComp({ searchedCoords, locationName, onMapClick }) {
   const defaultCenter = [45.4642, 9.19];
@@ -106,7 +44,7 @@ export default function MapComp({ searchedCoords, locationName, onMapClick }) {
       <TileLayer
         attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />      <CustomZoomControl />      
+      />      
       {searchedCoords ? (
         <Marker position={center} icon={searchIcon}>
           <Popup>

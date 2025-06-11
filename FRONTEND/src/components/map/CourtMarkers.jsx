@@ -84,17 +84,17 @@ export default function CourtMarkers({ searchedCoords }) {
           <Marker 
             key={court._id} 
             position={[lat, lng]}
-            icon={courtIcon}>
-            <Popup>
+            icon={courtIcon}>            
+            <Popup className="court-popup-container">
               <div className="court-popup p-5">
-                <h3 className="font-bold text-2xl mb-4 text-orange-600">{court.name}</h3>
+                <h3 className="font-bold md:text-2xl sm:mb-2 md:mb-4 text-orange-600">{court.name}</h3>
                 
                 {court.images && court.images.length > 0 && (
                   <div className="my-2">
                     <img 
                       src={court.images[0].url} 
                       alt={court.name} 
-                      className="w-full h-40 object-cover rounded"/>
+                      className="w-full sm:h-30 md:h-40 object-cover rounded"/>
                   </div>
                 )}
                 <div className='flex items-center text-gray-600 mb-2'>
@@ -119,8 +119,7 @@ export default function CourtMarkers({ searchedCoords }) {
                     <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-md p-[1px]"></div>
                     <button
                       className="relative py-3 px-4 rounded-md bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-normal transition-colors duration-200 flex items-center justify-center gap-2"
-                      onClick={() => navigate(`/court/${court._id}`)}
-                    >
+                      onClick={() => navigate(`/court/${court._id}`)}>
                       <FontAwesomeIcon icon={faInfoCircle} className="w-4 h-4" />
                       Dettagli Campetto
                     </button>

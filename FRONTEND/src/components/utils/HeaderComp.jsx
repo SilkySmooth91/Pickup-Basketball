@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faBars, faTimes, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import '/src/styles/HeaderComp.css'
-import logo from '../../assets/logo.png';
+import logo from '../../assets/newLogo.jpg';
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 
 export default function HeaderComp() {
@@ -95,8 +95,8 @@ export default function HeaderComp() {
             <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
           </button>
           {/* Logo & Title (center, mobile) */}
-          <Link to="/" className="flex flex-row items-center justify-center gap-2 flex-1">
-            <img src={logo} alt="Logo" className="h-9 w-9 object-contain select-none" style={{marginRight: 6}} />
+          <Link to="/" className="flex flex-row items-center justify-center gap-1 flex-1">
+            <img src={logo} alt="Logo" className="h-9 w-9 object-contain select-none"/>
             <span className="text-xl font-bold text-center text-orange-600 leading-none" style={{ letterSpacing: 1 }}>PickupBasketball</span>
           </Link>
           {/* Avatar & Dropdown (right, mobile) */}
@@ -175,7 +175,8 @@ export default function HeaderComp() {
               </div>
             )}
           </div>
-        </div>        {/* Mobile menu overlay */}
+        </div>        
+        {/* Mobile menu overlay */}
         <div
           className={`
             fixed inset-0 bg-black/40 md:hidden

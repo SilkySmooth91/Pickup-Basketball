@@ -50,7 +50,7 @@ export default function MainMap() {
         onClick={() => window.location.href = "/add-court"}
         className="add-court-button">
         <FontAwesomeIcon icon={faPlus} />
-        <span className="hidden sm:inline">Non trovi il campetto che cerchi? Aggiungilo!</span>
+        <span className="hidden sm:inline">Aggiungi un campetto</span>
       </button>
       
       <div className="map-page-footer">

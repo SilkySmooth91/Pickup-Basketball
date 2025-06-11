@@ -1,6 +1,6 @@
 import HeaderComp from '../components/utils/HeaderComp';
 import { faUsers, faMapLocationDot, faCalendarCheck, faComments } from '@fortawesome/free-solid-svg-icons';
-import logo from '../assets/logo.png';
+import logo from '../assets/newLogo.jpg';
 import BugReportForm from '../components/utils/BugReportForm';
 import FeatureCard from '../components/utils/FeatureCard';
 import Footer from '../components/utils/Footer';
@@ -8,17 +8,18 @@ import Footer from '../components/utils/Footer';
 export default function AboutPage() {
   
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">      <HeaderComp />
+    <div className="min-h-screen flex flex-col bg-gray-100">      
+      <HeaderComp />
       <div className="container mx-auto px-4 py-8 flex-grow">
         <div className="w-full max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4 overflow-hidden">                
             {/* Header */}
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white">
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 p-1 text-white">
               <div className="flex items-center gap-4">
-                <img src={logo} alt="Logo" className="h-12 w-12 md:h-20 md:w-20 object-contain bg-orange-50 rounded-full p-1 md:p-2" />
+                <img src={logo} alt="Logo" className="h-20 w-30 md:h-30 md:w-40 object-contain p-1" />
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold">Pickup Basketball</h1>
-                  <p className="text-lg md:text-xl opacity-90 mt-1">Trova partite, giocatori e campetti nella tua zona</p>
+                  <h1 className="text-xl md:text-3xl font-bold">Pickup Basketball</h1>
+                  <p className="text-base md:text-xl opacity-90 mt-1">Trova partite, giocatori e campetti nella tua zona</p>
                 </div>
               </div>
             </div>
@@ -69,7 +70,8 @@ export default function AboutPage() {
                   <li>Trova altri giocatori e aggiungili come amici</li>
                   <li>Organizza partite e divertiti!</li>
                 </ol>                </div>
-                {/* Form segnalazione bug */}              <BugReportForm />
+                {/* Form segnalazione bug */}              
+                <BugReportForm />
             </div>
           </div>
         </div>

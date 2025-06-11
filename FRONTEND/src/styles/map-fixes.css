@@ -41,17 +41,9 @@
   pointer-events: auto; /* Riabilita i click sul contenuto del footer */
 }
 
-@media (max-width: 640px) {
-  .map-page-footer {
-    /* Riduci l'altezza del footer su mobile */
-    bottom: 0.5rem;
-  }
-}
-
-/* Stile per il pulsante 'aggiungi campetto' */
 .add-court-button {
   position: fixed;
-  bottom: 2rem; /* Sopra il footer */
+  bottom: 5rem; /* Sopra il footer */
   right: 1.5rem;
   z-index: 1000;
   background: linear-gradient(to right, #f97316, #ef4444);
@@ -63,12 +55,6 @@
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-}
-
-@media (max-width: 640px) {
-  .add-court-button {
-    bottom: 10.5rem; /* Aumenta la distanza dal fondo su mobile */
-  }
 }
 
 .add-court-button:hover {
@@ -149,35 +135,9 @@
   max-width: calc(100vw - 20px); /* Impedisce overflow su schermi piccoli */
 }
 
-@media (max-width: 640px) {
-  .relative .dropdown-menu {
-    right: 0;
-    max-width: 200px;
-    width: auto !important;
-  }
+.leaflet-control-zoom {
+  display: none !important;
 }
-
-/* Stili per la visualizzazione mobile */
-@media (max-width: 767px) {
-  /* Assicura che la barra di ricerca non blocchi i dropdown su mobile */
-  .mobile-dropdown-active.search-bar-container {
-    z-index: 300 !important; 
-  }
-  
-
-  header .dropdown-menu {
-    position: absolute !important;
-    right: 0 !important;
-    width: auto !important;
-    min-width: 160px;
-  }
-  
-
-  .mobile-menu-open {
-    z-index: var(--z-mobile-menu) !important;
-  }
-}
-
 
 .leaflet-popup-close-button {
   padding: 8px !important; 
@@ -218,16 +178,58 @@
   transform: translateY(-3px);
 }
 
+@media (max-width: 640px) {
+  /* Footer ridotto su mobile */
+  .map-page-footer {
+    bottom: 0.5rem;
+  }
+  
+  .add-court-button {
+    bottom: 7rem
+  }
+  
+  .relative .dropdown-menu {
+    right: 0;
+    max-width: 200px;
+    width: auto !important;
+  }
+  
+  .leaflet-control-zoom {
+    display: none !important;
+  }
 
-.leaflet-control-zoom {
-  z-index: 1000 !important;
-  margin-top: 60px !important;
-  margin-bottom: 80px !important;
+
+  .leaflet-popup-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .leaflet-popup-content p {
+    margin-top: 0.2rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .court-popup > h3 {
+    font-size: 1.2rem !important;
+  }
 }
 
-@media (max-width: 640px) {
-  .leaflet-control-zoom {
-    margin-top: 0 !important;
-    margin-bottom: 160px !important;
+@media (max-width: 767px) {
+  /* Assicura che la barra di ricerca non blocchi i dropdown su mobile */
+  .mobile-dropdown-active.search-bar-container {
+    z-index: 300 !important; 
+  }
+  
+  header .dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    width: auto !important;
+    min-width: 160px;
+  }
+  
+  .mobile-menu-open {
+    z-index: var(--z-mobile-menu) !important;
   }
 }
