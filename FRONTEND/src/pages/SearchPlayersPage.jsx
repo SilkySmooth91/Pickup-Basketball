@@ -86,10 +86,16 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
         setSentRequests([]);
       });
   }, [accessToken, user]);  const handleAddFriend = async (userId) => {
+    // Assicuriamoci che gli ID siano stringhe valide
     const currentUserId = user?.id ? String(user.id) : user?._id ? String(user._id) : "";
-    const targetUserId = String(userId || "");
+    const targetUserId = userId ? String(userId).trim() : "";
     
     // Controllo di sicurezza
+    if (!targetUserId) {
+      toast.error("ID utente non valido");
+      return;
+    }
+    
     if (targetUserId === currentUserId) {
       toast.error("Non puoi inviare una richiesta a te stesso");
       return;
@@ -110,9 +116,9 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
       // Aggiorna comunque l'UI per dare feedback all'utente
       updateUIAfterRequest(userId);
     }, 5000);
-    
-    try {
-      const response = await sendFriendRequest(userId, { accessToken });
+      try {
+      console.log("Invio richiesta di amicizia a:", targetUserId);
+      const response = await sendFriendRequest(targetUserId, { accessToken });
       
       // Cancella il timeout perché abbiamo ottenuto una risposta
       clearTimeout(timeoutId);
@@ -126,22 +132,23 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
       });
       
       // Aggiorna l'UI
-      updateUIAfterRequest(userId);
+      updateUIAfterRequest(targetUserId);
       
       // Aggiorna anche la lista delle richieste inviate
-      setSentRequests(prev => [...prev, userId]);
+      setSentRequests(prev => [...prev, targetUserId]);
     } catch (err) {
       // Cancella il timeout perché abbiamo ottenuto una risposta (anche se è un errore)
       clearTimeout(timeoutId);
       
-      let errorMessage = "Errore durante l'invio della richiesta di amicizia";
+      console.error("Errore invio richiesta:", err, "a userId:", targetUserId);
       
-      // Gestione errori più dettagliata
+      let errorMessage = "Errore durante l'invio della richiesta di amicizia";
+        // Gestione errori più dettagliata
       if (err?.response?.status === 409) {
         errorMessage = "Richiesta di amicizia già inviata o già amici";
         // Considera la richiesta come inviata anche in caso di errore 409
-        updateUIAfterRequest(userId);
-        setSentRequests(prev => [...prev, userId]);
+        updateUIAfterRequest(targetUserId);
+        setSentRequests(prev => [...prev, targetUserId]);
       } else if (err?.message) {
         errorMessage = err.message;
       }

@@ -17,16 +17,31 @@ export async function searchUsers(query, auth) {
 
 export async function sendFriendRequest(toUserId, auth) {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  
+  // Assicuriamoci che toUserId sia una stringa
+  const sanitizedUserId = String(toUserId || "").trim();
+  
+  if (!sanitizedUserId) {
+    throw new Error("ID utente destinatario non valido");
+  }
+
   const res = await fetchWithAuth(
     `${API_URL}/friends/requests`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ to: toUserId })
+      body: JSON.stringify({ to: sanitizedUserId })
     },
     auth
   );
-  if (!res.ok) throw new Error("Errore invio richiesta amicizia");
+
+  // Log dettagliato in caso di errore
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => "Nessun testo di errore");
+    console.error(`Errore invio richiesta amicizia: ${res.status} ${res.statusText}`, errorText);
+    throw new Error(res.status === 400 ? "Richiesta non valida" : "Errore invio richiesta amicizia");
+  }
+  
   return await res.json();
 }
 
