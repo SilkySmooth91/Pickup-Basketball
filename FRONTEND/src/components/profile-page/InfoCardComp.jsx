@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import FriendsModalComp from './FriendsModalComp';
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
+import FloatingLabel from '../utils/FloatingLabel';
 
 export default function InfoCardComp({ profile, isOwner }) {
   const [showModal, setShowModal] = useState(false);
@@ -16,12 +17,19 @@ export default function InfoCardComp({ profile, isOwner }) {
   const [error, setError] = useState('');
   const { accessToken } = useAuth();
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
-    if (form.pwd !== form.repeat) return setError('Le password non coincidono');
-    if (form.old === form.pwd) return setError('La nuova password deve essere diversa dalla vecchia');
+    if (form.pwd !== form.repeat) {
+      setError('Le password non coincidono');
+      toast.error('Le password non coincidono');
+      return;
+    }
+    if (form.old === form.pwd) {
+      setError('La nuova password deve essere diversa dalla vecchia');
+      toast.error('La nuova password deve essere diversa dalla vecchia');
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/change-password`, {
@@ -31,11 +39,12 @@ export default function InfoCardComp({ profile, isOwner }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Errore');
-      toast.success('Password aggiornata!');
+      toast.success('Password aggiornata con successo!');
       setShowModal(false);
       setForm({ old: '', pwd: '', repeat: '' });
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'Si è verificato un errore durante il cambio password');
     } finally {
       setLoading(false);
     }
@@ -96,24 +105,43 @@ export default function InfoCardComp({ profile, isOwner }) {
           <div className="text-3xl font-bold text-black">{profile?.friendsCount ?? 0}</div>
           <div className="text-gray-600 text-base mt-1 text-center">Amici</div>
         </div>
-      </div>
-
-      {/* MODALE CAMBIO PASSWORD */}
+      </div>      {/* MODALE CAMBIO PASSWORD */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
             <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={() => setShowModal(false)} aria-label="Chiudi">×</button>
             <h2 className="text-xl font-bold mb-4 text-orange-600">Cambia password</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <input type="password" name="old" placeholder="Vecchia password" value={form.old} onChange={handleChange} className="border rounded px-2 py-1" required />
-              <input type="password" name="pwd" placeholder="Nuova password" value={form.pwd} onChange={handleChange} className="border rounded px-2 py-1" required />              <input type="password" name="repeat" placeholder="Ripeti nuova password" value={form.repeat} onChange={handleChange} className="border rounded px-2 py-1" required />
+              <FloatingLabel 
+                id="old-password" 
+                type="password" 
+                label="Vecchia password"
+                value={form.old}
+                onChange={e => setForm(f => ({ ...f, old: e.target.value }))}
+              />
+              <FloatingLabel 
+                id="new-password" 
+                type="password" 
+                label="Nuova password"
+                value={form.pwd}
+                onChange={e => setForm(f => ({ ...f, pwd: e.target.value }))}
+              />
+              <FloatingLabel 
+                id="confirm-password" 
+                type="password" 
+                label="Conferma nuova password"
+                value={form.repeat}
+                onChange={e => setForm(f => ({ ...f, repeat: e.target.value }))}
+              />
               {error && <div className="text-red-500 text-sm">{error}</div>}
-              <button type="submit" className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition" disabled={loading}>
+              <button type="submit" className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition mt-2" disabled={loading}>
                 {loading ? (
-                  <>
-                    <LoadingSpinner />
-                    Salvataggio...
-                  </>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    </div>
+                    <span>Salvataggio...</span>
+                  </div>
                 ) : "Salva"}
               </button>
             </form>

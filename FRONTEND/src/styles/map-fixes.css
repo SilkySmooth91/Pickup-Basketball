@@ -51,7 +51,7 @@
 /* Stile per il pulsante 'aggiungi campetto' */
 .add-court-button {
   position: fixed;
-  bottom: 5rem; /* Sopra il footer */
+  bottom: 2rem; /* Sopra il footer */
   right: 1.5rem;
   z-index: 1000;
   background: linear-gradient(to right, #f97316, #ef4444);

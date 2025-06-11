@@ -201,7 +201,6 @@ export default function SearchBar({ onLocationSelect }) {
                       transition-colors duration-200
                       flex items-center justify-center gap-2">
             <FontAwesomeIcon icon={faMagnifyingGlass} />
-            {isSearching ? "..." : ""}
           </button>
         </form>
         

@@ -7,6 +7,7 @@ import InfoCardComp from './InfoCardComp'
 import RecentActivityComp from './RecentActivityComp'
 import CommentsSection from '../utils/CommentsSection'
 import PageContainer from '../utils/PageContainer'
+import LoadingSpinner from '../utils/LoadingSpinner'
 
 
 export default function ProfilePageComp({ userId }) {
@@ -37,22 +38,16 @@ export default function ProfilePageComp({ userId }) {
 
   // Centralizza qui il calcolo
   const isOwner = user && profile && String(user.id) === String(profile._id);
-
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <span className="text-gray-700">Caricamento profilo...</span>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (!user) {
     // Se non autenticato, redirect alla home
     return <Navigate to="/" replace />;
   }
-
   if (error) return <div className="text-red-500">{error}</div>
-  if (!profile) return <div>Caricamento profilo...</div>
+  if (!profile) return <LoadingSpinner />
 
   // Handler per cambio avatar
   const handleChangeAvatar = () => {
