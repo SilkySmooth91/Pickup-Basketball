@@ -67,7 +67,7 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-white rounded-lg shadow-lg p-6 sm:w-11/12 md:w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-lg p-6 sm:w-11/12 md:w-full max-w-lg relative h-[70vh] max-h-[80vh] overflow-y-auto">
         <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={onClose} aria-label="Chiudi">×</button>
         <div className="flex items-center mb-4">
             <FontAwesomeIcon icon={faUsers} className="mr-2 text-orange-600"/>
