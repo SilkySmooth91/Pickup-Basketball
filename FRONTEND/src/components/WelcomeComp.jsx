@@ -4,30 +4,31 @@ import SignInComp from './auth/SignInComp'
 import RegisterComp from './auth/RegisterComp'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import logoImage from '../assets/newLogo.jpg'
 
 export default function WelcomeComp() {
   const [isTitleMoved, setIsTitleMoved] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
   const [isRegistering, setIsRegistering] = useState(false)
-  return (    <div className='h-screen w-full flex flex-col justify-center items-center bg-[url(https://res.cloudinary.com/dyg6giw5q/image/upload/v1749401570/market-square-the-pass_xbyjvl.jpg)] bg-bg-local bg-cover bg-center bg-fixed'>
-        <div className={`mx-2 transition-all duration-800 ease-in-out ${
+  return (    
+      <div className='h-screen w-full flex flex-col justify-center items-center bg-[url(https://res.cloudinary.com/dyg6giw5q/image/upload/v1749401570/market-square-the-pass_xbyjvl.jpg)] bg-bg-local bg-cover bg-center bg-fixed'>        <div className={`mx-2 transition-all duration-800 ease-in-out ${
           isTitleMoved 
-            ? 'transform -translate-y-[15vh] sm:-translate-y-[15vh] md:-translate-y-[15vh]' 
+            ? 'transform -translate-y-[2vh] sm:-translate-y-[10vh] md:-translate-y-[2vh]' 
             : ''
         }`}>
-          <h1 className='home-welcome text-4xl font-bold text-white text-center mb-2 text-shadow-lg'>
-            <span>Welcome to</span><br />
-            Pickup Basketball!
-          </h1>
-          <h2 className='home-welcome text-base italic text-white text-center text-shadow-lg'>
-            L'App n.1 per organizzare e partecipare a partite di pickup basketball
-          </h2>
-        </div>
-          <div className={`relative w-full transition-all duration-800 ease-in-out overflow-hidden ${
+          <div className="flex justify-center items-center">            
+            <img 
+              src={logoImage} 
+              alt="Pickup Basketball Logo" 
+              className="w-auto max-w-[350px] md:max-w-[400px] h-auto"
+            />
+          </div>
+        </div>          
+        <div className={`relative w-full transition-all duration-800 ease-in-out overflow-hidden ${
           isTitleMoved 
-            ? 'max-h-[500px] opacity-100' 
+            ? 'max-h-[550px] opacity-100' 
             : 'max-h-0 opacity-0'
-        } mt-2 sm:mt-4`} style={{minHeight: isTitleMoved ? '300px' : '0px'}}>
+        } mt-2 sm:mt-4`} style={{minHeight: isTitleMoved ? '350px' : '0px'}}>
           <SignInComp 
             isVisible={isLogin} 
             onRegister={() => {

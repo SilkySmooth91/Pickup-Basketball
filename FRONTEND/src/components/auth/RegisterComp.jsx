@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react'
+import { useReducer } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FloatingLabel from '../utils/FloatingLabel'
 import { loginUser, registerUser } from '../../api/authApi'

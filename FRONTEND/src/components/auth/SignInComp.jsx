@@ -29,7 +29,8 @@ export default function SignInComp({ isVisible, onRegister, className }) {
       isVisible 
         ? 'opacity-100 scale-100 translate-y-0 z-10' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none z-0'
-    } ${className}`}>      <form className='bg-none p-6 text-black' onSubmit={handleSubmit}>
+    } ${className}`}>      
+      <form className='bg-none p-6 text-black' onSubmit={handleSubmit}>
         <FloatingLabel 
           id="signin-email" 
           type="email" 
@@ -42,6 +43,7 @@ export default function SignInComp({ isVisible, onRegister, className }) {
           label="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}/>
+        <a href="#" className='text-sm text-gray-700 hover:text-black'>Password dimenticata?</a>
         <div className='flex flex-col justify-center items-center'>
           <button className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-1 cursor-pointer'>
             Accedi

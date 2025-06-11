@@ -20,7 +20,7 @@ export default function Footer({ showAboutLink }) {  return (
               </p>
               
               {showAboutLink && (
-                <Link to="/about" className="md:ml-4 sm:md:ml-7 text-orange-500 hover:text-orange-700 transition-colors flex items-center text-xs sm:text-sm">
+                <Link to="/about" className="md:ml-10 text-orange-500 hover:text-orange-700 transition-colors flex items-center text-xs sm:text-sm">
                   <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
                   <span>Scopri come funziona</span>
                 </Link>
@@ -38,5 +38,6 @@ export default function Footer({ showAboutLink }) {  return (
           </div>
         </div>
       </div>
-    </footer>  );
+    </footer>  
+  );
 }
