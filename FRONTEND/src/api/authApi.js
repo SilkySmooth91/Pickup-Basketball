@@ -64,3 +64,41 @@ export async function logoutUser(accessToken) {
   }
   return true;
 }
+
+// Richiesta reset password
+export async function forgotPassword(email) {
+  const res = await fetch(`${API_URL}/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
+  
+  if (!res.ok) {
+    // Non dobbiamo rivelare errori specifici per motivi di sicurezza
+    // in modo da non far sapere se l'email esiste o meno
+    const err = await res.json();
+    // Gestiamo solo errori critici di server, non quelli relativi all'utente
+    if (res.status >= 500) {
+      throw new Error("Errore del server. Riprova più tardi.");
+    }
+  }
+  
+  // Ritorniamo sempre un successo per non rivelare se l'email esiste
+  return { message: "Se l'indirizzo email è associato a un account, riceverai un'email con le istruzioni per reimpostare la password." };
+}
+
+// Reset password con token
+export async function resetPassword(token, password) {
+  const res = await fetch(`${API_URL}/auth/reset-password/${token}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password })
+  });
+  
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || "Errore nel reset della password");
+  }
+  
+  return await res.json();
+}

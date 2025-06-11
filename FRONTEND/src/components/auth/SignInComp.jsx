@@ -6,7 +6,7 @@ import { loginUser } from '../../api/authApi';
 import GoogleLoginButton from './GoogleLoginButton'
 import { toast } from 'react-toastify'
 
-export default function SignInComp({ isVisible, onRegister, className }) {
+export default function SignInComp({ isVisible, onRegister, onForgotPassword, className }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const { login } = useAuth()
@@ -38,12 +38,17 @@ export default function SignInComp({ isVisible, onRegister, className }) {
           value={email}
           onChange={e => setEmail(e.target.value)}/>
         <FloatingLabel 
-          id="signin-password" 
+          id="signin-password"          
           type="password" 
           label="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}/>
-        <a href="#" className='text-sm text-gray-700 hover:text-black'>Password dimenticata?</a>
+        <button 
+          type="button" 
+          onClick={onForgotPassword}
+          className='text-sm text-gray-700 hover:text-black block mb-2 cursor-pointer'>
+          Password dimenticata?
+        </button>
         <div className='flex flex-col justify-center items-center'>
           <button className='transition duration-500 bg-red-400 hover:bg-red-600 text-white py-2 px-4 rounded-3xl flex items-center mt-1 cursor-pointer'>
             Accedi

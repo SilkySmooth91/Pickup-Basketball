@@ -16,6 +16,7 @@ import { ProtectedRoute, PublicRoute } from './components/auth/RouteGuards'
 import LoadingSpinner from './components/utils/LoadingSpinner'
 import NotFound from './pages/NotFound'
 import AboutPage from './pages/AboutPage'
+import ResetPasswordPage from './components/auth/ResetPasswordPage'
 
 export default function App() {
   return (
@@ -46,11 +47,11 @@ function AppRoutes() {
         <Route path="/event/:id" element={<ProtectedRoute><EventDetailsPage /></ProtectedRoute>} />
         <Route path="/events" element={<ProtectedRoute><YourEvents /></ProtectedRoute>} />
         <Route path="/players" element={<ProtectedRoute><SearchPlayersPage /></ProtectedRoute>} />
-        <Route path="/about" element={<AboutPage />} />
-        {/* Rotte pubbliche (reindirizzano se autenticati) */}
+        <Route path="/about" element={<AboutPage />} />        {/* Rotte pubbliche (reindirizzano se autenticati) */}
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />        
         <Route path="/google-callback" element={<GoogleCallback />} />
         <Route path="/events/:eventId" element={<EventDetailsPage />} />
+        <Route path="/reset-password" element={<PublicRoute><ResetPasswordPage /></PublicRoute>} />
         {/* Pagina 404 per rotte sconosciute */}
         <Route path="*" element={<NotFound />} />
       </Routes>

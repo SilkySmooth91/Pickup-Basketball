@@ -74,7 +74,7 @@ export default function RegisterComp({ isVisible, onBack, className }) {
         ? 'opacity-100 scale-100 translate-y-0' 
         : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
     } ${className}`}>
-      <form className="space-y-4 px-2 sm:px-0" onSubmit={handleSubmit}>
+      <form className="space-y-4 px-2 sm:px-0 pt-1" onSubmit={handleSubmit}>
         <div className="flex gap-4">
           <FloatingLabel
             id="nome-giocatore"
