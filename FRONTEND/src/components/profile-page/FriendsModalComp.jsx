@@ -67,7 +67,7 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-lg p-6 sm:w-11/12 md:w-full max-w-lg relative h-[50vh] max-h-[90vh] overflow-y-auto">
         <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={onClose} aria-label="Chiudi">×</button>
         <div className="flex items-center mb-4">
             <FontAwesomeIcon icon={faUsers} className="mr-2 text-orange-600"/>
@@ -97,7 +97,8 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
           )}
         </div>
         
-        {/* Lista amici */}        {activeTab === 'friends' && (
+        {/* Lista amici */}        
+        {activeTab === 'friends' && (
           <div className="space-y-4">
             {loadingFriends ? (
               <LoadingSpinner />
@@ -130,7 +131,8 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
           </div>
         )}
         
-        {/* Lista richieste */}        {activeTab === 'requests' && isOwner && (
+        {/* Lista richieste */}        
+        {activeTab === 'requests' && isOwner && (
           <div className="space-y-4">
             {loadingFriends ? (
               <LoadingSpinner />

@@ -20,7 +20,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [friendReqSent, setFriendReqSent] = useState(false)
-  const { accessToken, user } = useAuth(); // <-- fix: aggiungi user
+  const { accessToken, user } = useAuth();
 
   // Aggiorna i campi del form
   const handleChange = e => {
@@ -161,15 +161,15 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
 
       {/* MODALE */}
       {showModal && isOwner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+        <div className=" fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="edit-profile-modal bg-white rounded-lg shadow-lg p-8 sm:w-11/12 md:w-full max-w-md relative">
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl"
               onClick={() => setShowModal(false)}
               aria-label="Chiudi"
             >×</button>
             <h2 className="text-xl font-bold mb-4 text-orange-600">Modifica profilo</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 !mb-2">
               <label className="flex flex-col">
                 Età
                 <input

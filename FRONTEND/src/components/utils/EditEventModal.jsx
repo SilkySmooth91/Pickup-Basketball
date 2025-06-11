@@ -64,15 +64,16 @@ export default function EditEventModal({ eventId, isOpen, onClose, onEventUpdate
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
         <button
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
           onClick={() => onClose()}
-        >×</button>        <h2 className="text-xl font-bold mb-4 text-orange-600">Modifica evento</h2>
+        >×</button>        
+        <h2 className="text-xl font-bold mb-4 text-orange-600">Modifica evento</h2>
         {loading ? (
           <LoadingSpinner />
         ) : (
-          <form onSubmit={handleEditSubmit} className="flex flex-col gap-2 w-full">
+          <form onSubmit={handleEditSubmit} className="flex flex-col gap-2 w-full !mb-2">
             <FloatingLabel
               id="edit-title"
               type="text"

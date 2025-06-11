@@ -79,7 +79,8 @@ export default function EditCourtModal({ court, onClose, onUpdate }) {
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || 'Errore durante l\'aggiornamento del campetto');
-      }      const updatedCourt = await res.json();
+      }      
+      const updatedCourt = await res.json();
       
       // Notifica il componente padre dell'aggiornamento
       onUpdate(updatedCourt);
@@ -95,7 +96,7 @@ export default function EditCourtModal({ court, onClose, onUpdate }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative">
         <button 
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
           onClick={onClose}

@@ -130,11 +130,10 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto md:mt-12">
         <button 
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-          onClick={onClose}
-        >
+          onClick={onClose}>
           <FontAwesomeIcon icon={faClose} className="text-xl" />
         </button>
           {loading ? (
@@ -147,8 +146,7 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon 
                   icon={event.isprivate ? faLock : faLockOpen} 
-                  className={event.isprivate ? "text-orange-600" : "text-green-600"} 
-                />
+                  className={event.isprivate ? "text-orange-600" : "text-green-600"} />
                 <h2 className="text-2xl text-orange-600 font-semibold">{event.title}</h2>
               </div>
             </div>
@@ -198,8 +196,7 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                 className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-orange-400 to-red-500 text-white shadow transition hover:scale-105 hover:from-orange-500 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
                 title="Dettagli evento"
                 aria-label="Dettagli evento"
-                onClick={() => navigate(`/events/${event._id}`)}
-              >
+                onClick={() => navigate(`/events/${event._id}`)}>
                 <FontAwesomeIcon icon={faCircleInfo} className="text-lg mr-2" />
                 Dettagli
               </button>
@@ -211,39 +208,38 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                       type="text"
                       label="Titolo evento"
                       value={editForm.title}
-                      onChange={e => handleEditChange({ target: { name: 'title', value: e.target.value, type: 'text' } })}
-                    />
+                      onChange={e => handleEditChange({ target: { name: 'title', value: e.target.value, type: 'text' } })}/>
+
                     <FloatingLabel
                       id="edit-description"
                       asTextarea
                       label="Descrizione"
                       value={editForm.description}
                       onChange={e => handleEditChange({ target: { name: 'description', value: e.target.value, type: 'textarea' } })}
-                      rows={3}
-                    />
+                      rows={3}/>
+
                     <FloatingLabel
                       id="edit-datetime"
                       type="datetime-local"
                       label="Data e ora"
                       value={editForm.datetime}
-                      onChange={e => handleEditChange({ target: { name: 'datetime', value: e.target.value, type: 'datetime-local' } })}
-                    />
+                      onChange={e => handleEditChange({ target: { name: 'datetime', value: e.target.value, type: 'datetime-local' } })}/>
+
                     <FloatingLabel
                       id="edit-maxplayers"
                       type="number"
                       label="Numero massimo giocatori"
                       value={editForm.maxplayers}
-                      onChange={e => handleEditChange({ target: { name: 'maxplayers', value: e.target.value, type: 'number' } })}
-                    />
+                      onChange={e => handleEditChange({ target: { name: 'maxplayers', value: e.target.value, type: 'number' } })}/>
+
                     <label className="flex items-center gap-2 mb-2">
                       <input
                         type="checkbox"
                         name="isprivate"
                         checked={editForm.isprivate}
                         onChange={handleEditChange}
-                        className="accent-orange-600"
-                      />
-                      Evento privato
+                        className="accent-orange-600"/>
+                        Evento privato
                     </label>
                     {editError && <div className="text-red-500 text-sm mb-2">{editError}</div>}
                     <div className="flex gap-2 mt-2">
@@ -254,8 +250,7 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                 ) : (
                   <button 
                     className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 border border-orange-600 rounded-md hover:bg-orange-50 transition"
-                    onClick={() => setEditMode(true)}
-                  >
+                    onClick={() => setEditMode(true)}>
                     <FontAwesomeIcon icon={faPen} />
                     Modifica
                   </button>
@@ -272,8 +267,7 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                     actionLoading ||
                     (event.participants?.length >= event.maxplayers && !isParticipant) ||
                     (event.isprivate && !isCreator) // BLOCCA partecipazione se l'evento è privato.
-                  }
-                >
+                  }>
                   <FontAwesomeIcon icon={isParticipant ? faUserMinus : faUserPlus} />
                   {actionLoading 
                     ? 'Attendere...' 

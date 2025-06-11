@@ -113,12 +113,11 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
   };
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] md:mt-12">
         <button 
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
           onClick={onClose}
-          disabled={loading}
-        >
+          disabled={loading}>
           <FontAwesomeIcon icon={faClose} className="text-xl" />
         </button>
         
@@ -133,8 +132,9 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
           </div>
         )}
         
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">            <FloatingLabel
+        <form onSubmit={handleSubmit} className='!mb-2'>
+          <div className="space-y-4">            
+            <FloatingLabel
               id="event-title"
               type="text"
               label="Titolo evento *"

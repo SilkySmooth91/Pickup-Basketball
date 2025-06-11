@@ -8,3 +8,7 @@ body {
 .home-welcome-bg {
   background: url('https://images.pexels.com/photos/680074/pexels-photo-680074.jpeg') center center/cover no-repeat;
 }
+
+.edit-profile-modal {
+  max-height: 90% !important;
+}
