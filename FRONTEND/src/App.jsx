@@ -1,5 +1,6 @@
 import './styles/App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import HomePage from './pages/HomePage'
 import Profile from './pages/Profile'
 import MainMap from './pages/MainMap'
@@ -30,8 +31,21 @@ export default function App() {
 
 function AppRoutes() {
   const { loading } = useAuth();
+  const [forceRender, setForceRender] = useState(false);
   
-  if (loading) {
+  // Timeout di sicurezza per prevenire spinner infinito
+  useEffect(() => {
+    if (loading) {
+      const timeoutId = setTimeout(() => {
+        console.warn("Timeout di sicurezza attivato nell'AppRoutes - Forzando il rendering");
+        setForceRender(true);
+      }, 6000); // 6 secondi di timeout
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [loading]);
+  
+  if (loading && !forceRender) {
     return <LoadingSpinner />;
   }
   

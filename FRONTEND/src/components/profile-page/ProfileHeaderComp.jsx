@@ -6,6 +6,7 @@ import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from "../../context/AuthContext";
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
+import { getSentFriendRequests } from '../../api/friendApi';
 
 export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, onProfileUpdate }) {
   const avatarUrl = profile?.avatar || '/vite.svg'
@@ -20,6 +21,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [friendReqSent, setFriendReqSent] = useState(false)
+  const [checkingRequests, setCheckingRequests] = useState(false)
   const { accessToken, user } = useAuth();
 
   // Aggiorna i campi del form
@@ -63,6 +65,34 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
       bestskill: profile?.bestskill || ''
     })
   }, [profile])
+
+  // Controlla se esiste già una richiesta di amicizia inviata
+  useEffect(() => {
+    // Verifica solo se non è il profilo dell'utente stesso e se non sono già amici
+    if (!isOwner && profile && user && !isFriend && !friendReqSent && !checkingRequests) {
+      setCheckingRequests(true);
+      
+      getSentFriendRequests({ accessToken })
+        .then(requests => {
+          // Verifica se esiste già una richiesta inviata a questo utente
+          const alreadySent = requests.some(req => {
+            const toUserId = req.to._id || req.to;
+            return String(toUserId) === String(profile._id);
+          });
+          
+          if (alreadySent) {
+            setFriendReqSent(true);
+          }
+        })
+        .catch(err => {
+          console.error("Errore nel controllo delle richieste di amicizia:", err);
+        })
+        .finally(() => {
+          setCheckingRequests(false);
+        });
+    }
+  }, [profile, user, isOwner, accessToken, friendReqSent, checkingRequests]);
+  
   // Logica invio richiesta amicizia
   const handleAddFriend = async () => {
     try {

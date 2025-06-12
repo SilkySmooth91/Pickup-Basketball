@@ -38,7 +38,6 @@ export function AuthProvider({ children }) {  const [accessToken, setAccessToken
     setAccessToken(newAccessToken);
     localStorage.setItem("accessToken", newAccessToken);
   };
-
   // Al mount: controlla token esistenti e fai refresh
   useEffect(() => {
     const storedAccessToken = localStorage.getItem("accessToken");
@@ -58,9 +57,17 @@ export function AuthProvider({ children }) {  const [accessToken, setAccessToken
       return;
     }
     
+    // Imposta un timeout di sicurezza per garantire che loading non rimanga bloccato
+    const timeoutId = setTimeout(() => {
+      console.warn("Timeout di sicurezza attivato per il caricamento dell'autenticazione");
+      setLoading(false);
+    }, 5000); // 5 secondi di timeout di sicurezza
+    
     // Altrimenti esegui il refresh completo
     refreshToken(storedRefreshToken)
       .then(data => {
+        clearTimeout(timeoutId); // Cancella il timeout se il refresh ha successo
+        
         setAccessToken(data.accessToken);
         localStorage.setItem("accessToken", data.accessToken);
         
@@ -74,11 +81,15 @@ export function AuthProvider({ children }) {  const [accessToken, setAccessToken
         }
       })
       .catch(error => {
+        clearTimeout(timeoutId); // Cancella il timeout anche in caso di errore
         console.error("Errore nel refresh del token:", error);
         // Pulizia in caso di errore
         logout();
       })
       .finally(() => setLoading(false));
+      
+    // Cleanup function per cancellare il timeout
+    return () => clearTimeout(timeoutId);
   }, []);
   return (
     <AuthContext.Provider

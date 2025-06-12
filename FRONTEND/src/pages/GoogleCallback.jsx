@@ -43,12 +43,19 @@ export default function GoogleCallback() {
       return () => clearTimeout(timer);
     }
   }, [status, message, navigate]);
-
   // Effetto principale che gestisce l'autenticazione
   useEffect(() => {
     // Evita di eseguire questa funzione più di una volta
     if (processedRef.current) return;
     processedRef.current = true;
+    
+    // Imposta un timeout di sicurezza per garantire che l'utente non rimanga bloccato
+    const safetyTimeoutId = setTimeout(() => {
+      console.warn("Timeout di sicurezza attivato nel callback Google");
+      setLoading(false);
+      setStatus("error");
+      setMessage("Si è verificato un timeout durante l'autenticazione. Riprova.");
+    }, 8000); // 8 secondi di timeout
     
     const handleGoogleCallback = async () => {
       try {
@@ -94,6 +101,7 @@ export default function GoogleCallback() {
         setMessage(error.message || "Si è verificato un errore durante il login con Google");
       } finally {
         setLoading(false);
+        clearTimeout(safetyTimeoutId); // Cancella il timeout di sicurezza
       }
     };
     
@@ -102,6 +110,7 @@ export default function GoogleCallback() {
     // Cleanup function
     return () => {
       processedRef.current = true;
+      clearTimeout(safetyTimeoutId);
     };
   }, [login]);
 
