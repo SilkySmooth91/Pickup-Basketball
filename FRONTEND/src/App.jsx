@@ -7,6 +7,7 @@ import MainMap from './pages/MainMap'
 import CourtInfo from './pages/CourtInfo';
 import GoogleCallback from './pages/GoogleCallback';
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { FriendRequestProvider } from './context/FriendRequestContext'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import EventDetailsPage from './pages/EventDetailsPage'
@@ -22,9 +23,11 @@ import ResetPasswordPage from './components/auth/ResetPasswordPage'
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <FriendRequestProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </FriendRequestProvider>
     </AuthProvider>
   );
 }

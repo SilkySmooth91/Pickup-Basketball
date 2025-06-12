@@ -32,10 +32,9 @@ export default function YourEvents() {
         const data = await getUserEvents(userId, page, 10, { accessToken });
         
         setEvents(data.events);
-        setTotalPages(data.totalPages);
-      } catch (err) {
+        setTotalPages(data.totalPages);      } catch (err) {
         setError("Impossibile caricare gli eventi");
-        console.error(err);
+        // Gestione silenziosa dell'errore
       } finally {
         setLoading(false);
       }

@@ -32,11 +32,10 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
       if (isOwner) {
         requestsData = await getReceivedFriendRequests({ accessToken, refresh });
       }
-      setFriends(friendsData);
-      setFriendRequests(requestsData);
+      setFriends(friendsData);      setFriendRequests(requestsData);
     } catch (err) {
       toast.error('Errore nel caricamento degli amici');
-      console.error(err);
+      // Gestione silenziosa dell'errore
     } finally {
       setLoadingFriends(false);
     }
@@ -48,8 +47,7 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
       toast.success('Richiesta accettata!');
       fetchFriendsData(); // Refresh data
     } catch (err) {
-      toast.error('Errore nell\'accettare la richiesta');
-      console.error(err);
+      toast.error('Errore nell\'accettare la richiesta');      // Gestione silenziosa dell'errore
     }
   };
 
@@ -59,8 +57,7 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
       toast.success('Richiesta rifiutata');
       fetchFriendsData(); // Refresh data
     } catch (err) {
-      toast.error('Errore nel rifiutare la richiesta');
-      console.error(err);
+      toast.error('Errore nel rifiutare la richiesta');      // Gestione silenziosa dell'errore
     }
   };
 

@@ -52,11 +52,9 @@ export default function InfoCardComp({ profile, isOwner }) {
       const data = await res.json();
       
       if (!res.ok) {
-        throw new Error(data.error || 'Errore durante il cambio password');
-      }
+        throw new Error(data.error || 'Errore durante il cambio password');      }
       
       // Se arriviamo qui, tutto è andato bene
-      console.log("Password aggiornata con successo!");
       toast.success('Password aggiornata con successo!', {
         position: "top-center",
         autoClose: 3000,
@@ -65,11 +63,10 @@ export default function InfoCardComp({ profile, isOwner }) {
         pauseOnHover: true,
         draggable: true
       });
-      
-      setShowModal(false);
+        setShowModal(false);
       setForm({ old: '', pwd: '', repeat: '' });
     } catch (err) {
-      console.error("Errore cambio password:", err.message);
+      // Gestione silenziosa dell'errore
       setError(err.message);
       toast.error(err.message || 'Si è verificato un errore durante il cambio password');
     } finally {

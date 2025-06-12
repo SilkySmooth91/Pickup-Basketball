@@ -60,7 +60,7 @@ export default function CourtInfo() {  const { id } = useParams();
               navigate('/map');
             }
           }}
-          className="mb-4 flex items-center gap-2 py-2 px-4 rounded-md shadow bg-white hover:bg-gray-100 text-orange-600 hover:text-orange-700 transition-colors font-medium"
+          className="mb-4 flex items-center gap-2 py-2 px-4 rounded-md shadow bg-white hover:bg-gray-100 text-orange-600 hover:text-orange-700 transition-colors font-medium cursor-pointer"
         >
           <FontAwesomeIcon icon={faArrowLeft} />
           Torna alla mappa

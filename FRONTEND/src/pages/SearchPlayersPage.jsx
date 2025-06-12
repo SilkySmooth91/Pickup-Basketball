@@ -5,21 +5,35 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus, faCheck } from "@fortawesome/free-solid-svg-icons";
-import { sendFriendRequest, getFriends, getSentFriendRequests } from "../api/friendApi";
+import { sendFriendRequest, getFriends } from "../api/friendApi";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
 import ImageWithFallback from "../components/utils/ImageWithFallback";
 import Footer from '../components/utils/Footer';
+import { useFriendRequests } from "../context/FriendRequestContext";
 
-export default function SearchPlayersPage() {  const { accessToken, user } = useAuth();
+export default function SearchPlayersPage() {  
+  const { accessToken, user } = useAuth();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [friends, setFriends] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
+  
+  // Usiamo il contesto globale per le richieste di amicizia
+  const { 
+    sentRequests, 
+    pendingRequests, 
+    addPendingRequest, 
+    removePendingRequest,
+    addSentRequest,
+    isRequestSent,
+    isRequestPending,
+    loadSentRequests
+  } = useFriendRequests();
   useEffect(() => {
     if (query.length < 3) {
       setResults([]);
@@ -68,25 +82,18 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
         }
       }, 400)
     );
-  }, [query, accessToken, user]);
-  useEffect(() => {
+  }, [query, accessToken, user]);  useEffect(() => {
     if (!accessToken || !user) return;
+    
+    // Carica la lista degli amici
     getFriends(null, { accessToken })
       .then(friendsList => setFriends(friendsList.map(f => f._id)))
       .catch(() => setFriends([]));
     
-    // Carica anche le richieste di amicizia inviate
-    getSentFriendRequests({ accessToken })
-      .then(requests => {
-        // Estrai gli ID degli utenti a cui sono state inviate richieste
-        const sentRequestIds = requests.map(req => req.to._id || req.to);
-        setSentRequests(sentRequestIds);
-      })
-      .catch(err => {
-        console.error("Errore nel caricamento delle richieste inviate:", err);
-        setSentRequests([]);
-      });
-  }, [accessToken, user]);  const handleAddFriend = async (userId) => {
+    // Carica le richieste di amicizia inviate usando il contesto
+    // Non forziamo il ricaricamento, usiamo la cache implementata nel contesto
+    loadSentRequests();
+  }, [accessToken, user, loadSentRequests]);const handleAddFriend = async (userId) => {
     // Assicuriamoci che gli ID siano stringhe valide
     const currentUserId = user?.id ? String(user.id) : user?._id ? String(user._id) : "";
     const targetUserId = userId ? String(userId).trim() : "";
@@ -101,29 +108,27 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
       toast.error("Non puoi inviare una richiesta a te stesso");
       return;
     }
-    
-    // Mostra un toast di caricamento
+
+    // Verifica se esiste già una richiesta inviata usando il contesto
+    if (isRequestSent(targetUserId)) {
+      toast.info("Hai già inviato una richiesta a questo utente");
+      return;
+    }    // Verifica se è già in corso una richiesta per questo utente usando il contesto
+    if (isRequestPending(targetUserId)) {
+      // Richiesta già in corso per questo utente
+      return;
+    }
+
+    // Aggiungi l'utente alla lista delle richieste in corso usando il contesto
+    addPendingRequest(targetUserId);
+      // Mostra un toast di caricamento
     const toastId = toast.loading("Invio richiesta in corso...");
-      // Imposta un timeout per assicurarsi che il toast non rimanga visibile troppo a lungo
-    const timeoutId = setTimeout(() => {
-      toast.update(toastId, {
-        render: "Richiesta inviata. Aggiorna la pagina per vedere lo stato aggiornato.",
-        type: "info",
-        isLoading: false,
-        autoClose: 5000,
-        closeOnClick: true
-      });
-      
-      // Aggiorna comunque l'UI per dare feedback all'utente
-      updateUIAfterRequest(userId);
-    }, 5000);
-      try {
-      console.log("Invio richiesta di amicizia a:", targetUserId);
+    
+    try {
+      // Invia la richiesta di amicizia
       const response = await sendFriendRequest(targetUserId, { accessToken });
       
-      // Cancella il timeout perché abbiamo ottenuto una risposta
-      clearTimeout(timeoutId);
-        // Aggiorna il toast con un messaggio di successo
+      // Aggiorna il toast con un messaggio di successo
       toast.update(toastId, {
         render: "Richiesta di amicizia inviata con successo!",
         type: "success",
@@ -134,32 +139,32 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
       
       // Aggiorna l'UI
       updateUIAfterRequest(targetUserId);
-      
-      // Aggiorna anche la lista delle richieste inviate
-      setSentRequests(prev => [...prev, targetUserId]);
+        // Aggiungi alla lista delle richieste inviate usando il contesto
+      addSentRequest(targetUserId);
     } catch (err) {
-      // Cancella il timeout perché abbiamo ottenuto una risposta (anche se è un errore)
-      clearTimeout(timeoutId);
-      
-      console.error("Errore invio richiesta:", err, "a userId:", targetUserId);
-      
+      // Gestione errori
       let errorMessage = "Errore durante l'invio della richiesta di amicizia";
-        // Gestione errori più dettagliata
+      
+      // Gestione errori più dettagliata
       if (err?.response?.status === 409) {
         errorMessage = "Richiesta di amicizia già inviata o già amici";
         // Considera la richiesta come inviata anche in caso di errore 409
         updateUIAfterRequest(targetUserId);
-        setSentRequests(prev => [...prev, targetUserId]);
+        addSentRequest(targetUserId);
       } else if (err?.message) {
         errorMessage = err.message;
       }
-        toast.update(toastId, {
+      
+      toast.update(toastId, {
         render: errorMessage,
         type: "error",
         isLoading: false,
         autoClose: 3000,
         closeOnClick: true
       });
+    } finally {
+      // Rimuovi l'utente dalla lista delle richieste in corso usando il contesto
+      removePendingRequest(targetUserId);
     }
   };
   
@@ -203,8 +208,9 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
               // Se l'utente corrente non ha ID o gli ID sono diversi, mostra il risultato
               return !currentUserId || resultUserId !== currentUserId;
             })            
-            .map(userResult => {
-            const isFriend = friends.includes(userResult._id);            const isRequestSent = sentRequests.includes(userResult._id) || userResult.requestSent;
+            .map(userResult => {            const isFriend = friends.includes(userResult._id);
+            const isRequestSent = sentRequests.includes(userResult._id) || userResult.requestSent;
+            const isPending = pendingRequests.has(userResult._id);
             return (
               <div key={userResult._id} className="bg-white shadow-xl rounded-xl p-4 flex items-center gap-4 border border-orange-100">
                 <ImageWithFallback
@@ -237,8 +243,7 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
                           <FontAwesomeIcon icon={faCheck} />
                           <span>Amico</span>
                         </button>
-                      );
-                    } else if (isRequestSent) {
+                      );                    } else if (isRequestSent) {
                       return (
                         <button
                           type="button"
@@ -246,6 +251,16 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
                           disabled>
                           <FontAwesomeIcon icon={faCheck} />
                           <span>Richiesta inviata</span>
+                        </button>
+                      );
+                    } else if (isPending) {
+                      return (
+                        <button
+                          type="button"
+                          className="ml-2 py-2 px-3 rounded-full bg-gray-100 text-gray-500 border border-gray-300 flex items-center gap-2 cursor-default"
+                          disabled>
+                          <LoadingSpinner size="sm" />
+                          <span>Invio...</span>
                         </button>
                       );
                     } else {

@@ -118,7 +118,7 @@ export default function CourtMarkers({ searchedCoords }) {
                   <div className="relative inline-block">
                     <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-md p-[1px]"></div>
                     <button
-                      className="relative py-3 px-4 rounded-md bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-normal transition-colors duration-200 flex items-center justify-center gap-2"
+                      className="relative py-3 px-4 rounded-md bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-normal transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer"
                       onClick={() => navigate(`/court/${court._id}`)}>
                       <FontAwesomeIcon icon={faInfoCircle} className="w-4 h-4" />
                       Dettagli Campetto

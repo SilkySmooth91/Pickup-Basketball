@@ -5,9 +5,10 @@ import { faCalendar } from '@fortawesome/free-regular-svg-icons'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from "../../context/AuthContext";
+import { useFriendRequests } from "../../context/FriendRequestContext";
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
 import ImageWithFallback from '../../components/utils/ImageWithFallback';
-import { getSentFriendRequests } from '../../api/friendApi';
+import { toast } from 'react-toastify';
 
 export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, onProfileUpdate }) {
   const avatarUrl = profile?.avatar || '/vite.svg'
@@ -21,9 +22,16 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [friendReqSent, setFriendReqSent] = useState(false)
-  const [checkingRequests, setCheckingRequests] = useState(false)
+  const [sendingRequest, setSendingRequest] = useState(false)
   const { accessToken, user } = useAuth();
+  
+  // Usa il contesto per le richieste di amicizia
+  const { 
+    sentRequests, 
+    isRequestSent,
+    addSentRequest,
+    loadSentRequests
+  } = useFriendRequests();
 
   // Aggiorna i campi del form
   const handleChange = e => {
@@ -37,7 +45,8 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${profile._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${profile._id}`, 
+      {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -55,7 +64,6 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
       setLoading(false)
     }
   }
-
   // Aggiorna i dati del form se cambia il profilo
   useEffect(() => {
     setForm({
@@ -67,36 +75,23 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
     })
   }, [profile])
 
-  // Controlla se esiste già una richiesta di amicizia inviata
+  // Carica le richieste inviate usando il contesto
   useEffect(() => {
-    // Verifica solo se non è il profilo dell'utente stesso e se non sono già amici
-    if (!isOwner && profile && user && !isFriend && !friendReqSent && !checkingRequests) {
-      setCheckingRequests(true);
-      
-      getSentFriendRequests({ accessToken })
-        .then(requests => {
-          // Verifica se esiste già una richiesta inviata a questo utente
-          const alreadySent = requests.some(req => {
-            const toUserId = req.to._id || req.to;
-            return String(toUserId) === String(profile._id);
-          });
-          
-          if (alreadySent) {
-            setFriendReqSent(true);
-          }
-        })
-        .catch(err => {
-          console.error("Errore nel controllo delle richieste di amicizia:", err);
-        })
-        .finally(() => {
-          setCheckingRequests(false);
-        });
+    if (!isOwner && profile && user) {
+      loadSentRequests();
     }
-  }, [profile, user, isOwner, accessToken, friendReqSent, checkingRequests]);
-  
-  // Logica invio richiesta amicizia
+  }, [profile, user, isOwner, loadSentRequests]);  // Logica invio richiesta amicizia
   const handleAddFriend = async () => {
+    // Evita doppie richieste
+    if (isRequestSent(profile._id) || sendingRequest) {
+      return;
+    }
+    
+    setSendingRequest(true);
+    
     try {
+      const toastId = toast.loading("Invio richiesta in corso...");
+      
       const res = await fetch(
         `${import.meta.env.VITE_API_URL || "http://localhost:3001"}/friends/requests`,
         {
@@ -108,9 +103,32 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
           body: JSON.stringify({ to: profile._id })
         }
       );
-      if (res.ok) setFriendReqSent(true);
+      
+      if (res.ok) {
+        // Aggiorna il contesto
+        addSentRequest(profile._id);
+        
+        toast.update(toastId, {
+          render: "Richiesta di amicizia inviata con successo!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+          closeOnClick: true
+        });
+      } else {
+        const errorData = await res.json().catch(() => ({ message: "Errore durante l'invio della richiesta" }));
+        toast.update(toastId, {
+          render: errorData.message || "Errore durante l'invio della richiesta",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+          closeOnClick: true
+        });      }
     } catch (err) {
-      // Gestisci eventuali errori
+      toast.error("Errore di rete durante l'invio della richiesta");
+      // Gestione silenziosa dell'errore
+    } finally {
+      setSendingRequest(false);
     }
   };
 
@@ -163,7 +181,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
             </span>
           </div>
         </div>
-        {/* Bottone modifica profilo o aggiungi amico */}
+        {/* Bottone modifica profilo o aggiungi amico */}        
         {isOwner ? (
           <button
             className="cursor-pointer w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
@@ -179,12 +197,12 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
             Siete amici
           </button>
         ) : (
-          <button
+          <button            
             className="cursor-pointer w-auto mt-4 md:mt-0 md:mr-5 bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow hover:bg-gray-100 transition"
             onClick={handleAddFriend}
-            disabled={friendReqSent}>
+            disabled={isRequestSent(profile?._id) || sendingRequest}>
             <FontAwesomeIcon icon={faUserPlus} className='mr-3' />
-            {friendReqSent ? "Richiesta inviata" : "Aggiungi amico"}
+            {isRequestSent(profile?._id) ? "Richiesta inviata" : sendingRequest ? "Invio in corso..." : "Aggiungi amico"}
           </button>
         )}
       </div>
@@ -263,7 +281,8 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
                   onChange={handleChange}
                   className="border rounded px-2 py-1 mt-1"
                 />
-              </label>              {error && <div className="text-red-500">{error}</div>}
+              </label>              
+              {error && <div className="text-red-500">{error}</div>}
               <button
                 type="submit"
                 className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition"

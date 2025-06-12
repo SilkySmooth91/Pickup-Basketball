@@ -45,13 +45,8 @@ export default function EditCourtModal({ court, onClose, onUpdate }) {
       });
     }
   };  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault();    setLoading(true);
     setError(null);
-
-    // Debug info
-    console.log('Court object:', court);
-    console.log('Court ID:', court?._id);
 
     // Se non ci sono campi modificati, chiudi semplicemente il modale
     if (Object.keys(changedFields).length === 0) {
