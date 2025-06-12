@@ -11,7 +11,7 @@ import ImageWithFallback from '../../components/utils/ImageWithFallback';
 import { toast } from 'react-toastify';
 
 export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, onProfileUpdate }) {
-  const avatarUrl = profile?.avatar || '';  // Rimuovo il fallback hardcoded per usare quello del componente
+  const avatarUrl = profile?.avatar || '';
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState({
     age: profile?.age || '',
