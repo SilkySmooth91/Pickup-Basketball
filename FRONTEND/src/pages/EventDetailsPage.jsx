@@ -13,6 +13,7 @@ import CommentsSection from '../components/utils/CommentsSection';
 import EditEventModal from '../components/utils/EditEventModal';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
+import ImageWithFallback from '../components/utils/ImageWithFallback';
 import Footer from '../components/utils/Footer';
 
 export default function EventDetailsPage() {
@@ -102,12 +103,11 @@ export default function EventDetailsPage() {
                   <h2 className="text-3xl font-bold text-white drop-shadow">{event.title}</h2>
                   <FontAwesomeIcon 
                     icon={event.isprivate ? faLock : faLockOpen} 
-                    className={event.isprivate ? "text-orange-600" : "text-green-500"} 
-                    title={event.isprivate ? 'Evento privato' : 'Evento pubblico'}/>
+                    className={event.isprivate ? "text-orange-600" : "text-green-500"}                    title={event.isprivate ? 'Evento privato' : 'Evento pubblico'}/>
                 </div>
                 {event.creator && (
                   <div className="flex items-center gap-2">
-                    <img src={event.creator.avatar || '/vite.svg'} alt={event.creator.username} className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+                    <ImageWithFallback src={event.creator.avatar || '/vite.svg'} alt={event.creator.username} className="w-8 h-8 rounded-full border-2 border-white object-cover" />
                     <span className="text-orange-500 font-medium drop-shadow">{event.creator.username}</span>
                   </div>
                 )}
@@ -199,10 +199,9 @@ export default function EventDetailsPage() {
           <div className="w-full md:w-1/5 bg-white rounded-lg shadow-xl p-4 flex flex-col gap-2 h-fit self-start mt-6 md:mt-0">
             <div className="font-semibold text-orange-700 mb-2">Partecipanti</div>
             {event.participants?.length > 0 ? (
-              <>
-                {(showAllParticipants ? event.participants : event.participants.slice(0, 9)).map(p => (
+              <>                {(showAllParticipants ? event.participants : event.participants.slice(0, 9)).map(p => (
                   <div key={p._id} className="flex items-center gap-2 cursor-pointer hover:bg-orange-50 rounded p-1 transition" onClick={() => window.location.href = `/profile/${p._id}` }>
-                    <img src={p.avatar || '/vite.svg'} alt={p.username} className="w-8 h-8 rounded-full object-cover border-2 border-orange-600" />
+                    <ImageWithFallback src={p.avatar || '/vite.svg'} alt={p.username} className="w-8 h-8 rounded-full object-cover border-2 border-orange-600" />
                     <span className="font-medium text-gray-700">{p.username}</span>
                   </div>
                 ))}

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { getFriends, getReceivedFriendRequests, acceptFriendRequest, rejectFriendRequest } from '../../api/friendApi';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
+import ImageWithFallback from '../../components/utils/ImageWithFallback';
 
 export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }) {
   const [activeTab, setActiveTab] = useState('friends');
@@ -110,11 +111,10 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
                   key={friend._id} 
                   to={`/profile/${friend._id}`}
                   className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition"
-                  onClick={onClose}
-                >
+                  onClick={onClose}                >
                   <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden flex-shrink-0">
                     {friend.avatar ? (
-                      <img src={friend.avatar} alt={friend.username} className="w-full h-full object-cover" />
+                      <ImageWithFallback src={friend.avatar} alt={friend.username} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-orange-200">
                         <FontAwesomeIcon icon={faUser} className="text-orange-500" />
@@ -140,20 +140,13 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
               <div className="text-center py-4 text-gray-500">Nessuna richiesta di amicizia</div>
             ) : (
               friendRequests.map(request => (
-                <div key={request._id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100">
-                  <div className="flex items-center">
+                <div key={request._id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100">                  <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden flex-shrink-0">
                       {request.from && request.from.avatar ? (
-                        <img 
+                        <ImageWithFallback 
                           src={request.from.avatar} 
                           alt={request.from.username || 'Utente'} 
                           className="w-full h-full object-cover" 
-                          onError={(e) => {
-                            console.log("Errore caricamento avatar:", e);
-                            e.target.onerror = null;
-                            e.target.style.display = 'none';
-                            e.target.parentNode.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-orange-200"><svg class="text-orange-500" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"></path></svg></div>`;
-                          }}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-orange-200">

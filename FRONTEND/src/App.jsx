@@ -39,7 +39,7 @@ function AppRoutes() {
       const timeoutId = setTimeout(() => {
         console.warn("Timeout di sicurezza attivato nell'AppRoutes - Forzando il rendering");
         setForceRender(true);
-      }, 6000); // 6 secondi di timeout
+      }, 6000);
       
       return () => clearTimeout(timeoutId);
     }

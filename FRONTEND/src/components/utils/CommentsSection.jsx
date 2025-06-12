@@ -6,6 +6,7 @@ import { faComment, faComments } from '@fortawesome/free-regular-svg-icons';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import FloatingLabel from './FloatingLabel';
 import LoadingSpinner from './LoadingSpinner';
+import ImageWithFallback from './ImageWithFallback';
 
 export default function CommentsSection({ targetId, targetType }) {
   const { user, accessToken } = useAuth();
@@ -75,11 +76,10 @@ export default function CommentsSection({ targetId, targetType }) {
               <li className="text-gray-400 text-sm">Non ci sono ancora commenti. Aggiungine uno!</li>
             ) : (
               comments.map((c) => (
-                <li key={c._id} className="bg-orange-50 rounded-md p-3 flex flex-col items-start gap-3">
-                  <div className='flex items-center justify-start'>
+                <li key={c._id} className="bg-orange-50 rounded-md p-3 flex flex-col items-start gap-3">                  <div className='flex items-center justify-start'>
                       <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                         {c.author?.avatar ? (
-                          <img src={c.author.avatar} alt={c.author.username || 'Utente'} className="w-full h-full object-cover" />
+                          <ImageWithFallback src={c.author.avatar} alt={c.author.username || 'Utente'} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-orange-200">
                             <FontAwesomeIcon icon={faComments} className="text-orange-400 text-lg" />

@@ -6,6 +6,7 @@ import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from "../../context/AuthContext";
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
+import ImageWithFallback from '../../components/utils/ImageWithFallback';
 import { getSentFriendRequests } from '../../api/friendApi';
 
 export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, onProfileUpdate }) {
@@ -123,11 +124,10 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
         items-center
         gap-y-4 md:gap-y-0 md:gap-x-6
         mb-8 bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 shadow-xl rounded-lg
-        p-6
-      ">
+        p-6      ">
         {/* Avatar + pulsante */}
         <div className="relative mb-2 md:mb-0">
-          <img
+          <ImageWithFallback
             src={avatarUrl}
             alt="Avatar"
             className="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover border-4 border-red-200 shadow"

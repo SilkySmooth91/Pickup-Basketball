@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import '/src/styles/HeaderComp.css'
 import logo from '../../assets/newLogo.jpg';
 import { faUser } from "@fortawesome/free-regular-svg-icons";
+import ImageWithFallback from "./ImageWithFallback";
 
 export default function HeaderComp() {
   const { user, accessToken, logout } = useAuth();
@@ -101,20 +102,18 @@ export default function HeaderComp() {
             className="flex items-center text-2xl text-orange-500 focus:outline-none"
             onClick={() => setMobileMenuOpen((v) => !v)}
             aria-label="Apri menu">
-            <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
-          </button>
+            <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />          </button>
           {/* Logo & Title (center, mobile) */}          <Link to="/" className="flex flex-row items-center justify-center gap-1 flex-1">
-            <img src={logo} alt="Logo" className="h-9 w-9 object-contain select-none"/>
+            <ImageWithFallback src={logo} alt="Logo" className="h-9 w-9 object-contain select-none"/>
             <span className="text-xl font-bold text-center text-orange-600 leading-none" style={{ letterSpacing: 1 }}>PickupBasketball</span>
           </Link>
           {/* Avatar & Dropdown (right, mobile) - mostra solo se autenticato */}
           {isAuthenticated && (
             <div className="relative ml-2" ref={dropdownRefMobile}>
               <button
-                className="flex items-center gap-2 focus:outline-none"
-                onClick={() => setDropdownOpenMobile((v) => !v)}
+                className="flex items-center gap-2 focus:outline-none"                onClick={() => setDropdownOpenMobile((v) => !v)}
                 aria-label="User menu">
-                <img
+                <ImageWithFallback
                   src={user?.avatar || "/vite.svg"}
                   alt="avatar"
                   className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>              
@@ -146,10 +145,9 @@ export default function HeaderComp() {
         </div>
 
         {/* Desktop layout */}
-        <div className="hidden md:flex items-center justify-between w-full">
-          {/* Logo (desktop) */}
+        <div className="hidden md:flex items-center justify-between w-full">          {/* Logo (desktop) */}
           <Link to="/" className="flex items-center gap-2 text-orange-600 font-bold text-2xl">
-            <img src={logo} alt="Logo" className="h-10 w-10 object-contain select-none" style={{marginRight: 4}} />
+            <ImageWithFallback src={logo} alt="Logo" className="h-10 w-10 object-contain select-none" style={{marginRight: 4}} />
             <span className="hidden sm:inline">PickupBasketball</span>
           </Link>
           {/* Nav links */}          <div className="flex-1 flex justify-center">
@@ -158,11 +156,10 @@ export default function HeaderComp() {
           {/* Avatar & Dropdown (desktop) - mostra solo se autenticato */}
           {isAuthenticated && (
             <div className="relative ml-4" ref={dropdownRef}>
-              <button
-                className="flex items-center gap-2 focus:outline-none cursor-pointer"
+              <button                className="flex items-center gap-2 focus:outline-none cursor-pointer"
                 onClick={() => setDropdownOpen((v) => !v)}
                 aria-label="User menu">
-                <img
+                <ImageWithFallback
                   src={user?.avatar || "/vite.svg"}
                   alt="avatar"
                   className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>

@@ -8,6 +8,7 @@ import { faUserPlus, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { sendFriendRequest, getFriends, getSentFriendRequests } from "../api/friendApi";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
+import ImageWithFallback from "../components/utils/ImageWithFallback";
 import Footer from '../components/utils/Footer';
 
 export default function SearchPlayersPage() {  const { accessToken, user } = useAuth();
@@ -181,7 +182,9 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
               value={query}
               onChange={e => setQuery(e.target.value)}
               className="flex-1 border border-orange-300 rounded-3xl p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-orange-400"/>
-          </form>        </div>        <div className="w-full max-w-md mt-4 space-y-3 px-4">
+          </form>        
+        </div>        
+        <div className="w-full max-w-md mt-4 space-y-3 px-4">
           {loading && <LoadingSpinner />}
           {error && <div className="text-center text-red-500">{error}</div>}
           
@@ -201,11 +204,10 @@ export default function SearchPlayersPage() {  const { accessToken, user } = use
               return !currentUserId || resultUserId !== currentUserId;
             })            
             .map(userResult => {
-            const isFriend = friends.includes(userResult._id);
-            const isRequestSent = sentRequests.includes(userResult._id) || userResult.requestSent;
+            const isFriend = friends.includes(userResult._id);            const isRequestSent = sentRequests.includes(userResult._id) || userResult.requestSent;
             return (
               <div key={userResult._id} className="bg-white shadow-xl rounded-xl p-4 flex items-center gap-4 border border-orange-100">
-                <img
+                <ImageWithFallback
                   src={userResult.avatar || "/default-avatar.png"}
                   alt={userResult.username}
                   className="w-12 h-12 rounded-full object-cover border border-orange-200"/>
