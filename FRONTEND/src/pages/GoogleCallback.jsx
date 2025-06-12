@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
@@ -8,17 +8,60 @@ export default function GoogleCallback() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState("pending"); // pending, success, error
+  const [message, setMessage] = useState("");
+  const processedRef = useRef(false);
+  const toastShownRef = useRef(false);
 
+  // Effetto di navigazione dopo che l'autenticazione è completata
   useEffect(() => {
+    if (status === "error") {
+      // Mostra il toast di errore solo una volta
+      if (!toastShownRef.current) {
+        toast.error(message || "Si è verificato un errore durante il login con Google");
+        toastShownRef.current = true;
+      }
+      
+      // Naviga alla homepage dopo un breve ritardo
+      const timer = setTimeout(() => {
+        navigate("/");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    
+    if (status === "success") {
+      // Mostra il toast di successo solo una volta
+      if (!toastShownRef.current) {
+        toast.success("Login con Google completato con successo!");
+        toastShownRef.current = true;
+      }
+      
+      // Naviga al profilo dopo un breve ritardo
+      const timer = setTimeout(() => {
+        navigate("/profile");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [status, message, navigate]);
+
+  // Effetto principale che gestisce l'autenticazione
+  useEffect(() => {
+    // Evita di eseguire questa funzione più di una volta
+    if (processedRef.current) return;
+    processedRef.current = true;
+    
     const handleGoogleCallback = async () => {
       try {
         const params = new URLSearchParams(window.location.search);
         const accessToken = params.get("accessToken");
         const refreshToken = params.get("refreshToken");
         
+        // Verifica la presenza dei token prima di procedere
         if (!accessToken || !refreshToken) {
-          toast.error("Login con Google fallito. Dati mancanti.");
-          navigate("/?google=fail");
+          console.error("Token mancanti nell'URL");
+          setStatus("error");
+          setMessage("Login con Google fallito. Dati mancanti.");
+          setLoading(false);
           return;
         }
         
@@ -30,34 +73,58 @@ export default function GoogleCallback() {
         });
         
         if (!response.ok) {
-          throw new Error("Errore nel recupero dei dati utente");
+          const errorData = await response.json().catch(() => ({}));
+          console.error("Risposta non valida:", response.status, errorData);
+          setStatus("error");
+          setMessage(errorData.error || "Errore nel recupero dati utente");
+          setLoading(false);
+          return;
         }
         
         const userData = await response.json();
         
         // Login con i dati dell'utente e i token
         await login(userData.user, accessToken, refreshToken);
-        toast.success("Login con Google completato con successo!");
-        navigate("/profile");
+        
+        // Imposta lo stato di successo
+        setStatus("success");
       } catch (error) {
         console.error("Errore durante il login con Google:", error);
-        toast.error("Si è verificato un errore durante il login con Google");
-        navigate("/?google=fail");
+        setStatus("error");
+        setMessage(error.message || "Si è verificato un errore durante il login con Google");
       } finally {
         setLoading(false);
       }
     };
-
+    
     handleGoogleCallback();
-  }, [login, navigate]);
+    
+    // Cleanup function
+    return () => {
+      processedRef.current = true;
+    };
+  }, [login]);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       {loading ? (
         <LoadingSpinner />
       ) : (
         <div className="text-center">
-          <p className="text-xl">Autenticazione completata!</p>
-          <p className="text-gray-600 mt-2">Verrai reindirizzato automaticamente...</p>
+          {status === "success" ? (
+            <>
+              <p className="text-xl text-green-600">Autenticazione completata con successo!</p>
+              <p className="text-gray-600 mt-2">Verrai reindirizzato al tuo profilo...</p>
+            </>
+          ) : status === "error" ? (
+            <>
+              <p className="text-xl text-red-600">Autenticazione fallita</p>
+              <p className="text-gray-600 mt-2">{message}</p>
+              <p className="text-gray-600">Verrai reindirizzato alla pagina iniziale...</p>
+            </>
+          ) : (
+            <p className="text-xl">Elaborazione autenticazione...</p>
+          )}
         </div>
       )}
     </div>

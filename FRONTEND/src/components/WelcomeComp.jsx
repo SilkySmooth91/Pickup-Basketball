@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import '/src/styles/WelcomeComp.css'
 import SignInComp from './auth/SignInComp'
 import RegisterComp from './auth/RegisterComp'
@@ -12,7 +13,20 @@ export default function WelcomeComp() {
   const [isLogin, setIsLogin] = useState(false)
   const [isRegistering, setIsRegistering] = useState(false)
   const [isForgotPassword, setIsForgotPassword] = useState(false)
-  return (    
+  const [searchParams] = useSearchParams()
+  
+  // Controlla se l'URL contiene parametri specifici all'avvio
+  useEffect(() => {
+    // Verifica se l'URL contiene un parametro google=fail (autenticazione Google fallita)
+    if (searchParams.get('google') === 'fail') {
+      // Utilizza setTimeout per assicurarsi che il toast venga mostrato dopo il rendering iniziale
+      setTimeout(() => {
+        toast.error('L\'autenticazione con Google non è andata a buon fine. Riprova.')
+      }, 300)
+    }
+  }, [searchParams])
+  
+  return (
     <div className='h-screen w-full flex flex-col justify-center items-center bg-[url(https://res.cloudinary.com/dyg6giw5q/image/upload/v1749401570/market-square-the-pass_xbyjvl.jpg)] bg-bg-local bg-cover bg-center bg-fixed'>        
       <div className={`mx-2 transition-all duration-800 ease-in-out ${
           isTitleMoved 
