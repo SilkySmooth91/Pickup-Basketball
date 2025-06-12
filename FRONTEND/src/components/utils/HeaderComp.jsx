@@ -16,6 +16,10 @@ export default function HeaderComp() {
   const dropdownRef = useRef(null);
   const dropdownRefMobile = useRef(null);
   const navigate = useNavigate();
+
+  // Controllo se l'utente è autenticato
+  const isAuthenticated = !!user;
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -64,19 +68,24 @@ export default function HeaderComp() {
     }
     logout();
     navigate("/");
-  };
-  // Mobile nav links
+  };  // Mobile nav links
   const navLinks = (
     <ul className="flex flex-col md:flex-row justify-center text-base font-medium">
-      <li className="inline-block">
-        <Link to="/map" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Mappa</Link>
-      </li>
-      <li className="inline-block">
-        <Link to="/events" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>I tuoi eventi</Link>
-      </li>
-      <li className="inline-block">
-        <Link to="/players" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Cerca giocatori</Link>
-      </li>
+      {/* Mostra i link a pagine protette solo se l'utente è autenticato */}
+      {isAuthenticated ? (
+        <>
+          <li className="inline-block">
+            <Link to="/map" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Mappa</Link>
+          </li>
+          <li className="inline-block">
+            <Link to="/events" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>I tuoi eventi</Link>
+          </li>
+          <li className="inline-block">
+            <Link to="/players" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Cerca giocatori</Link>
+          </li>
+        </>
+      ) : null}
+      {/* Link pubblico sempre visibile */}
       <li className="inline-block">
         <Link to="/about" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>About</Link>
       </li>
@@ -94,43 +103,46 @@ export default function HeaderComp() {
             aria-label="Apri menu">
             <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
           </button>
-          {/* Logo & Title (center, mobile) */}
-          <Link to="/" className="flex flex-row items-center justify-center gap-1 flex-1">
+          {/* Logo & Title (center, mobile) */}          <Link to="/" className="flex flex-row items-center justify-center gap-1 flex-1">
             <img src={logo} alt="Logo" className="h-9 w-9 object-contain select-none"/>
             <span className="text-xl font-bold text-center text-orange-600 leading-none" style={{ letterSpacing: 1 }}>PickupBasketball</span>
           </Link>
-          {/* Avatar & Dropdown (right, mobile) */}
-          <div className="relative ml-2" ref={dropdownRefMobile}>
-            <button
-              className="flex items-center gap-2 focus:outline-none"
-              onClick={() => setDropdownOpenMobile((v) => !v)}
-              aria-label="User menu">
-              <img
-                src={user?.avatar || "/vite.svg"}
-                alt="avatar"
-                className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>              
-                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
-            </button>
-            {dropdownOpenMobile && (
-              <div className="absolute right-0 top-10 mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
-                zIndex: 'var(--z-dropdown)'
-              }}>
-                <Link
-                  to="/profile"
-                  className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
-                  onClick={() => setDropdownOpenMobile(false)}>
-                  <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
-                  Profilo
-                </Link>
-                <button
-                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
-                  onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-orange-600" />
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Avatar & Dropdown (right, mobile) - mostra solo se autenticato */}
+          {isAuthenticated && (
+            <div className="relative ml-2" ref={dropdownRefMobile}>
+              <button
+                className="flex items-center gap-2 focus:outline-none"
+                onClick={() => setDropdownOpenMobile((v) => !v)}
+                aria-label="User menu">
+                <img
+                  src={user?.avatar || "/vite.svg"}
+                  alt="avatar"
+                  className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>              
+                  <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
+              </button>
+              {dropdownOpenMobile && (
+                <div className="absolute right-0 top-10 mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
+                  zIndex: 'var(--z-dropdown)'
+                }}>
+                  <Link
+                    to="/profile"
+                    className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
+                    onClick={() => setDropdownOpenMobile(false)}>
+                    <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
+                    Profilo
+                  </Link>
+                  <button
+                    className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
+                    onClick={handleLogout}>
+                    <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-orange-600" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          {/* Placeholder vuoto per mantenere il layout quando non c'è l'avatar */}
+          {!isAuthenticated && <div className="w-9"></div>}
         </div>
 
         {/* Desktop layout */}
@@ -140,41 +152,43 @@ export default function HeaderComp() {
             <img src={logo} alt="Logo" className="h-10 w-10 object-contain select-none" style={{marginRight: 4}} />
             <span className="hidden sm:inline">PickupBasketball</span>
           </Link>
-          {/* Nav links */}
-          <div className="flex-1 flex justify-center">
-            {navLinks}          </div>
-          {/* Avatar & Dropdown (desktop) */}
-          <div className="relative ml-4" ref={dropdownRef}>
-            <button
-              className="flex items-center gap-2 focus:outline-none cursor-pointer"
-              onClick={() => setDropdownOpen((v) => !v)}
-              aria-label="User menu">
-              <img
-                src={user?.avatar || "/vite.svg"}
-                alt="avatar"
-                className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>
-              <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
-            </button>
-            {dropdownOpen && (
-              <div className="absolute right-0 top-11 mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
-                zIndex: 'var(--z-dropdown)'
-              }}>
-                <Link
-                  to="/profile"
-                  className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
-                  onClick={() => setDropdownOpen(false)}>
-                  <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
-                  Profilo
-                </Link>
-                <button
-                  className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
-                  onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-orange-600" />
-                  Logout
-                </button>
-              </div>
-            )}
+          {/* Nav links */}          <div className="flex-1 flex justify-center">
+            {navLinks}
           </div>
+          {/* Avatar & Dropdown (desktop) - mostra solo se autenticato */}
+          {isAuthenticated && (
+            <div className="relative ml-4" ref={dropdownRef}>
+              <button
+                className="flex items-center gap-2 focus:outline-none cursor-pointer"
+                onClick={() => setDropdownOpen((v) => !v)}
+                aria-label="User menu">
+                <img
+                  src={user?.avatar || "/vite.svg"}
+                  alt="avatar"
+                  className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>
+                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 top-11 mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
+                  zIndex: 'var(--z-dropdown)'
+                }}>
+                  <Link
+                    to="/profile"
+                    className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
+                    onClick={() => setDropdownOpen(false)}>
+                    <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
+                    Profilo
+                  </Link>
+                  <button
+                    className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
+                    onClick={handleLogout}>
+                    <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2 text-orange-600" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>        
         {/* Mobile menu overlay */}
         <div
