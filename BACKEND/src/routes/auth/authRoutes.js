@@ -8,10 +8,14 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import uniqueUserFields from "../../middlewares/uniqueUserFields.js";
+import passport from "passport";
+import googleStrategy from "../../auth/strategies/googleOAuth.js";
 
 const router = express.Router();
 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
 const FE_URL = process.env.FE_URL;
+
+passport.use(googleStrategy);
 
 /**
  * @openapi
@@ -552,6 +556,56 @@ router.patch("/change-password", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore aggiornamento password" });
+  }
+});
+
+// === GOOGLE OAUTH ROUTES ===
+router.get("/google", passport.authenticate("google", {
+  scope: ["profile", "email"],
+  session: false
+}));
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false, failureRedirect: FE_URL + "/?google=fail" }),
+  (req, res) => {
+    // I token sono in req.user (vedi googleOAuth.js)
+    // Redirigi al FE con i token come query string
+    const { accessToken, refreshToken } = req.user;
+    const redirectUrl = `${FE_URL}/google-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    res.redirect(redirectUrl);
+  }
+);
+
+/**
+ * @openapi
+ * /auth/me:
+ *   get:
+ *     summary: Recupera i dati dell'utente autenticato
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dati utente recuperati con successo
+ *       401:
+ *         description: Non autorizzato
+ *       404:
+ *         description: Utente non trovato
+ *       500:
+ *         description: Errore interno del server
+ */
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await usersModel.findById(req.user.id).select("-password -refreshToken");
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+    res.json({ user });
+  } catch (err) {
+    console.error("Errore nel recupero dati utente:", err);
+    res.status(500).json({ error: "Errore nel recupero dati utente" });
   }
 });
 
