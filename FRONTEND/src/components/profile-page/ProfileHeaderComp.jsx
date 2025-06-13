@@ -74,15 +74,16 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
       bestskill: profile?.bestskill || ''
     })
   }, [profile])
-
   // Carica le richieste inviate usando il contesto
   useEffect(() => {
     if (!isOwner && profile && user) {
       loadSentRequests();
     }
-  }, [profile, user, isOwner, loadSentRequests]);  // Logica invio richiesta amicizia
+  }, [profile, user, isOwner, loadSentRequests]);  
+
+  // Logica invio richiesta amicizia  
   const handleAddFriend = async () => {
-    // Evita doppie richieste
+    // Evita doppie richieste o richieste già inviate
     if (isRequestSent(profile._id) || sendingRequest) {
       return;
     }
@@ -210,7 +211,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
       {/* MODALE */}
       {showModal && isOwner && (
         <div className=" fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="edit-profile-modal bg-white rounded-lg shadow-lg p-8 sm:w-11/12 md:w-full max-w-md relative">
+          <div className="edit-profile-modal bg-white rounded-lg shadow-lg p-8 md:mt-10 sm:w-11/12 md:w-full max-w-md relative">
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl"
               onClick={() => setShowModal(false)}

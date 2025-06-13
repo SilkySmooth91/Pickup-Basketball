@@ -93,7 +93,7 @@ export default function SearchPlayersPage() {
     // Carica le richieste di amicizia inviate usando il contesto
     // Non forziamo il ricaricamento, usiamo la cache implementata nel contesto
     loadSentRequests();
-  }, [accessToken, user, loadSentRequests]);const handleAddFriend = async (userId) => {
+  }, [accessToken, user, loadSentRequests]);  const handleAddFriend = async (userId) => {
     // Assicuriamoci che gli ID siano stringhe valide
     const currentUserId = user?.id ? String(user.id) : user?._id ? String(user._id) : "";
     const targetUserId = userId ? String(userId).trim() : "";
@@ -113,15 +113,16 @@ export default function SearchPlayersPage() {
     if (isRequestSent(targetUserId)) {
       toast.info("Hai già inviato una richiesta a questo utente");
       return;
-    }    // Verifica se è già in corso una richiesta per questo utente usando il contesto
+    }    
+    
+    // Verifica se è già in corso una richiesta per questo utente usando il contesto
     if (isRequestPending(targetUserId)) {
       // Richiesta già in corso per questo utente
       return;
-    }
-
-    // Aggiungi l'utente alla lista delle richieste in corso usando il contesto
+    }// Aggiungi l'utente alla lista delle richieste in corso usando il contesto
     addPendingRequest(targetUserId);
-      // Mostra un toast di caricamento
+    
+    // Mostra un toast di caricamento
     const toastId = toast.loading("Invio richiesta in corso...");
     
     try {
