@@ -25,7 +25,6 @@ export default function CourtMarkers({ searchedCoords }) {
   const { accessToken } = useAuth();
   const map = useMap();
   const navigate = useNavigate();
-
   useEffect(() => {
     // Carica i campetti solo quando ci sono coordinate di ricerca
     if (searchedCoords) {
@@ -33,8 +32,15 @@ export default function CourtMarkers({ searchedCoords }) {
       setLoading(true);
       setError(null);
 
+      // Imposta un timeout per evitare che la richiesta rimanga in sospeso troppo a lungo
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+        setError('Timeout nella richiesta dei campetti');
+      }, 15000); // 15 secondi di timeout
+
       getNearbyCourts(lat, lng, 5, { accessToken })
         .then(data => {
+          clearTimeout(timeoutId);
           setCourts(data.courts || []);
           
           // Se sono stati trovati campetti, aggiusta lo zoom per mostrare tutti i marker
@@ -59,20 +65,86 @@ export default function CourtMarkers({ searchedCoords }) {
           }
         })
         .catch(err => {
+          clearTimeout(timeoutId);
           console.error('Errore nel caricamento dei campetti:', err);
-          setError('Impossibile caricare i campetti vicini');
+          setError(`Impossibile caricare i campetti vicini. ${err.message || ''}`);
         })
         .finally(() => {
+          clearTimeout(timeoutId);
           setLoading(false);
         });
     } else {
       // Resetta lo stato quando non ci sono coordinate
       setCourts([]);
     }
-  }, [searchedCoords, accessToken, map]);
 
-  if (!searchedCoords || loading || courts.length === 0) {
+    // Cleanup function per annullare il caricamento quando il componente viene smontato
+    return () => {
+      setLoading(false);
+      setError(null);
+    };
+  }, [searchedCoords, accessToken, map]);
+  if (!searchedCoords) {
     return null;
+  }
+
+  // Mostra un messaggio di errore se c'è stato un problema
+  if (error) {
+    return (
+      <div className="error-toast" style={{
+        position: 'absolute',
+        top: '70px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: 'rgba(220, 38, 38, 0.9)',
+        color: 'white',
+        padding: '10px 20px',
+        borderRadius: '4px',
+        zIndex: 1000,
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
+      }}>
+        {error}
+      </div>
+    );
+  }
+
+  // Mostra un indicatore di caricamento
+  if (loading) {
+    return (
+      <div className="loading-toast" style={{
+        position: 'absolute',
+        top: '70px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: 'rgba(34, 139, 230, 0.9)',
+        color: 'white',
+        padding: '10px 20px',
+        borderRadius: '4px',
+        zIndex: 1000,
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
+      }}>
+        Caricamento campetti in corso...
+      </div>
+    );
+  }
+
+  if (courts.length === 0) {
+    return (
+      <div className="info-toast" style={{
+        position: 'absolute',
+        top: '70px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: 'rgba(245, 158, 11, 0.9)',
+        color: 'white',
+        padding: '10px 20px',
+        borderRadius: '4px',
+        zIndex: 1000,
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
+      }}>
+        Nessun campetto trovato in questa zona
+      </div>
+    );
   }
 
   return (

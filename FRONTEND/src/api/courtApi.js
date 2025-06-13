@@ -60,12 +60,21 @@ export async function getNearbyCourts(lat, lng, distance = 5, auth) {
   // Converti km in metri per la query
   const distanceInMeters = distance * 1000;
   
-  const res = await fetchWithAuth(
-    `${API_URL}/courts?lat=${lat}&lng=${lng}&distance=${distanceInMeters}`,
-    {},
-    auth
-  );
-  
-  if (!res.ok) throw new Error("Errore nel recupero dei campetti vicini");
-  return await res.json();
+  try {
+    const res = await fetchWithAuth(
+      `${API_URL}/courts?lat=${lat}&lng=${lng}&distance=${distanceInMeters}`,
+      {},
+      auth
+    );
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || "Errore nel recupero dei campetti vicini");
+    }
+    
+    return await res.json();
+  } catch (error) {
+    console.error("Errore nel recupero dei campetti vicini:", error);
+    throw new Error(`Errore nel recupero dei campetti vicini: ${error.message}`);
+  }
 }

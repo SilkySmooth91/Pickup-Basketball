@@ -1,4 +1,5 @@
 let refreshPromise = null;
+let refreshAttemptMade = false; // Flag per evitare tentativi multipli di refresh
 
 export async function fetchWithAuth(url, options = {}, auth) {
   let finalOptions = { ...options };
@@ -11,44 +12,46 @@ export async function fetchWithAuth(url, options = {}, auth) {
 
   let res = await fetch(url, finalOptions);
 
-  if (res.status === 401 && auth?.refresh) {
+  // Tenta di fare il refresh solo se non è già stato fatto un tentativo nella catena di richieste
+  if (res.status === 401 && auth?.refresh && !refreshAttemptMade) {
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
     const refreshToken = localStorage.getItem("refreshToken");
-    console.log("[DEBUG] 401 ricevuto, provo refresh...");
-    console.log("[DEBUG] Refresh token letto da localStorage:", refreshToken);
-
+    
+    // Imposta il flag per evitare tentativi ripetuti
+    refreshAttemptMade = true;
+    
     if (!refreshPromise) {
       refreshPromise = (async () => {
         if (refreshToken) {
-          const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken }),
-          });
-
-          let data = null;
           try {
-            data = await refreshRes.clone().json();
-            console.log("[DEBUG] Body risposta refresh:", data);
-          } catch (e) {
-            console.log("[DEBUG] Nessun body JSON nella risposta refresh.");
-          }
+            const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ refreshToken }),
+            });
 
-          if (refreshRes.ok && data && data.accessToken) {
-            console.log("[DEBUG] Refresh token ricevuto dal backend:", data.refreshToken);
-            auth.refresh(data.accessToken);
-            if (data.refreshToken) {
-              localStorage.setItem("refreshToken", data.refreshToken);
-              console.log("[DEBUG] Refresh token salvato in localStorage:", localStorage.getItem("refreshToken"));
+            let data = null;
+            try {
+              data = await refreshRes.clone().json();
+            } catch (e) {
+              // Errore silenzioso, nessun body JSON
             }
-            return data.accessToken;
-          } else {
-            console.warn("[DEBUG] Refresh fallito, faccio logout. Status:", refreshRes.status, "Body:", data);
+
+            if (refreshRes.ok && data && data.accessToken) {
+              auth.refresh(data.accessToken);
+              if (data.refreshToken) {
+                localStorage.setItem("refreshToken", data.refreshToken);
+              }
+              return data.accessToken;
+            } else {
+              auth.logout && auth.logout();
+              throw new Error("Sessione scaduta, effettua nuovamente il login");
+            }
+          } catch (error) {
             auth.logout && auth.logout();
-            throw new Error("Sessione scaduta, effettua nuovamente il login");
+            throw error;
           }
         } else {
-          console.warn("[DEBUG] Nessun refresh token trovato in localStorage.");
           auth.logout && auth.logout();
           throw new Error("Sessione scaduta, effettua nuovamente il login");
         }
@@ -60,8 +63,15 @@ export async function fetchWithAuth(url, options = {}, auth) {
       finalOptions.headers = { ...(finalOptions.headers || {}) };
       finalOptions.headers.Authorization = `Bearer ${newAccessToken}`;
       res = await fetch(url, finalOptions);
+    } catch (error) {
+      // Gestisci l'errore, ma non rilanciarlo per evitare loop
+      console.error("Errore durante il refresh del token:", error.message);
     } finally {
       refreshPromise = null;
+      // Reimposta il flag dopo aver completato il tentativo
+      setTimeout(() => {
+        refreshAttemptMade = false;
+      }, 1000); // Attendi un secondo prima di permettere un nuovo tentativo
     }
   }
 
