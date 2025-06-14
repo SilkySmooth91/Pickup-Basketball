@@ -65,8 +65,7 @@ router.post("/", authMiddleware, uploadGallery.array("images", 10), async (req, 
     } catch (e) {
       console.error("Errore nel parsing delle coordinate:", e);
       return res.status(400).json({ error: "Formato coordinate non valido" });
-    }let images = [];
-    if (req.files && req.files.length > 0) {
+    }let images = [];    if (req.files && req.files.length > 0) {
       images = req.files.map(f => ({ url: f.path, public_id: f.filename }));
     }
     const court = await courtModel.create({
@@ -76,7 +75,8 @@ router.post("/", authMiddleware, uploadGallery.array("images", 10), async (req, 
       baskets: Number(baskets),
       officialsize: isOfficialSize,
       nightlights: hasNightLights,
-      images
+      images,
+      createdBy: req.user.id // Aggiungiamo l'ID dell'utente che crea il campetto
     });
     res.status(201).json(court);
   } catch (err) {
@@ -114,8 +114,7 @@ router.get("/", authMiddleware, async (req, res) => {
       const lat = parseFloat(req.query.lat);
       const lng = parseFloat(req.query.lng);
       const distance = parseInt(req.query.distance) || 5000; // Default 5km, in metri
-      
-      // Esegui una query geospaziale per trovare campetti vicini
+        // Esegui una query geospaziale per trovare campetti vicini
       const courts = await courtModel.find({
         coordinates: {
           $near: {
@@ -126,7 +125,7 @@ router.get("/", authMiddleware, async (req, res) => {
             $maxDistance: distance
           }
         }
-      });
+      }).populate('createdBy', '_id username avatar');
       
       return res.json({
         courts,
@@ -134,12 +133,11 @@ router.get("/", authMiddleware, async (req, res) => {
       });
     }
     
-    // Altrimenti usa la paginazione standard
-    const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+    // Altrimenti usa la paginazione standard    const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
     const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
     const skip = (page - 1) * limit;
     const [courts, total] = await Promise.all([
-      courtModel.find().skip(skip).limit(limit),
+      courtModel.find().populate('createdBy', '_id username avatar').skip(skip).limit(limit),
       courtModel.countDocuments()
     ]);
     res.json({
@@ -176,7 +174,11 @@ router.get("/", authMiddleware, async (req, res) => {
  */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
-    const court = await courtModel.findById(req.params.id);
+    const court = await courtModel.findById(req.params.id)
+                                  .populate('createdBy', '_id username avatar');
+    console.log('Dettagli del campetto con ID:', req.params.id);
+    console.log('Creatore del campetto:', court.createdBy);
+    
     if (!court) {
       return res.status(404).json({ error: "Campetto non trovato" });
     }

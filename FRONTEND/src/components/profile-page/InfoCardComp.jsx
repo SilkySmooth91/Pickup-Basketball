@@ -96,10 +96,10 @@ export default function InfoCardComp({ profile, isOwner }) {
             </div>
           ) : null}
 
-          <div className="flex flex-col gap-2 mt-2">
+          <div className="flex flex-col gap-2 mt-2">           
             <div>
               <span className="font-semibold text-gray-600">Altezza: </span>
-              <span className="text-gray-800">{profile?.height || "185 cm"}</span>
+              <span className="text-gray-800">{profile?.height ? `${profile.height} cm` : "185 cm"}</span>
             </div>
             <div>
               <span className="font-semibold text-gray-600">Ruolo: </span>

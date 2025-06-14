@@ -29,10 +29,10 @@ export default function CourtInfo() {  const { id } = useParams();
     setLoading(true);
     setError(null);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const res = await fetchWithAuth(`${API_URL}/courts/${id}`, {}, { accessToken });
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';      const res = await fetchWithAuth(`${API_URL}/courts/${id}`, {}, { accessToken });
       if (!res.ok) throw new Error('Errore nel recupero del campetto');
       const data = await res.json();
+      console.log('Dati campetto ricevuti:', data); // Aggiunto log per debug
       setCourt(data);
     } catch (err) {
       setError('Impossibile caricare i dati del campetto');
@@ -72,7 +72,8 @@ export default function CourtInfo() {  const { id } = useParams();
           courtId={court?._id}
           onUploadSuccess={() => fetchCourt()}
         />
-        <div className="mt-8 flex flex-col md:flex-row gap-6">          {/* Card informazioni campetto */}
+        <div className="mt-8 flex flex-col md:flex-row gap-6">          
+          {/* Card informazioni campetto */}
           <div className="bg-white rounded-lg shadow-xl min-w-[260px] border-orange-500 border-l-6 flex-1">
             {loading && <LoadingSpinner />}
             {error && <p className="text-red-500">{error}</p>}
@@ -80,17 +81,17 @@ export default function CourtInfo() {  const { id } = useParams();
               <div className="bg-white rounded shadow p-4">
                 <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2'>
                   <h2 className="text-2xl text-orange-600 font-semibold mb-2 md:mb-0">{court.name}</h2>
-                  <div className='hidden md:flex flex-row md:gap-2 mt-2 md:mt-0'>                    <button 
+                  <div className='hidden md:flex flex-row md:gap-2 mt-2 md:mt-0'>                    
+                    <button 
                       className='w-auto bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow border border-orange-500 hover:bg-gray-100 transition cursor-pointer flex gap-2 items-center'
                       onClick={() => setShowEditModal(true)}
-                    >
+>
                       <FontAwesomeIcon icon={faPen} className='text-orange-600' />
                       Modifica
                     </button>
                     <button 
                       className='w-auto py-2 px-5 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-normal text-base hover:from-orange-600 hover:to-red-600 transition-colors shadow flex items-center gap-2 cursor-pointer'
-                      onClick={() => setShowCreateEventModal(true)}
-                    >
+                      onClick={() => setShowCreateEventModal(true)}>
                       <FontAwesomeIcon icon={faCalendar} />
                       Crea Evento
                     </button>
@@ -110,32 +111,46 @@ export default function CourtInfo() {  const { id } = useParams();
                     <FontAwesomeIcon icon={faRulerCombined} className='text-orange-600 ml-4' />
                     <span className="font-light">Dimensioni ufficiali:</span> 
                     <span className='py-1 px-2 bg-gray-200 rounded-full font-semibold'>{court.officialsize ? 'Sì' : 'No'}</span>
-                  </p>
-                  <p className='flex items-center gap-3 py-3 rounded-md bg-orange-100'>
+                  </p>                  <p className='flex items-center gap-3 py-3 rounded-md bg-orange-100'>
                     <FontAwesomeIcon icon={faLightbulb} className='text-orange-600 ml-4' />
                     <span className="font-light">Illuminazione notturna:</span> 
                     <span className='py-1 px-2 bg-gray-200 rounded-full font-semibold'>{court.nightlights ? 'Sì' : 'No'}</span>
                   </p>
+                  
+                  {/* Informazioni sul creatore del campetto */}
+                  {court.createdBy && (
+                    <div className="mt-4 pt-3 border-t border-gray-200">
+                      <p className="text-gray-600 text-sm">
+                        Aggiunto da: 
+                        <span 
+                          className="ml-1 text-orange-600 hover:text-orange-700 cursor-pointer"
+                          onClick={() => navigate(`/profile/${court.createdBy._id}`)}
+                        >
+                          {court.createdBy.username || `Utente #${court.createdBy._id}`}
+                        </span>
+                      </p>
+                    </div>
+                  )}
                 </div>
                 {/* Bottoni solo su mobile */}
-                <div className='w-auto flex flex-col gap-2 mt-4 md:hidden'>                  <button 
+                <div className='w-auto flex flex-col gap-2 mt-4 md:hidden'>                  
+                  <button 
                     className='w-auto self-start bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow border border-orange-500 hover:bg-gray-100 transition cursor-pointer flex gap-2 items-center'
-                    onClick={() => setShowEditModal(true)}
-                  >
+                    onClick={() => setShowEditModal(true)}>
                     <FontAwesomeIcon icon={faPen} className='text-orange-600' />
                     Modifica
                   </button>
                   <button 
                     className='w-auto self-start py-2 px-3 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-normal text-base hover:from-orange-600 hover:to-red-600 transition-colors shadow flex items-center gap-2 cursor-pointer'
-                    onClick={() => setShowCreateEventModal(true)}
-                  >
+                    onClick={() => setShowCreateEventModal(true)}>
                     <FontAwesomeIcon icon={faCalendar} />
                     Crea Evento
                   </button>
                 </div>
               </div>
             )}
-          </div>          {/* Card prossimi eventi */}
+          </div>          
+          {/* Card prossimi eventi */}
           <div className="bg-white rounded-lg shadow-xl min-w-[260px] border-orange-500 border-l-6 flex-1 md:max-w-md">
             <UpcomingEvents courtId={court?._id} refreshTrigger={eventsRefreshTrigger} />
           </div>
@@ -151,7 +166,8 @@ export default function CourtInfo() {  const { id } = useParams();
               fetchCourt(); 
             }}
           />
-        )}        {showCreateEventModal && court && (
+        )}        
+        {showCreateEventModal && court && (
           <CreateEventModal 
             court={court}
             onClose={() => setShowCreateEventModal(false)}

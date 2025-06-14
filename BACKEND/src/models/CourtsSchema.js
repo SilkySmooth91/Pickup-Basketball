@@ -21,7 +21,8 @@ const courtsSchema = new mongoose.Schema({
         url: { type: String, required: true },
         public_id: { type: String, required: true }
     }],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments" }]
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments" }],
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Users" }
 })
 
 // Creiamo un indice geospaziale per abilitare query geografiche
