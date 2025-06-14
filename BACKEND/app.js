@@ -17,6 +17,9 @@ dotenv.config();
 const app = express();
 passport.use("google", googleStrategy);
 
+// Inizializzazione di passport
+app.use(passport.initialize());
+
 // Configurazione CORS per permettere richieste solo dal frontend
 const corsOptions = {
   origin: [process.env.FE_URL, 'http://localhost:5173', 'https://pickup-basketball.vercel.app'],

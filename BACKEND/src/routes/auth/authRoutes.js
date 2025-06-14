@@ -8,6 +8,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import uniqueUserFields from "../../middlewares/uniqueUserFields.js";
+import passport from "passport";
 
 const router = express.Router();
 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
@@ -543,6 +544,96 @@ router.patch("/change-password", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore aggiornamento password" });
+  }
+});
+
+
+/**
+ * @openapi
+ * /auth/google:
+ *   get:
+ *     summary: Inizia il processo di autenticazione con Google
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       302:
+ *         description: Redirect all'autenticazione Google
+ */
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+/**
+ * @openapi
+ * /auth/google/callback:
+ *   get:
+ *     summary: Callback per l'autenticazione Google
+ *     tags:
+ *       - Auth
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         schema:
+ *           type: string
+ *         description: Codice di autorizzazione Google
+ *     responses:
+ *       302:
+ *         description: Redirect al frontend con token
+ *       500:
+ *         description: Errore nell'autenticazione Google
+ */
+router.get('/google/callback', 
+  passport.authenticate('google', { session: false, failureRedirect: `${FE_URL}/login?error=google-auth-failed` }),
+  async (req, res) => {
+    try {
+      // req.user contiene i token generati nella strategia
+      const { accessToken, refreshToken } = req.user;
+      
+      // Decodifica l'access token per ottenere l'ID utente
+      const decoded = jwt.verify(accessToken, process.env.JWT_KEY);
+      const user = await usersModel.findById(decoded.id);
+      
+      if (!user) {
+        return res.redirect(`${FE_URL}/login?error=user-not-found`);
+      }
+      
+      // Redirect al frontend con i token come parametri di query
+      return res.redirect(`${FE_URL}/google-callback?accessToken=${accessToken}&refreshToken=${refreshToken}&userId=${user.id}`);
+    } catch (error) {
+      console.error('Google callback error:', error);
+      return res.redirect(`${FE_URL}/login?error=google-callback-error`);
+    }
+  }
+);
+
+
+/**
+ * @openapi
+ * /auth/me:
+ *   get:
+ *     summary: Ottiene i dati dell'utente autenticato
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dati utente ottenuti con successo
+ *       401:
+ *         description: Non autorizzato
+ *       500:
+ *         description: Errore nel recupero dei dati utente
+ */
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await usersModel.findById(req.user.id).select('-password -refreshToken');
+    if (!user) {
+      return res.status(404).json({ error: 'Utente non trovato' });
+    }
+    return res.json({ user });
+  } catch (error) {
+    console.error('Errore nel recupero dati utente:', error);
+    return res.status(500).json({ error: 'Errore nel recupero dati utente' });
   }
 });
 
