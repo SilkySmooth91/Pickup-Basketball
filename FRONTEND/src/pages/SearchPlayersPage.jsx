@@ -4,18 +4,21 @@ import { getUsers } from "../api/userApi";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserPlus, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus, faCheck, faFilter } from "@fortawesome/free-solid-svg-icons";
 import { sendFriendRequest, getFriends } from "../api/friendApi";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
 import ImageWithFallback from "../components/utils/ImageWithFallback";
 import Footer from '../components/utils/Footer';
 import { useFriendRequests } from "../context/FriendRequestContext";
+import FloatingLabel from "../components/utils/FloatingLabel";
 
 export default function SearchPlayersPage() {  
   const { accessToken, user } = useAuth();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const [results, setResults] = useState([]);
   
   const [loading, setLoading] = useState(false);
@@ -33,44 +36,47 @@ export default function SearchPlayersPage() {
     isRequestSent,
     isRequestPending,
     loadSentRequests
-  } = useFriendRequests();
-  useEffect(() => {
-    if (query.length < 3) {
+  } = useFriendRequests();  useEffect(() => {
+    // Cerca anche se non c'è query (per cercare solo per città)
+    const shouldSearch = query.length >= 3 || cityFilter.length >= 2;
+    
+    if (!shouldSearch) {
       setResults([]);
       setError(null);
       return;
     }
+    
     if (typingTimeout) clearTimeout(typingTimeout);
     setTypingTimeout(
       setTimeout(async () => {
         setLoading(true);
-        setError(null);          try {
+        setError(null);          
+        try {
           const data = await getUsers(1, 100, { accessToken });
           
-          // Verifica che data.users esista
           if (!data || !data.users || !Array.isArray(data.users)) {
             setResults([]);
             return;
           }
 
-          // Estrai l'ID dell'utente corrente in modo sicuro
-          // Importante: l'oggetto user può avere l'ID come user.id oppure user._id
           const currentUserId = user?.id ? String(user.id) : user?._id ? String(user._id) : null;
           
-          // Filtra prima per username e poi rimuovi l'utente corrente
           const filtered = data.users
-            .filter(u => u.username.toLowerCase().includes(query.toLowerCase()))
+            .filter(u => {
+              const matchesName = !query || u.username.toLowerCase().includes(query.toLowerCase());
+              const matchesCity = !cityFilter || (u.city && u.city.toLowerCase().includes(cityFilter.toLowerCase()));
+              return matchesName && matchesCity;
+            })
             .filter(u => {
               const userId = u._id ? String(u._id) : "";
-              const isCurrentUser = currentUserId && userId === currentUserId;
-              // Ritorna false per l'utente corrente (da escludere)
-              return !isCurrentUser;
-            });          // Ordina i risultati
+              return !(currentUserId && userId === currentUserId);
+            });
+
           filtered.sort((a, b) => {
-            const aStart = a.username.toLowerCase().startsWith(query.toLowerCase());
-            const bStart = b.username.toLowerCase().startsWith(query.toLowerCase());
-            if (aStart && !bStart) return -1;
-            if (!aStart && bStart) return 1;
+            const aStartsWithName = query && a.username.toLowerCase().startsWith(query.toLowerCase());
+            const bStartsWithName = query && b.username.toLowerCase().startsWith(query.toLowerCase());
+            if (aStartsWithName && !bStartsWithName) return -1;
+            if (!aStartsWithName && bStartsWithName) return 1;
             return a.username.localeCompare(b.username);
           });
           
@@ -82,7 +88,7 @@ export default function SearchPlayersPage() {
         }
       }, 400)
     );
-  }, [query, accessToken, user]);  useEffect(() => {
+  }, [query, cityFilter, accessToken, user]);useEffect(() => {
     if (!accessToken || !user) return;
     
     // Carica la lista degli amici
@@ -178,26 +184,49 @@ export default function SearchPlayersPage() {
   };
   return (
     <div className="min-h-screen flex flex-col">
-      <HeaderComp />
+      <HeaderComp />        
       <div className="flex-grow flex flex-col items-center mt-8">
-        <div className="w-full max-w-md px-4">
-          <form className="bg-white shadow-xl rounded-full flex items-center p-2 gap-2 !mb-4 border border-orange-200">
-            <input
-              type="text"
-              placeholder="Cerca giocatori per username..."
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              className="flex-1 border border-orange-300 rounded-3xl p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-orange-400"/>
-          </form>        
-        </div>        
+        <div className="w-full max-w-md px-4 relative">
+          <div className="bg-white shadow-xl rounded-full border border-orange-200 !mb-4">
+            <div className="flex items-center p-2 gap-2">
+              <input
+                type="text"
+                placeholder="Cerca giocatori per username..."
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                className="flex-1 border border-orange-300 rounded-3xl p-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+              <button
+                type="button"
+                onClick={() => setShowFilters(!showFilters)}
+                className={`py-2 px-3 rounded-full transition-colors ${showFilters ? 'bg-orange-500 text-white' : 'bg-orange-100 text-orange-600 hover:bg-orange-200'}`}
+              >
+                <FontAwesomeIcon icon={faFilter} />
+              </button>
+            </div>
+          </div>
+          
+          {/* Dropdown filtri posizionato a destra */}
+          {showFilters && (
+            <div className="absolute top-0 left-full ml-4 w-64 bg-white shadow-xl rounded-lg border border-orange-200 p-4 z-10">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Filtri di ricerca</h3>
+              <FloatingLabel
+                id="cityFilter"
+                type="text"
+                label="Filtra per città"
+                value={cityFilter}
+                onChange={e => setCityFilter(e.target.value)}
+              />
+            </div>
+          )}
+        </div>
         <div className="w-full max-w-md mt-4 space-y-3 px-4">
           {loading && <LoadingSpinner />}
           {error && <div className="text-center text-red-500">{error}</div>}
-          
-          {/* Debug info */}
+            {/* Debug info */}
           <div className="text-xs text-gray-500 mb-2">
-            Query: {query} | Risultati: {results.length}
-          </div>            
+            Query: {query} | Città: {cityFilter} | Risultati: {results.length}
+          </div>
           {/* Risultati della ricerca */}
           {results
             // Controllo di sicurezza extra: non visualizzare mai l'utente corrente
@@ -218,14 +247,13 @@ export default function SearchPlayersPage() {
                   src={userResult.avatar || "/default-avatar.png"}
                   alt={userResult.username}
                   className="w-12 h-12 rounded-full object-cover border border-orange-200"/>
-                <div className="flex-1 min-w-0">
-                  <button
+                <div className="flex-1 min-w-0">                  <button
                     type="button"
                     className="text-left w-full bg-transparent border-0 p-0 m-0 cursor-pointer"
                     onClick={() => navigate(`/profile/${userResult._id}`)}>
                     <div className="font-semibold text-orange-700 hover:underline truncate">{userResult.username}</div>
-                    {userResult.name && <div className="text-gray-500 text-sm truncate">{userResult.name}</div>}
-                  </button>                
+                    {userResult.city && <div className="text-gray-500 text-sm truncate">{userResult.city}</div>}
+                  </button>
                 </div>                {
                   (() => {
                     // Estrai l'ID dell'utente corrente, considerando entrambe le proprietà
@@ -279,9 +307,9 @@ export default function SearchPlayersPage() {
                 }
               </div>
             );
-          })}
-          {!loading && query.length >= 3 && results.length === 0 && !error && (
-            <div className="text-center text-gray-400">Nessun giocatore trovato</div>          )}
+          })}          {!loading && (query.length >= 3 || cityFilter.length >= 2) && results.length === 0 && !error && (
+            <div className="text-center text-gray-400">Nessun giocatore trovato</div>
+          )}
         </div>
       </div>
       <Footer />
