@@ -45,6 +45,14 @@ export default function RegisterComp({ isVisible, onBack, className }) {
       toast.error("I campi contrassegnati con * sono obbligatori"); 
       return;
     }
+
+    // Validazione formato email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(state.email.trim())) {
+      toast.error("Inserisci un indirizzo email valido");
+      return;
+    }
+    
     const ageNum = Number(state.age);
     if (state.age && (isNaN(ageNum) || ageNum < 13)) {
       toast.error("L'età deve essere un numero valido (minimo 13)");

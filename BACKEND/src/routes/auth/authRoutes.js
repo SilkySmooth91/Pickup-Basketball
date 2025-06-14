@@ -8,14 +8,10 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import uniqueUserFields from "../../middlewares/uniqueUserFields.js";
-import passport from "passport";
-import googleStrategy from "../../auth/strategies/googleOAuth.js";
 
 const router = express.Router();
 const jwtRefreshKey = process.env.JWT_REFRESH_KEY;
 const FE_URL = process.env.FE_URL;
-
-passport.use(googleStrategy);
 
 /**
  * @openapi
@@ -70,6 +66,12 @@ router.post('/register', uniqueUserFields, async (req, res) => {
   // Verifica che password e conferma corrispondano
   if (password !== confirmPassword) {
     return res.status(400).json({ error: 'Le password non coincidono' });
+  }
+
+  // Validazione formato email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Formato email non valido' });
   }
 
   try {
@@ -150,6 +152,13 @@ router.post('/login', async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ error: 'Email e password sono obbligatorie' });
   }
+
+  // Validazione formato email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Formato email non valido' });
+  }
+
   try {
     const user = await usersModel.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -308,59 +317,37 @@ router.post("/logout", authMiddleware, async (req, res) => {
  */
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ error: "Email richiesta" });
-  }
   try {
-    // Ritardo artificiale per mitigare timing attacks
-    const startTime = Date.now();
     const user = await usersModel.findOne({ email });
-    if (!user) {
-      const elapsedTime = Date.now() - startTime;
-      if (elapsedTime < 1000) await new Promise(r => setTimeout(r, 1000 - elapsedTime));
-      return res.status(200).json({ message: "Se l'indirizzo email è associato a un account, riceverai un'email con le istruzioni per reimpostare la password." });
-    }
-    // Genera token e salva su user
+    if (!user) return res.status(404).json({ error: "Utente non trovato" });
+
+    // Genera un token di reset casuale e imposta la scadenza
     const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // salva il token e la scadenza nel DB
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 ora di validità
     await user.save();
+
+    // Crea il link di reset
     const resetUrl = `${FE_URL}/reset-password?token=${resetToken}`;
-    const emailHTML = `
-      <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;\">
-        <div style=\"text-align: center; margin-bottom: 20px;\">
-          <h2 style=\"color: #D62828;\">Pickup Basketball</h2>
-        </div>
-        <p>Ciao <strong>${user.username}</strong>,</p>
-        <p>Abbiamo ricevuto una richiesta di reimpostazione della password per il tuo account. Se non hai richiesto questa modifica, puoi ignorare questa email.</p>
-        <p>Per reimpostare la password, clicca sul pulsante qui sotto:</p>
-        <div style=\"text-align: center; margin: 30px 0;\">
-          <a href=\"${resetUrl}\" style=\"background-color: #D62828; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;\">Reimposta Password</a>
-        </div>
-        <p>Oppure copia e incolla il seguente URL nel tuo browser:</p>
-        <p style=\"word-break: break-all; color: #777;\">${resetUrl}</p>
-        <p>Questo link scadrà tra un'ora.</p>
-        <div style=\"margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #777; font-size: 12px;\">
-          <p>Se hai problemi, contatta il supporto.</p>
-        </div>
-      </div>
-    `;
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: "Reimposta la tua password - Pickup Basketball",
-        html: emailHTML
-      });
-      console.log(`Email di reset inviata con successo a: ${user.email}`);
-    } catch (emailError) {
-      console.error(`Errore nell'invio dell'email di reset a ${user.email}:`, emailError);
-    }
-    const elapsedTime = Date.now() - startTime;
-    if (elapsedTime < 1000) await new Promise(r => setTimeout(r, 1000 - elapsedTime));
-    res.status(200).json({ message: "Se l'indirizzo email è associato a un account, riceverai un'email con le istruzioni per reimpostare la password." });
+    
+    // Invia l'email di reset e crea il corpo del messaggio
+    await sendEmail({
+      to: user.email,
+      subject: "Reset password",
+      html: `
+        <p>Ciao ${user.username},</p>
+        <p>hai richiesto di resettare la password. Clicca qui sotto:</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>Il link ha validità un’ora.</p>
+      `
+    });
+
+    res.status(200).json({ message: "Email di reset inviata" });
   } catch (err) {
-    console.error("Errore in forgot-password:", err);
-    res.status(500).json({ error: "Errore nel reset della password. Riprova più tardi." });
+    console.error(err);
+    res.status(500).json({ error: "Errore nel reset della password" });
   }
 });
 
@@ -556,56 +543,6 @@ router.patch("/change-password", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore aggiornamento password" });
-  }
-});
-
-// === GOOGLE OAUTH ROUTES ===
-router.get("/google", passport.authenticate("google", {
-  scope: ["profile", "email"],
-  session: false
-}));
-
-router.get(
-  "/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: FE_URL + "/?google=fail" }),
-  (req, res) => {
-    // I token sono in req.user (vedi googleOAuth.js)
-    // Redirigi al FE con i token come query string
-    const { accessToken, refreshToken } = req.user;
-    const redirectUrl = `${FE_URL}/google-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
-    res.redirect(redirectUrl);
-  }
-);
-
-/**
- * @openapi
- * /auth/me:
- *   get:
- *     summary: Recupera i dati dell'utente autenticato
- *     tags:
- *       - Auth
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Dati utente recuperati con successo
- *       401:
- *         description: Non autorizzato
- *       404:
- *         description: Utente non trovato
- *       500:
- *         description: Errore interno del server
- */
-router.get("/me", authMiddleware, async (req, res) => {
-  try {
-    const user = await usersModel.findById(req.user.id).select("-password -refreshToken");
-    if (!user) {
-      return res.status(404).json({ error: "Utente non trovato" });
-    }
-    res.json({ user });
-  } catch (err) {
-    console.error("Errore nel recupero dati utente:", err);
-    res.status(500).json({ error: "Errore nel recupero dati utente" });
   }
 });
 

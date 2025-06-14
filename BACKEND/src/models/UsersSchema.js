@@ -9,7 +9,14 @@ const usersSchema = new mongoose.Schema(
     height: { type: Number, default: null },
     basketrole: {type: String, default: null, enum: ['Playmaker', 'Guard', 'Forward', 'Center']},
     bestskill: { type: String, default: null},
-    email: { type: String, required: true, unique: true },
+    email: { 
+      type: String, 
+      required: true, 
+      unique: true,
+      trim: true,
+      lowercase: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Il formato email non è valido']
+    },
     password: {
       type: String,
       required: function () {

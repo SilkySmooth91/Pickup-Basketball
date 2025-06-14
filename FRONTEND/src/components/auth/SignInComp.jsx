@@ -15,6 +15,13 @@ export default function SignInComp({ isVisible, onRegister, onForgotPassword, cl
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validazione formato email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      toast.error("Inserisci un indirizzo email valido");
+      return;
+    }
+    
     try {
       const loginRes = await loginUser({ email, password });
       await login(loginRes.user, loginRes.accessToken, loginRes.refreshToken);
