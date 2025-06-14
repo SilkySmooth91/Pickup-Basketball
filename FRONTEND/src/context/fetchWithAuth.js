@@ -35,24 +35,21 @@ export async function fetchWithAuth(url, options = {}, auth) {
               data = await refreshRes.clone().json();
             } catch (e) {
               // Errore silenzioso, nessun body JSON
-            }
-
-            if (refreshRes.ok && data && data.accessToken) {
+            }            if (refreshRes.ok && data && data.accessToken) {
               auth.refresh(data.accessToken);
               if (data.refreshToken) {
                 localStorage.setItem("refreshToken", data.refreshToken);
               }
               return data.accessToken;
             } else {
-              auth.logout && auth.logout();
+              auth.logout && auth.logout(true);
               throw new Error("Sessione scaduta, effettua nuovamente il login");
-            }
-          } catch (error) {
-            auth.logout && auth.logout();
+            }          } catch (error) {
+            auth.logout && auth.logout(true);
             throw error;
           }
         } else {
-          auth.logout && auth.logout();
+          auth.logout && auth.logout(true);
           throw new Error("Sessione scaduta, effettua nuovamente il login");
         }
       })();

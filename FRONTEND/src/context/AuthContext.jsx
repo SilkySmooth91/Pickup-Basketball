@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { refreshToken } from "../api/authApi";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
@@ -25,13 +26,23 @@ export function AuthProvider({ children }) {  const [accessToken, setAccessToken
       localStorage.setItem("refreshToken", refreshTokenValue);
     }
   };
-
-  const logout = () => {
+  const logout = (showMessage = false, message = "Il tuo accesso è scaduto, effettua nuovamente il login") => {
     setUser(null);
     setAccessToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    
+    if (showMessage) {
+      toast.warn(message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
   };
 
   const refresh = (newAccessToken) => {
@@ -79,12 +90,11 @@ export function AuthProvider({ children }) {  const [accessToken, setAccessToken
         if (data.refreshToken) {
           localStorage.setItem("refreshToken", data.refreshToken);
         }
-      })
-      .catch(error => {
+      })      .catch(error => {
         clearTimeout(timeoutId); // Cancella il timeout anche in caso di errore
         console.error("Errore nel refresh del token:", error);
-        // Pulizia in caso di errore
-        logout();
+        // Pulizia in caso di errore con messaggio informativo
+        logout(true, "La tua sessione è scaduta durante il caricamento");
       })
       .finally(() => setLoading(false));
       

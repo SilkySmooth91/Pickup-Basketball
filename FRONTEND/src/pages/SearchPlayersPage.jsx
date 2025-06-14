@@ -12,10 +12,12 @@ import ImageWithFallback from "../components/utils/ImageWithFallback";
 import Footer from '../components/utils/Footer';
 import { useFriendRequests } from "../context/FriendRequestContext";
 import FloatingLabel from "../components/utils/FloatingLabel";
+import { useAuthErrorHandler } from "../hooks/useAuthErrorHandler";
 
 export default function SearchPlayersPage() {  
   const { accessToken, user } = useAuth();
   const navigate = useNavigate();
+  const { handleAuthError } = useAuthErrorHandler();
   const [query, setQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -79,10 +81,13 @@ export default function SearchPlayersPage() {
             if (!aStartsWithName && bStartsWithName) return 1;
             return a.username.localeCompare(b.username);
           });
-          
-          setResults(filtered);
+            setResults(filtered);
         } catch (e) {
-          setError("Errore nella ricerca utenti");
+          console.error("Errore nella ricerca utenti:", e);
+          // Gestisci errori di autenticazione
+          if (!handleAuthError(e)) {
+            setError("Errore nella ricerca utenti");
+          }
         } finally {
           setLoading(false);
         }
@@ -90,11 +95,15 @@ export default function SearchPlayersPage() {
     );
   }, [query, cityFilter, accessToken, user]);useEffect(() => {
     if (!accessToken || !user) return;
-    
-    // Carica la lista degli amici
+      // Carica la lista degli amici
     getFriends(null, { accessToken })
       .then(friendsList => setFriends(friendsList.map(f => f._id)))
-      .catch(() => setFriends([]));
+      .catch((err) => {
+        console.error("Errore nel caricamento degli amici:", err);
+        if (!handleAuthError(err)) {
+          setFriends([]);
+        }
+      });
     
     // Carica le richieste di amicizia inviate usando il contesto
     // Non forziamo il ricaricamento, usiamo la cache implementata nel contesto
@@ -147,12 +156,18 @@ export default function SearchPlayersPage() {
       // Aggiorna l'UI
       updateUIAfterRequest(targetUserId);
         // Aggiungi alla lista delle richieste inviate usando il contesto
-      addSentRequest(targetUserId);
-    } catch (err) {
-      // Gestione errori
-      let errorMessage = "Errore durante l'invio della richiesta di amicizia";
+      addSentRequest(targetUserId);    } catch (err) {
+      console.error("Errore durante l'invio della richiesta di amicizia:", err);
+      
+      // Gestisci errori di autenticazione prima
+      if (handleAuthError(err, "La tua sessione è scaduta durante l'invio della richiesta")) {
+        toast.dismiss(toastId);
+        return;
+      }
       
       // Gestione errori più dettagliata
+      let errorMessage = "Errore durante l'invio della richiesta di amicizia";
+      
       if (err?.response?.status === 409) {
         errorMessage = "Richiesta di amicizia già inviata o già amici";
         // Considera la richiesta come inviata anche in caso di errore 409
