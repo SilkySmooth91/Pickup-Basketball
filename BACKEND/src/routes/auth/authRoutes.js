@@ -70,7 +70,7 @@ router.post('/register', uniqueUserFields, async (req, res) => {
   }
 
   // Validazione formato email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,64}$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Formato email non valido' });
   }
@@ -155,7 +155,7 @@ router.post('/login', async (req, res) => {
   }
 
   // Validazione formato email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,64}$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Formato email non valido' });
   }
@@ -453,7 +453,7 @@ router.patch("/change-email", authMiddleware, async (req, res) => {
     return res.status(400).json({ error: "La nuova email è obbligatoria" });
   }
   // Sanitize: consenti solo email valide
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,64}$/;
   if (!emailRegex.test(newEmail)) {
     return res.status(400).json({ error: "Formato email non valido" });
   }

@@ -6,9 +6,9 @@ Un'applicazione web completa per trovare, organizzare e partecipare a partite di
 
 ## 📋 Descrizione
 
-Pickup Basketball è una piattaforma che connette giocatori di basket amatoriale con campetti e partite nelle vicinanze. L'app consente agli utenti di:
+Pickup Basketball è una piattaforma che connette giocatori di basket di ogni livello per permettergli di trovare altri giocatori e campetti vicino a loro. L'app consente agli utenti di:
 
-- 🗺️ Trovare campetti da basket sulla mappa
+- 🗺️ Trovare campetti da basket sulla mappa interattiva
 - 🏆 Organizzare e partecipare a eventi/partite
 - 👥 Connettersi con altri giocatori e fare amicizia
 - ⭐ Aggiungere nuovi campetti al database
