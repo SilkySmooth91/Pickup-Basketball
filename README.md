@@ -241,7 +241,9 @@ I contributi sono benvenuti! Sentiti libero di inviare pull request o aprire iss
 
 ## 📜 Licenza
 
-Questo progetto è sotto licenza MIT.
+Questo progetto è sotto licenza GNU GPL v3.
+
+Per maggiori dettagli, consulta il file [LICENSE](./LICENSE).
 
 ## 📧 Contatti
 
