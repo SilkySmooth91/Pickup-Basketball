@@ -110,9 +110,7 @@ router.post('/register', uniqueUserFields, async (req, res) => {
       email: user.email
     });
     user.refreshToken = refreshToken;
-    await user.save();
-
-    // Risposta
+    await user.save();    // Risposta
     res.status(201).json({
       user: {
         id: user.id,
@@ -120,7 +118,8 @@ router.post('/register', uniqueUserFields, async (req, res) => {
         email: user.email,
         age: user.age,
         city: user.city,
-        avatar: user.avatar || null // <-- AGGIUNTO
+        avatar: user.avatar || null,
+        lastSeenChangelog: user.lastSeenChangelog
       },
       accessToken,
       refreshToken
@@ -184,13 +183,12 @@ router.post('/login', async (req, res) => {
       id: user.id, username: user.username, email: user.email
     });
     user.refreshToken = refreshToken;
-    await user.save();
-
-    res.json({
+    await user.save();    res.json({
       user: {
         id: user.id, username: user.username, email: user.email,
         age: user.age, city: user.city,
-        avatar: user.avatar || null // <-- AGGIUNTO
+        avatar: user.avatar || null,
+        lastSeenChangelog: user.lastSeenChangelog
       },
       accessToken, refreshToken
     });
@@ -252,9 +250,7 @@ router.post("/refresh", async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email,
-    });
-
-    user.refreshToken = newRefreshToken;
+    });    user.refreshToken = newRefreshToken;
     await user.save();
 
     // console.log("=== [DEBUG] Nuovo refresh token generato:", newRefreshToken); 
@@ -267,7 +263,8 @@ router.post("/refresh", async (req, res) => {
         email: user.email,
         age: user.age,
         city: user.city,
-        avatar: user.avatar || null // <-- AGGIUNTO
+        avatar: user.avatar || null,
+        lastSeenChangelog: user.lastSeenChangelog
       }
     });
 

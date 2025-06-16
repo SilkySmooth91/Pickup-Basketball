@@ -63,7 +63,7 @@ export default function MainMap() {
       
       <button 
         onClick={() => window.location.href = "/add-court"}
-        className="add-court-button cursor-pointer">
+        className="add-court-button cursor-pointer px-4 py-4 md:py-3">
         <FontAwesomeIcon icon={faPlus} />
         <span className="hidden sm:inline">Aggiungi un campetto</span>
       </button>

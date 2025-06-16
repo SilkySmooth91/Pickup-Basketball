@@ -33,7 +33,10 @@ import { ProtectedRoute, PublicRoute } from './components/auth/RouteGuards'
 import LoadingSpinner from './components/utils/LoadingSpinner'
 import NotFound from './pages/NotFound'
 import AboutPage from './pages/AboutPage'
+import WhatsNewPage from './pages/WhatsNewPage'
 import ResetPasswordPage from './components/auth/ResetPasswordPage'
+import ChangelogModal from './components/utils/ChangelogModal'
+import { useChangelog } from './hooks/useChangelog'
 
 export default function App() {
   return (
@@ -50,6 +53,7 @@ export default function App() {
 function AppRoutes() {
   const { loading } = useAuth();
   const [forceRender, setForceRender] = useState(false);
+  const { showChangelog, closeChangelog } = useChangelog();
   
   // Timeout di sicurezza per prevenire spinner infinito
   useEffect(() => {
@@ -70,6 +74,7 @@ function AppRoutes() {
   return (
     <>
       <ToastContainer position="top-center" autoClose={3500} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
+      <ChangelogModal isOpen={showChangelog} onClose={closeChangelog} />
       <Routes>
         {/* Rotte protette (richiedono autenticazione) */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />        
@@ -80,6 +85,7 @@ function AppRoutes() {
         <Route path="/event/:id" element={<ProtectedRoute><EventDetailsPage /></ProtectedRoute>} />
         <Route path="/events" element={<ProtectedRoute><YourEvents /></ProtectedRoute>} />
         <Route path="/players" element={<ProtectedRoute><SearchPlayersPage /></ProtectedRoute>} />
+        <Route path="/whats-new" element={<ProtectedRoute><WhatsNewPage /></ProtectedRoute>} />
         <Route path="/about" element={<AboutPage />} />        
         {/* Rotte pubbliche (reindirizzano se autenticati) */}
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />        
