@@ -17,7 +17,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faBars, faTimes, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faBars, faTimes, faArrowRightFromBracket, faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import '/src/styles/HeaderComp.css'
 import logo from '../../assets/newLogo.jpg';
@@ -64,6 +64,7 @@ export default function HeaderComp() {
       document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [dropdownOpen, dropdownOpenMobile]);
+
   // Logout handler
   const handleLogout = async () => {
     try {
@@ -84,30 +85,51 @@ export default function HeaderComp() {
     }
     logout();
     navigate("/");
-  };  // Mobile nav links
+  };
+
+  // Mobile nav links
   const navLinks = (
     <ul className="flex flex-col md:flex-row justify-center text-base font-medium">
       {/* Mostra i link a pagine protette solo se l'utente è autenticato */}
       {isAuthenticated ? (
         <>
           <li className="inline-block">
-            <Link to="/map" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Mappa</Link>
+            <Link 
+              to="/map" 
+              className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" 
+              onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>
+              Mappa
+            </Link>
           </li>
           <li className="inline-block">
-            <Link to="/events" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>I tuoi eventi</Link>
+            <Link 
+              to="/events" 
+              className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" 
+              onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>
+              I tuoi eventi
+            </Link>
           </li>
           <li className="inline-block">
-            <Link to="/players" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>Cerca giocatori</Link>
+            <Link 
+              to="/players" 
+              className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" 
+              onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>
+              Cerca giocatori
+            </Link>
           </li>
         </>
       ) : null}
       {/* Link pubblico sempre visibile */}
       <li className="inline-block">
-        <Link to="/about" className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>About</Link>
+        <Link 
+          to="/about" 
+          className="relative hvr-bounce-to-bottom px-4 py-2 rounded transition-colors" 
+          onClick={() => {setMobileMenuOpen(false); setDropdownOpen(false); setDropdownOpenMobile(false);}}>
+          About
+        </Link>
       </li>
     </ul>
-  );
-  return (
+  );  return (
     <header className="w-full bg-white shadow-md sticky top-0" style={{ zIndex: 'var(--z-header)' }}>
       <nav className="container mx-auto flex items-center justify-between px-4 py-2 relative">
         {/* Mobile layout: burger left, logo center, avatar right */}
@@ -117,22 +139,29 @@ export default function HeaderComp() {
             className="flex items-center text-2xl text-orange-500 focus:outline-none"
             onClick={() => setMobileMenuOpen((v) => !v)}
             aria-label="Apri menu">
-            <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />          </button>
-          {/* Logo & Title (center, mobile) */}          <Link to="/" className="flex flex-row items-center justify-center gap-1 flex-1">
+            <FontAwesomeIcon icon={mobileMenuOpen ? faTimes : faBars} />
+          </button>
+
+          {/* Logo & Title (center, mobile) */}
+          <Link to="/" className="flex flex-row items-center justify-center gap-1 flex-1">
             <ImageWithFallback src={logo} alt="Logo" className="h-9 w-9 object-contain select-none"/>
-            <span className="text-xl font-bold text-center text-orange-600 leading-none" style={{ letterSpacing: 1 }}>PickupBasketball</span>
+            <span className="text-xl font-bold text-center text-orange-600 leading-none" style={{ letterSpacing: 1 }}>
+              PickupBasketball
+            </span>
           </Link>
+
           {/* Avatar & Dropdown (right, mobile) - mostra solo se autenticato */}
           {isAuthenticated && (
             <div className="relative ml-2" ref={dropdownRefMobile}>
               <button
-                className="flex items-center gap-2 focus:outline-none"                onClick={() => setDropdownOpenMobile((v) => !v)}
+                className="flex items-center gap-2 focus:outline-none"
+                onClick={() => setDropdownOpenMobile((v) => !v)}
                 aria-label="User menu">
                 <ImageWithFallback
                   src={user?.avatar || "/vite.svg"}
                   alt="avatar"
-                  className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>              
-                  <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
+                  className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>
+                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />
               </button>
               {dropdownOpenMobile && (
                 <div className="absolute right-0 top-10 mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
@@ -144,6 +173,13 @@ export default function HeaderComp() {
                     onClick={() => setDropdownOpenMobile(false)}>
                     <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
                     Profilo
+                  </Link>
+                  <Link
+                    to="/whats-new"
+                    className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
+                    onClick={() => setDropdownOpenMobile(false)}>
+                    <FontAwesomeIcon icon={faLightbulb} className="mr-2 text-orange-600" />
+                    What's new
                   </Link>
                   <button
                     className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
@@ -160,25 +196,30 @@ export default function HeaderComp() {
         </div>
 
         {/* Desktop layout */}
-        <div className="hidden md:flex items-center justify-between w-full">          {/* Logo (desktop) */}
+        <div className="hidden md:flex items-center justify-between w-full">
+          {/* Logo (desktop) */}
           <Link to="/" className="flex items-center gap-2 text-orange-600 font-bold text-2xl">
             <ImageWithFallback src={logo} alt="Logo" className="h-10 w-10 object-contain select-none" style={{marginRight: 4}} />
             <span className="hidden sm:inline">PickupBasketball</span>
           </Link>
-          {/* Nav links */}          <div className="flex-1 flex justify-center">
+
+          {/* Nav links */}
+          <div className="flex-1 flex justify-center">
             {navLinks}
           </div>
+
           {/* Avatar & Dropdown (desktop) - mostra solo se autenticato */}
           {isAuthenticated && (
             <div className="relative ml-4" ref={dropdownRef}>
-              <button                className="flex items-center gap-2 focus:outline-none cursor-pointer"
+              <button
+                className="flex items-center gap-2 focus:outline-none cursor-pointer"
                 onClick={() => setDropdownOpen((v) => !v)}
                 aria-label="User menu">
                 <ImageWithFallback
                   src={user?.avatar || "/vite.svg"}
                   alt="avatar"
                   className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>
-                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />            
+                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 top-11 mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
@@ -191,6 +232,13 @@ export default function HeaderComp() {
                     <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
                     Profilo
                   </Link>
+                  <Link
+                    to="/whats-new"
+                    className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
+                    onClick={() => setDropdownOpen(false)}>
+                    <FontAwesomeIcon icon={faLightbulb} className="mr-2 text-orange-600" />
+                    What's new
+                  </Link>
                   <button
                     className="w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
                     onClick={handleLogout}>
@@ -201,7 +249,8 @@ export default function HeaderComp() {
               )}
             </div>
           )}
-        </div>        
+        </div>
+        
         {/* Mobile menu overlay */}
         <div
           className={`
