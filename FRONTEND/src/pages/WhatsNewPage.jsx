@@ -14,28 +14,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faCheckCircle, faCalendar, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faCheckCircle, faCalendar, faArrowLeft, faBasketball, faWrench } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import HeaderComp from '../components/WelcomeComp';
+import HeaderComp from '../components/utils/HeaderComp';
+import Footer from '../components/utils/Footer';
 import { CHANGELOG_DATA } from '../data/changelog';
 
 export default function WhatsNewPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <HeaderComp />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="flex items-center mb-8">
-            <Link 
-              to="/map"
-              className="mr-4 p-2 text-gray-600 hover:text-orange-600 transition-colors">
-              <FontAwesomeIcon icon={faArrowLeft} className="text-xl" />
-            </Link>            
+          <div className="flex items-center mb-8">         
             <div className="flex items-center">
-              <FontAwesomeIcon icon={faStar} className="text-orange-600 text-3xl mr-3" />
-              <h1 className="text-3xl font-bold text-gray-800">Novità</h1>
+              <FontAwesomeIcon icon={faBasketball} className="text-orange-600 text-3xl mr-3" />
+              <h2 className="text-3xl font-bold text-gray-800">Novità</h2>
             </div>
           </div>
 
@@ -67,7 +63,12 @@ export default function WhatsNewPage() {
                 {/* Features */}
                 {version.features && version.features.length > 0 && (
                   <div className="mb-4">
-                    <h3 className="text-sm font-medium text-green-600 mb-3">✨ Nuove funzionalità</h3>
+                    <h4 className="text-sm font-medium text-green-600 mb-2">
+                        <span>
+                            <FontAwesomeIcon icon={faBasketball} className='text-green-700 text-sm mr-2'/>
+                        </span>  
+                        Nuove funzionalità
+                    </h4>
                     <ul className="space-y-2">
                       {version.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start text-gray-700">
@@ -82,7 +83,12 @@ export default function WhatsNewPage() {
                 {/* Fixes */}
                 {version.fixes && version.fixes.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-medium !text-orange-600 mb-3">🔧 Correzioni</h3>
+                    <h4 className="text-sm font-medium text-orange-600 mb-2">
+                        <span>
+                            <FontAwesomeIcon icon={faWrench} className='text-gray-600 text-sm mr-2'/>
+                        </span> 
+                        Correzioni
+                    </h4>
                     <ul className="space-y-2">
                       {version.fixes.map((fix, fixIndex) => (
                         <li key={fixIndex} className="flex items-start text-gray-700">
@@ -95,14 +101,14 @@ export default function WhatsNewPage() {
                 )}
               </div>
             ))}
-          </div>
-
+          </div>            
           {/* Footer info */}
           <div className="mt-8 text-center text-gray-500 text-sm">
             <p>Tieni d'occhio questa pagina per rimanere aggiornato sulle ultime novità!</p>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

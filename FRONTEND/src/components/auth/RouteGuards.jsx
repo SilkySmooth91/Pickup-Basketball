@@ -25,7 +25,8 @@ export function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   const location = useLocation();
   
-  if (loading) return <LoadingSpinner />;
+  if (loading) 
+    return <LoadingSpinner />;
   
   if (!user) {
     // Memorizza l'URL che l'utente stava cercando di visitare
@@ -42,7 +43,8 @@ export function ProtectedRoute({ children }) {
 export function PublicRoute({ children }) {
   const { user, loading } = useAuth();
   
-  if (loading) return <LoadingSpinner />;
+  if (loading) 
+    return <LoadingSpinner />;
   
   if (user) {
     return <Navigate to="/map" replace />;
