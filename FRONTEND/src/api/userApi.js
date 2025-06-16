@@ -77,6 +77,25 @@ export async function updateUserAvatar(userId, file, auth) {
   return await res.json();
 }
 
+// Aggiorna ultimo changelog visto dall'utente
+export async function updateLastSeenChangelog(userId, version, auth) {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+  const res = await fetchWithAuth(
+    `${API_URL}/users/${userId}/changelog`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ version })
+    },
+    auth
+  );
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error("Errore nell'aggiornamento changelog");
+  }
+  return await res.json();
+}
+
 // Elimina utente
 export async function deleteUser(userId, auth) {
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";

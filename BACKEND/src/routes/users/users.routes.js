@@ -382,4 +382,65 @@ router.get("/:id/events", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /users/{id}/changelog:
+ *   patch:
+ *     summary: Aggiorna l'ultima versione del changelog vista dall'utente
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'utente
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               version:
+ *                 type: string
+ *                 description: Versione del changelog vista
+ *     responses:
+ *       200:
+ *         description: Changelog aggiornato con successo
+ *       403:
+ *         description: Non autorizzato
+ *       404:
+ *         description: Utente non trovato
+ */
+router.patch("/:id/changelog", authMiddleware, async (req, res) => {
+  try {
+    // Solo l'utente stesso può aggiornare il proprio changelog
+    if (req.user.id !== req.params.id) {
+      return res.status(403).json({ error: 'Non autorizzato ad aggiornare il changelog di questo utente' });
+    }
+
+    const { version } = req.body;
+    if (!version) {
+      return res.status(400).json({ error: 'Versione del changelog richiesta' });
+    }
+
+    const user = await usersModel.findByIdAndUpdate(
+      req.params.id,
+      { $set: { lastSeenChangelog: version } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "Utente non trovato" });
+    }
+
+    res.json({ message: 'Changelog aggiornato con successo', lastSeenChangelog: user.lastSeenChangelog });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore aggiornamento changelog" });
+  }
+});
+
 export default router;

@@ -41,12 +41,13 @@ const usersSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date, default: null },
     googleId: { type: String, index: true },
     avatar: { type: String, default: null },
-    verified: { type: Boolean, default: false },
+    verified: { type: Boolean, default: false },    
     role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
     },
+    lastSeenChangelog: { type: String, default: null }, // Ultima versione del changelog visualizzata
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
     commentsOnProfile: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
     commentsByUser: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
