@@ -349,7 +349,8 @@ export default function SearchPlayersPage() {
         </div>
         <div className="w-full max-w-md mt-4 space-y-3 px-4">
           {loading && <LoadingSpinner />}
-          {error && <div className="text-center text-red-500">{error}</div>}          {/* Debug info */}
+          {error && <div className="text-center text-red-500">{error}</div>}          
+          {/* Debug info */}
           <div className="text-xs text-gray-500 mb-2">
             Query: {query} | Città: {cityFilter} | Risultati: {paginationData.totalResults} | Pagina: {paginationData.currentPage}/{paginationData.totalPages}
           </div>
@@ -389,7 +390,8 @@ export default function SearchPlayersPage() {
                           <FontAwesomeIcon icon={faCheck} />
                           <span>Amico</span>
                         </button>
-                      );                    } else if (isRequestSent) {
+                      );                    
+                    } else if (isRequestSent) {
                       return (
                         <button
                           type="button"
