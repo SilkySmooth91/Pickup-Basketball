@@ -19,7 +19,7 @@ export const CURRENT_CHANGELOG_VERSION = '1.1.0';
 // Dati del changelog - aggiungi nuove versioni in cima
 export const CHANGELOG_DATA = [
     {
-    version: '1.1.1',
+    version: '1.1.2',
     date: '18 Giugno 2025',
     title: 'Miglioramenti UX/UI',
     features: [
@@ -27,7 +27,8 @@ export const CHANGELOG_DATA = [
     ],
     fixes: [
       'Ottimizzata la funzionalità di alcuni pulsanti per una migliore esperienza utente',
-      'Risolto un bug per cui il modale del changelog veniva mostrato ad ogni refresh della pagina, anche se l\'utente lo aveva già chiuso in precedenza'
+      'Risolto un bug per cui il modale del changelog veniva mostrato ad ogni refresh della pagina, anche se l\'utente lo aveva già chiuso in precedenza',
+      'Risolti alcuni bug grafici minori'
     ]
   },
   {

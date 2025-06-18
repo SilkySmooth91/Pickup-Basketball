@@ -19,7 +19,6 @@ import { createEvent } from '../../api/eventApi';
 import FloatingLabel from './FloatingLabel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose, faCalendar, faUsers, faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
-import LoadingSpinner from './LoadingSpinner';
 
 // Stato iniziale del form
 const initialState = {
@@ -111,15 +110,16 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
       document.dispatchEvent(new CustomEvent('event-created', { 
         detail: { eventId: result._id }
       }));
-      
-      // Notifica il componente padre del successo
+        // Notifica il componente padre del successo
       if (typeof onEventCreated === 'function') {
         onEventCreated(result);
       }
       
-      // Reset e chiusura
-      dispatch({ type: 'RESET' });
-      onClose();
+      // Piccolo delay per mostrare lo stato di successo prima di chiudere
+      setTimeout(() => {
+        dispatch({ type: 'RESET' });
+        onClose();
+      }, 300);
     } catch (err) {
       setError(err.message || "Errore durante la creazione dell'evento");
     } finally {
@@ -172,7 +172,8 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
             <div className="mb-4">
               <label htmlFor="event-datetime" className="block text-sm font-medium text-gray-700 mb-1">
                 Data e ora *
-              </label>              <input
+              </label>              
+              <input
                 id="event-datetime"
                 type="datetime-local"
                 className="block w-full p-2 border border-gray-300 rounded"
@@ -196,7 +197,8 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
             
             <div className="flex items-center gap-2 mt-4">
               <input
-                id="event-isprivate"              type="checkbox"
+              id="event-isprivate"              
+              type="checkbox"
               checked={state.isprivate}
               onChange={(e) => dispatch({ type: 'SET_FIELD', field: 'isprivate', value: e.target.checked })}
               className="w-4 h-4 text-orange-600"
@@ -230,16 +232,20 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
               disabled={loading}
             >
               Annulla
-            </button>
+            </button>            
             <button
               type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-md shadow-sm hover:from-orange-600 hover:to-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[120px]"              disabled={loading}
+              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-md shadow-sm hover:from-orange-600 hover:to-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center w-[130px] h-[40px]"              
+              disabled={loading}
             >
               {loading ? (
-                <>
-                  <LoadingSpinner />
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
                   Creazione...
-                </>
+                </span>
               ) : 'Crea Evento'}
             </button>
           </div>
