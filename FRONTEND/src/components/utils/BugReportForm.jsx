@@ -146,7 +146,7 @@ export default function BugReportForm() {
           <p className="text-green-600">Il tuo feedback è importante per migliorare l'applicazione.</p>
           <button 
             onClick={() => setIsSubmitted(false)}
-            className="mt-3 text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-md text-sm px-5 py-2 transition-colors">
+            className="mt-3 text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-md text-sm px-5 py-2 transition-colors cursor-pointer">
             Invia un'altra segnalazione
           </button>
         </div>
@@ -204,7 +204,7 @@ export default function BugReportForm() {
               className={`flex items-center px-5 py-2 rounded-md text-white transition-colors ${
                 isLoading || !bugReport.title || !bugReport.description || !bugReport.email
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-orange-500 hover:bg-orange-600'
+                  : 'bg-orange-500 hover:bg-orange-600 cursor-pointer'
               }`}>
               {isLoading ? 'Invio in corso...' : 'Invia segnalazione'}
             </button>

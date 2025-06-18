@@ -19,7 +19,7 @@ import { getUsers } from "../api/userApi";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserPlus, faCheck, faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus, faCheck, faFilter, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { sendFriendRequest, getFriends } from "../api/friendApi";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
@@ -32,11 +32,12 @@ import { useAuthErrorHandler } from "../hooks/useAuthErrorHandler";
 export default function SearchPlayersPage() {  
   const { accessToken, user } = useAuth();
   const navigate = useNavigate();
-  const { handleAuthError } = useAuthErrorHandler();
-  const [query, setQuery] = useState("");
+  const { handleAuthError } = useAuthErrorHandler();  const [query, setQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [results, setResults] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [resultsPerPage] = useState(10);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -205,6 +206,88 @@ export default function SearchPlayersPage() {
     }
   };
   
+  // Funzione di supporto per aggiornare l'UI dopo l'invio di una richiesta  // Funzione per calcolare la rilevanza di un risultato
+  const calculateRelevance = (userResult, searchQuery, cityQuery) => {
+    let score = 0;
+    
+    if (!userResult || !userResult.username) return score;
+    
+    const username = userResult.username.toLowerCase();
+    const searchLower = searchQuery.toLowerCase();
+    const cityLower = cityQuery.toLowerCase();
+    const userCity = (userResult.city || "").toLowerCase();
+    
+    // Punteggio per match del username
+    if (username === searchLower) score += 100; // Match esatto
+    else if (username.startsWith(searchLower)) score += 50; // Inizia con la query
+    else if (username.includes(searchLower)) score += 25; // Contiene la query
+    
+    // Punteggio per match della città
+    if (cityQuery && userCity) {
+      if (userCity === cityLower) score += 30; // Match esatto città
+      else if (userCity.startsWith(cityLower)) score += 15; // Città inizia con query
+      else if (userCity.includes(cityLower)) score += 10; // Città contiene query
+    }
+    
+    return score;
+  };
+
+  // Calcola risultati filtrati, ordinati e paginati
+  const getFilteredAndPaginatedResults = () => {
+    // Filtra i risultati escludendo l'utente corrente
+    const currentUserId = user?.id ? String(user.id) : user?._id ? String(user._id) : null;
+    
+    let filteredResults = results.filter(userResult => {
+      const resultUserId = String(userResult._id || "");
+      return !currentUserId || resultUserId !== currentUserId;
+    });
+
+    // Ordina per rilevanza se c'è una query di ricerca
+    if (query.trim() || cityFilter.trim()) {
+      filteredResults = filteredResults
+        .map(userResult => ({
+          ...userResult,
+          relevanceScore: calculateRelevance(userResult, query, cityFilter)
+        }))
+        .sort((a, b) => b.relevanceScore - a.relevanceScore);
+    }
+
+    // Calcola la paginazione
+    const totalResults = filteredResults.length;
+    const totalPages = Math.ceil(totalResults / resultsPerPage);
+    const startIndex = (currentPage - 1) * resultsPerPage;
+    const endIndex = startIndex + resultsPerPage;
+    const paginatedResults = filteredResults.slice(startIndex, endIndex);
+
+    return {
+      results: paginatedResults,
+      totalResults,
+      totalPages,
+      currentPage,
+      hasNextPage: currentPage < totalPages,
+      hasPrevPage: currentPage > 1
+    };
+  };
+
+  const paginationData = getFilteredAndPaginatedResults();
+  // Reset della pagina quando cambia la query o il filtro città
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, cityFilter]);
+
+  // Funzioni per la navigazione delle pagine
+  const goToNextPage = () => {
+    if (paginationData.hasNextPage) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (paginationData.hasPrevPage) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
   // Funzione di supporto per aggiornare l'UI dopo l'invio di una richiesta
   const updateUIAfterRequest = (userId) => {
     const updatedResults = results.map(r => 
@@ -234,41 +317,45 @@ export default function SearchPlayersPage() {
                 <FontAwesomeIcon icon={faFilter} />
               </button>
             </div>
-          </div>
-          
-          {/* Dropdown filtri posizionato a destra */}
+          </div>          
+          {/* Dropdown filtri - Responsive: desktop a destra, mobile sotto */}
           {showFilters && (
-            <div className="absolute top-0 left-full ml-4 w-64 bg-white shadow-xl rounded-lg border border-orange-200 p-4 z-10">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Filtri di ricerca</h3>
-              <FloatingLabel
-                id="cityFilter"
-                type="text"
-                label="Filtra per città"
-                value={cityFilter}
-                onChange={e => setCityFilter(e.target.value)}
-              />
-            </div>
+            <>
+              {/* Desktop: posizionato a destra */}
+              <div className="hidden md:block absolute top-0 left-full ml-4 w-64 bg-white shadow-xl rounded-lg border border-orange-200 p-4 z-10">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Filtri di ricerca</h3>
+                <FloatingLabel
+                  id="cityFilter"
+                  type="text"
+                  label="Filtra per città"
+                  value={cityFilter}
+                  onChange={e => setCityFilter(e.target.value)}
+                />
+              </div>
+              
+              {/* Mobile: posizionato sotto la barra di ricerca */}
+              <div className="md:hidden absolute top-full mt-2 left-0 right-0 bg-white shadow-xl rounded-lg border border-orange-200 p-4 z-10">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Filtri di ricerca</h3>
+                <FloatingLabel
+                  id="cityFilterMobile"
+                  type="text"
+                  label="Filtra per città"
+                  value={cityFilter}
+                  onChange={e => setCityFilter(e.target.value)}
+                />
+              </div>
+            </>
           )}
         </div>
         <div className="w-full max-w-md mt-4 space-y-3 px-4">
           {loading && <LoadingSpinner />}
-          {error && <div className="text-center text-red-500">{error}</div>}
-            {/* Debug info */}
+          {error && <div className="text-center text-red-500">{error}</div>}          {/* Debug info */}
           <div className="text-xs text-gray-500 mb-2">
-            Query: {query} | Città: {cityFilter} | Risultati: {results.length}
+            Query: {query} | Città: {cityFilter} | Risultati: {paginationData.totalResults} | Pagina: {paginationData.currentPage}/{paginationData.totalPages}
           </div>
+          
           {/* Risultati della ricerca */}
-          {results
-            // Controllo di sicurezza extra: non visualizzare mai l'utente corrente
-            .filter(userResult => {
-              // Estrai l'ID dell'utente corrente, considerando entrambe le proprietà
-              const currentUserId = user?.id ? String(user.id) : user?._id ? String(user._id) : null;
-              const resultUserId = String(userResult._id || "");
-              
-              // Se l'utente corrente non ha ID o gli ID sono diversi, mostra il risultato
-              return !currentUserId || resultUserId !== currentUserId;
-            })            
-            .map(userResult => {            const isFriend = friends.includes(userResult._id);
+          {paginationData.results.map(userResult => {const isFriend = friends.includes(userResult._id);
             const isRequestSent = sentRequests.includes(userResult._id) || userResult.requestSent;
             const isPending = pendingRequests.has(userResult._id);
             return (
@@ -336,8 +423,44 @@ export default function SearchPlayersPage() {
                   })()
                 }
               </div>
-            );
-          })}          {!loading && (query.length >= 3 || cityFilter.length >= 2) && results.length === 0 && !error && (
+            );          })}
+          
+          {/* Controlli di paginazione */}
+          {paginationData.totalPages > 1 && (
+            <div className="flex items-center justify-center gap-4 mt-6 mb-4">
+              <button
+                onClick={goToPrevPage}
+                disabled={!paginationData.hasPrevPage}
+                className={`p-3 rounded-full transition-colors ${
+                  paginationData.hasPrevPage 
+                    ? 'bg-orange-100 hover:bg-orange-200 text-orange-600 cursor-pointer' 
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }`}
+                title="Pagina precedente">
+                <FontAwesomeIcon icon={faChevronLeft} />
+              </button>
+              
+              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-md border border-orange-100">
+                <span className="text-sm text-gray-600">
+                  Pagina <span className="font-semibold text-orange-600">{paginationData.currentPage}</span> di <span className="font-semibold">{paginationData.totalPages}</span>
+                </span>
+              </div>
+              
+              <button
+                onClick={goToNextPage}
+                disabled={!paginationData.hasNextPage}
+                className={`p-3 rounded-full transition-colors ${
+                  paginationData.hasNextPage 
+                    ? 'bg-orange-100 hover:bg-orange-200 text-orange-600 cursor-pointer' 
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }`}
+                title="Pagina successiva">
+                <FontAwesomeIcon icon={faChevronRight} />
+              </button>
+            </div>
+          )}
+
+          {!loading && (query.length >= 3 || cityFilter.length >= 2) && paginationData.totalResults === 0 && !error && (
             <div className="text-center text-gray-400">Nessun giocatore trovato</div>
           )}
         </div>

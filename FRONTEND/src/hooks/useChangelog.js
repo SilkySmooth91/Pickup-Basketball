@@ -20,21 +20,47 @@ import { CURRENT_CHANGELOG_VERSION } from '../data/changelog';
 
 export function useChangelog() {
   const [showChangelog, setShowChangelog] = useState(false);
-  const { user, accessToken, refresh, setUser } = useAuth();  // Controlla se deve mostrare il changelog al login
+  const { user, accessToken, refresh, setUser } = useAuth();
+  // Controlla se deve mostrare il changelog al login
   useEffect(() => {
     if (user && user.lastSeenChangelog !== CURRENT_CHANGELOG_VERSION) {
-      // Mostra il changelog se l'utente non ha visto l'ultima versione
-      setShowChangelog(true);
+      // Controlla se l'utente ha già chiuso il modal in questa sessione
+      const sessionKey = `changelog_closed_${user.id || user._id}_${CURRENT_CHANGELOG_VERSION}`;
+      const hasClosedInSession = localStorage.getItem(sessionKey) === 'true';
+      
+      if (!hasClosedInSession) {
+        // Mostra il changelog solo se non è stato chiuso in questa sessione
+        setShowChangelog(true);
+      }
     } else {
       setShowChangelog(false);
     }
   }, [user]);
 
+  // Pulizia delle chiavi di sessione vecchie al mount
+  useEffect(() => {
+    if (user) {
+      const userId = user.id || user._id;
+      const currentSessionKey = `changelog_closed_${userId}_${CURRENT_CHANGELOG_VERSION}`;
+      
+      // Rimuovi tutte le chiavi di sessione precedenti per questo utente
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith(`changelog_closed_${userId}_`) && key !== currentSessionKey) {
+          localStorage.removeItem(key);
+        }
+      });
+    }
+  }, [user]);
   // Funzione per chiudere il changelog e aggiornare il backend
   const closeChangelog = async () => {
     if (user) {
       try {
         const userId = user.id || user._id;
+        
+        // Segna che il modal è stato chiuso in questa sessione
+        const sessionKey = `changelog_closed_${userId}_${CURRENT_CHANGELOG_VERSION}`;
+        localStorage.setItem(sessionKey, 'true');
+        
         await updateLastSeenChangelog(userId, CURRENT_CHANGELOG_VERSION, { accessToken, refresh });
         
         // Aggiorna lo stato locale dell'utente
@@ -48,7 +74,12 @@ export function useChangelog() {
         setShowChangelog(false);
       } catch (error) {
         console.error('Errore nell\'aggiornamento del changelog:', error);
-        // Anche se c'è un errore, chiudiamo il modal per non bloccare l'utente
+        // Anche se c'è un errore nel backend, salva comunque che è stato chiuso localmente
+        if (user) {
+          const userId = user.id || user._id;
+          const sessionKey = `changelog_closed_${userId}_${CURRENT_CHANGELOG_VERSION}`;
+          localStorage.setItem(sessionKey, 'true');
+        }
         setShowChangelog(false);
       }
     }

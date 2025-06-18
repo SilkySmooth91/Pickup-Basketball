@@ -18,6 +18,18 @@ export const CURRENT_CHANGELOG_VERSION = '1.1.0';
 
 // Dati del changelog - aggiungi nuove versioni in cima
 export const CHANGELOG_DATA = [
+    {
+    version: '1.1.1',
+    date: '18 Giugno 2025',
+    title: 'Miglioramenti UX/UI',
+    features: [
+      'Aggiunta paginazione dei risultati per la ricerca dei giocatori: adesso saranno visualizzati solo 10 risultati alla volta, con la possibilità di navigare tra le pagine dei risultati'
+    ],
+    fixes: [
+      'Ottimizzata la funzionalità di alcuni pulsanti per una migliore esperienza utente',
+      'Risolto un bug per cui il modale del changelog veniva mostrato ad ogni refresh della pagina, anche se l\'utente lo aveva già chiuso in precedenza'
+    ]
+  },
   {
     version: '1.1.0',
     date: '16 Giugno 2025',
