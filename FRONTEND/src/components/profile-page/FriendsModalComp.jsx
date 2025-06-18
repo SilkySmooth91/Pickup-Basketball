@@ -90,14 +90,14 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
         {/* Tabs */}
         <div className="flex border-b mb-4">
           <button 
-            className={`px-4 py-2 ${activeTab === 'friends' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-gray-500'}`}
+            className={`px-4 py-2 cursor-pointer ${activeTab === 'friends' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-gray-500'}`}
             onClick={() => setActiveTab('friends')}>
             <FontAwesomeIcon icon={faUser} className="mr-2" />
             Amici
           </button>
           {isOwner && (
             <button 
-              className={`px-4 py-2 ${activeTab === 'requests' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-gray-500'}`}
+              className={`px-4 py-2 cursor-pointer ${activeTab === 'requests' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-gray-500'}`}
               onClick={() => setActiveTab('requests')}>
                 <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
               Richieste
