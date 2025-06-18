@@ -105,7 +105,7 @@ export default function InfoCardComp({ profile, isOwner }) {
                 <span className="font-semibold text-gray-600 ">Email: </span>
                 <span className="text-gray-700">{profile?.email || "email@email.com"}</span>
               </div>
-              <button type="button" onClick={() => setShowModal(true)} className="w-auto mt-2 md:mt-0 md:ml-4 px-3 py-2 font-semibold bg-orange-500 text-white rounded hover:bg-orange-600 transition text-sm">
+              <button type="button" onClick={() => setShowModal(true)} className="w-auto mt-2 md:mt-0 md:ml-4 px-3 py-2 font-semibold bg-orange-500 text-white rounded hover:bg-orange-600 transition text-sm cursor-pointer">
                 Cambia password
               </button>
             </div>
@@ -175,7 +175,7 @@ export default function InfoCardComp({ profile, isOwner }) {
                 onChange={e => setForm(f => ({ ...f, repeat: e.target.value }))}
               />
               {error && <div className="text-red-500 text-sm">{error}</div>}
-              <button type="submit" className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition mt-2" disabled={loading}>
+              <button type="submit" className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition mt-2 cursor-pointer" disabled={loading}>
                 {loading ? (
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-5 h-5">
