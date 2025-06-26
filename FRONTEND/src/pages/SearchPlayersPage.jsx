@@ -21,7 +21,6 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus, faCheck, faFilter, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { sendFriendRequest, getFriends } from "../api/friendApi";
-import { toast } from "react-toastify";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
 import ImageWithFallback from "../components/utils/ImageWithFallback";
 import Footer from '../components/utils/Footer';
@@ -131,18 +130,15 @@ export default function SearchPlayersPage() {
     
     // Controllo di sicurezza
     if (!targetUserId) {
-      toast.error("ID utente non valido");
       return;
     }
     
     if (targetUserId === currentUserId) {
-      toast.error("Non puoi inviare una richiesta a te stesso");
       return;
     }
 
     // Verifica se esiste già una richiesta inviata usando il contesto
     if (isRequestSent(targetUserId)) {
-      toast.info("Hai già inviato una richiesta a questo utente");
       return;
     }    
     
@@ -150,56 +146,33 @@ export default function SearchPlayersPage() {
     if (isRequestPending(targetUserId)) {
       // Richiesta già in corso per questo utente
       return;
-    }// Aggiungi l'utente alla lista delle richieste in corso usando il contesto
+    }
+
+    // Aggiungi l'utente alla lista delle richieste in corso usando il contesto
     addPendingRequest(targetUserId);
-    
-    // Mostra un toast di caricamento
-    const toastId = toast.loading("Invio richiesta in corso...");
     
     try {
       // Invia la richiesta di amicizia
       const response = await sendFriendRequest(targetUserId, { accessToken });
       
-      // Aggiorna il toast con un messaggio di successo
-      toast.update(toastId, {
-        render: "Richiesta di amicizia inviata con successo!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-        closeOnClick: true
-      });
-      
       // Aggiorna l'UI
       updateUIAfterRequest(targetUserId);
-        // Aggiungi alla lista delle richieste inviate usando il contesto
-      addSentRequest(targetUserId);    } catch (err) {
+      // Aggiungi alla lista delle richieste inviate usando il contesto
+      addSentRequest(targetUserId);
+    } catch (err) {
       console.error("Errore durante l'invio della richiesta di amicizia:", err);
       
       // Gestisci errori di autenticazione prima
       if (handleAuthError(err, "La tua sessione è scaduta durante l'invio della richiesta")) {
-        toast.dismiss(toastId);
         return;
       }
       
       // Gestione errori più dettagliata
-      let errorMessage = "Errore durante l'invio della richiesta di amicizia";
-      
       if (err?.response?.status === 409) {
-        errorMessage = "Richiesta di amicizia già inviata o già amici";
         // Considera la richiesta come inviata anche in caso di errore 409
         updateUIAfterRequest(targetUserId);
         addSentRequest(targetUserId);
-      } else if (err?.message) {
-        errorMessage = err.message;
       }
-      
-      toast.update(toastId, {
-        render: errorMessage,
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-        closeOnClick: true
-      });
     } finally {
       // Rimuovi l'utente dalla lista delle richieste in corso usando il contesto
       removePendingRequest(targetUserId);
