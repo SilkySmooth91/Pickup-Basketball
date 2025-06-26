@@ -34,8 +34,11 @@ export default function BugReportForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { user, accessToken } = useAuth();
+  const { user, accessToken, refresh, logout } = useAuth();
   const recaptchaRef = useRef(null);
+  
+  // Crea l'oggetto auth per passarlo alle API
+  const auth = { accessToken, refresh, logout };
   
   // Controlla se il dispositivo è mobile
   useEffect(() => {
@@ -119,7 +122,7 @@ export default function BugReportForm() {
       };
       
       // Invia la segnalazione includendo il token reCAPTCHA
-      await sendBugReport(bugReportData, accessToken, recaptchaToken);
+      await sendBugReport(bugReportData, auth, recaptchaToken);
       
       toast.success("Grazie per la tua segnalazione!");
       setIsLoading(false);

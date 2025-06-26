@@ -30,7 +30,6 @@ L'applicazione è disponibile online all'indirizzo: [https://pickup-basketball.v
 - **FontAwesome**: Icone
 - **Cloudinary**: Gestione immagini
 - **React-Toastify**: Notifiche UI
-- **EmailJS**: Invio email (segnalazioni bug)
 - **Google reCAPTCHA**: Protezione da spam
 
 ### Backend
@@ -134,8 +133,7 @@ BACKEND/
 - MongoDB
 - Account Google OAuth (per autenticazione)
 - Account Cloudinary (per storage immagini)
-- Account SendGrid (per email)
-- Account EmailJS (per segnalazioni bug)
+- Account SendGrid (per email e segnalazioni bug)
 
 ### Configurazione Backend
 
@@ -196,9 +194,6 @@ BACKEND/
    ```
    VITE_API_URL=http://localhost:3001
    VITE_RECAPTCHA_SITE_KEY=...
-   VITE_EMAILJS_SERVICE_ID=...
-   VITE_EMAILJS_TEMPLATE_ID=...
-   VITE_EMAILJS_PUBLIC_KEY=...
    ```
 
 4. Avvia l'applicazione in modalità sviluppo
