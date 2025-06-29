@@ -27,8 +27,9 @@ import { isCourtInFavorites, toggleCourtFavorite } from '../../api/favoritesApi'
  * @param {string} courtName - Nome del campetto (per i messaggi)
  * @param {string} className - Classi CSS aggiuntive
  * @param {string} size - Dimensione dell'icona ('sm', 'md', 'lg')
+ * @param {function} onFavoriteChange - Callback chiamato quando cambia lo stato (courtId, isFavorite)
  */
-export default function FavoriteButton({ courtId, courtName, className = '', size = 'md' }) {
+export default function FavoriteButton({ courtId, courtName, className = '', size = 'md', onFavoriteChange }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -84,6 +85,11 @@ export default function FavoriteButton({ courtId, courtName, className = '', siz
       const result = await toggleCourtFavorite(courtId, isFavorite, auth);
       
       setIsFavorite(result.isFavorite);
+      
+      // Chiama il callback se fornito
+      if (onFavoriteChange) {
+        onFavoriteChange(courtId, result.isFavorite);
+      }
       
       // Mostra messaggio di successo
       if (result.isFavorite) {

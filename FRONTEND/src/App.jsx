@@ -28,6 +28,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import EventDetailsPage from './pages/EventDetailsPage'
 import SearchPlayersPage from './pages/SearchPlayersPage'
 import YourEvents from './pages/YourEvents'
+import FavoriteCourts from './pages/FavoriteCourts'
 import AddCourtPage from './pages/AddCourtPage'
 import { ProtectedRoute, PublicRoute } from './components/auth/RouteGuards'
 import LoadingSpinner from './components/utils/LoadingSpinner'
@@ -82,9 +83,12 @@ function AppRoutes() {
         <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />          <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
         <Route path="/add-court" element={<ProtectedRoute><AddCourtPage /></ProtectedRoute>} />
         <Route path="/events" element={<ProtectedRoute><YourEvents /></ProtectedRoute>} />
-        <Route path="/players" element={<ProtectedRoute><SearchPlayersPage /></ProtectedRoute>} />        <Route path="/whats-new" element={<ProtectedRoute><WhatsNewPage /></ProtectedRoute>} />
+        <Route path="/favorite-courts" element={<ProtectedRoute><FavoriteCourts /></ProtectedRoute>} />
+        <Route path="/players" element={<ProtectedRoute><SearchPlayersPage /></ProtectedRoute>} />        
+        <Route path="/whats-new" element={<ProtectedRoute><WhatsNewPage /></ProtectedRoute>} />
         <Route path="/event/:id" element={<ProtectedRoute><EventDetailsPage /></ProtectedRoute>} />
-        <Route path="/about" element={<AboutPage />} />        {/* Rotte pubbliche (reindirizzano se autenticati) */}
+        <Route path="/about" element={<AboutPage />} />        
+        {/* Rotte pubbliche (reindirizzano se autenticati) */}
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />        
         <Route path="/google-callback" element={<GoogleCallback />} />
         <Route path="/events/:eventId" element={<EventDetailsPage />} />

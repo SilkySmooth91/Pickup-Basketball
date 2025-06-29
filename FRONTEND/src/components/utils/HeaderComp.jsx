@@ -17,7 +17,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faBars, faTimes, faArrowRightFromBracket, faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faBars, faTimes, faArrowRightFromBracket, faLightbulb, faBasketball } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import '/src/styles/HeaderComp.css'
 import logo from '../../assets/newLogo.jpg';
@@ -175,6 +175,13 @@ export default function HeaderComp() {
                     Profilo
                   </Link>
                   <Link
+                    to="/favorite-courts"
+                    className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
+                    onClick={() => setDropdownOpenMobile(false)}>
+                    <FontAwesomeIcon icon={faBasketball} className="mr-2 text-orange-600" />
+                    Campetti preferiti
+                  </Link>
+                  <Link
                     to="/whats-new"
                     className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700 cursor-pointer"
                     onClick={() => setDropdownOpenMobile(false)}>
@@ -231,6 +238,13 @@ export default function HeaderComp() {
                     onClick={() => setDropdownOpen(false)}>
                     <FontAwesomeIcon icon={faUser} className="mr-2 text-orange-600" />
                     Profilo
+                  </Link>
+                  <Link
+                    to="/favorite-courts"
+                    className="block w-full text-left px-4 py-2 hover:bg-orange-50 text-gray-700"
+                    onClick={() => setDropdownOpen(false)}>
+                    <FontAwesomeIcon icon={faBasketball} className="mr-2 text-orange-600" />
+                    Campetti preferiti
                   </Link>
                   <Link
                     to="/whats-new"
