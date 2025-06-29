@@ -28,6 +28,7 @@ import EditCourtModal from '../components/utils/EditCourtModal';
 import CreateEventModal from '../components/utils/CreateEventModal';
 import CommentsSection from '../components/utils/CommentsSection';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
+import FavoriteButton from '../components/utils/FavoriteButton';
 import Footer from '../components/utils/Footer';
 
 export default function CourtInfo() {  const { id } = useParams();
@@ -95,7 +96,15 @@ export default function CourtInfo() {  const { id } = useParams();
             {court && (
               <div className="bg-white rounded shadow p-4">
                 <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-2'>
-                  <h2 className="text-2xl text-orange-600 font-semibold mb-2 md:mb-0">{court.name}</h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-2xl text-orange-600 font-semibold">{court.name}</h2>
+                    <FavoriteButton 
+                      courtId={court._id} 
+                      courtName={court.name}
+                      size="lg"
+                      className="flex-shrink-0"
+                    />
+                  </div>
                   <div className='hidden md:flex flex-row md:gap-2 mt-2 md:mt-0'>                    
                     <button 
                       className='w-auto bg-white text-orange-600 font-semibold px-5 py-2 rounded-md shadow border border-orange-500 hover:bg-gray-100 transition cursor-pointer flex gap-2 items-center'

@@ -49,6 +49,7 @@ const usersSchema = new mongoose.Schema(
     },
     lastSeenChangelog: { type: String, default: null }, // Ultima versione del changelog visualizzata
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
+    favoriteCourts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Courts' }], // Campetti preferiti dell'utente
     commentsOnProfile: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
     commentsByUser: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }],
   },

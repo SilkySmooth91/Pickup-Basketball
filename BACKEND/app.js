@@ -25,6 +25,7 @@ import eventsRoutes from "./src/routes/events/events.routes.js";
 import friendsRoutes from "./src/routes/friends-requests/friends.routes.js";
 import commentsRoutes from "./src/routes/comments/comments.routes.js";
 import bugReportsRoutes from "./src/routes/bug-reports/bugReports.routes.js";
+import favoritesRoutes from "./src/routes/favorites/favorites.routes.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./src/config/swagger.js";
 
@@ -54,6 +55,7 @@ app.use("/events", eventsRoutes);
 app.use("/friends", friendsRoutes);
 app.use("/comments", commentsRoutes);
 app.use("/bug-reports", bugReportsRoutes);
+app.use("/favorites", favoritesRoutes);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

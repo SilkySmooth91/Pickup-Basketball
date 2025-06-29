@@ -22,6 +22,7 @@ import basketballMarker from '../../assets/basketball-marker.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import FavoriteButton from '../utils/FavoriteButton';
 
 
 // Icona personalizzata per i marker dei campetti
@@ -174,7 +175,15 @@ export default function CourtMarkers({ searchedCoords }) {
             icon={courtIcon}>            
             <Popup className="court-popup-container">
               <div className="court-popup p-5">
-                <h3 className="font-bold md:text-2xl sm:mb-2 md:mb-4 text-orange-600">{court.name}</h3>
+                <div className="flex items-center justify-between mb-2 md:mb-4">
+                  <h3 className="font-bold md:text-2xl text-orange-600 mr-2">{court.name}</h3>
+                  <FavoriteButton 
+                    courtId={court._id} 
+                    courtName={court.name}
+                    size="lg"
+                    className="flex-shrink-0"
+                  />
+                </div>
                 
                 {court.images && court.images.length > 0 && (
                   <div className="my-2">
