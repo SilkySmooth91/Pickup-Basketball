@@ -14,11 +14,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Versione attuale del changelog (aggiorna questo quando aggiungi nuove features)
-export const CURRENT_CHANGELOG_VERSION = '1.1.0';
+export const CURRENT_CHANGELOG_VERSION = '1.2.0';
 
 // Dati del changelog - aggiungi nuove versioni in cima
 export const CHANGELOG_DATA = [
     {
+    version: '1.2.0',
+    date: '1 Luglio 2025',
+    title: 'Sistema di Notifiche',
+    features: [
+      'Nuovo sistema di notifiche con campanellina nella navbar: ricevi notifiche in tempo reale per richieste di amicizia, eventi e molto altro!',
+      'Notifiche automatiche per richieste di amicizia inviate e accettate',
+      'Contatore notifiche non lette sempre visibile',
+      'Dropdown notifiche con azioni rapide e cronologia completa'
+    ],
+    fixes: [
+      'Migliorata la responsività della navbar su dispositivi mobili',
+      'Ottimizzate le performance del sistema di autenticazione'
+    ]
+  },
+  {
     version: '1.1.1',
     date: '18 Giugno 2025',
     title: 'Miglioramenti UX/UI',

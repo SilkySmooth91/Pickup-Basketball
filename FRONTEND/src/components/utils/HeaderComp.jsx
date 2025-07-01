@@ -23,6 +23,7 @@ import '/src/styles/HeaderComp.css'
 import logo from '../../assets/newLogo.jpg';
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import ImageWithFallback from "./ImageWithFallback";
+import NotificationDropdown from "./NotificationDropdown";
 
 export default function HeaderComp() {
   const { user, accessToken, logout } = useAuth();
@@ -150,19 +151,24 @@ export default function HeaderComp() {
             </span>
           </Link>
 
-          {/* Avatar & Dropdown (right, mobile) - mostra solo se autenticato */}
+          {/* Notifications & Avatar (right, mobile) - mostra solo se autenticato */}
           {isAuthenticated && (
-            <div className="relative ml-2" ref={dropdownRefMobile}>
-              <button
-                className="flex items-center gap-2 focus:outline-none"
-                onClick={() => setDropdownOpenMobile((v) => !v)}
-                aria-label="User menu">
-                <ImageWithFallback
-                  src={user?.avatar || "/vite.svg"}
-                  alt="avatar"
-                  className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>
-                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />
-              </button>
+            <div className="flex items-center gap-2">
+              {/* Notification Bell Mobile */}
+              <NotificationDropdown />
+              
+              {/* Avatar & Dropdown Mobile */}
+              <div className="relative" ref={dropdownRefMobile}>
+                <button
+                  className="flex items-center gap-2 focus:outline-none"
+                  onClick={() => setDropdownOpenMobile((v) => !v)}
+                  aria-label="User menu">
+                  <ImageWithFallback
+                    src={user?.avatar || "/vite.svg"}
+                    alt="avatar"
+                    className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>
+                  <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />
+                </button>
               {dropdownOpenMobile && (
                 <div className="absolute right-0 top-10 mt-2 w-40 dropdown-menu py-2 animate-fade-in" style={{ 
                   zIndex: 'var(--z-dropdown)'
@@ -196,6 +202,7 @@ export default function HeaderComp() {
                   </button>
                 </div>
               )}
+              </div>
             </div>
           )}
           {/* Placeholder vuoto per mantenere il layout quando non c'è l'avatar */}
@@ -215,19 +222,24 @@ export default function HeaderComp() {
             {navLinks}
           </div>
 
-          {/* Avatar & Dropdown (desktop) - mostra solo se autenticato */}
+          {/* Notifications & Avatar (desktop) - mostra solo se autenticato */}
           {isAuthenticated && (
-            <div className="relative ml-4" ref={dropdownRef}>
-              <button
-                className="flex items-center gap-2 focus:outline-none cursor-pointer"
-                onClick={() => setDropdownOpen((v) => !v)}
-                aria-label="User menu">
-                <ImageWithFallback
-                  src={user?.avatar || "/vite.svg"}
-                  alt="avatar"
-                  className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>
-                <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />
-              </button>
+            <div className="flex items-center gap-3">
+              {/* Notification Bell */}
+              <NotificationDropdown />
+              
+              {/* Avatar & Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  className="flex items-center gap-2 focus:outline-none cursor-pointer"
+                  onClick={() => setDropdownOpen((v) => !v)}
+                  aria-label="User menu">
+                  <ImageWithFallback
+                    src={user?.avatar || "/vite.svg"}
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>
+                  <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />
+                </button>
               {dropdownOpen && (
                 <div className="absolute right-0 top-11 mt-2 w-48 dropdown-menu py-2 animate-fade-in" style={{ 
                   zIndex: 'var(--z-dropdown)'
@@ -261,6 +273,7 @@ export default function HeaderComp() {
                   </button>
                 </div>
               )}
+              </div>
             </div>
           )}
         </div>

@@ -18,6 +18,7 @@ import authMiddleware from "../../middlewares/auth.js";
 import validateFriendRequest from "../../middlewares/friendRequestValidation.js";
 import friendRequestModel from "../../models/FriendReqModel.js";
 import usersModel from "../../models/UsersSchema.js";
+import NotificationService from "../../utils/NotificationService.js";
 
 const router = express.Router();
 
@@ -49,6 +50,15 @@ router.post("/requests", authMiddleware, validateFriendRequest, async (req, res)
   try {
     const { to } = req.body;
     const request = await friendRequestModel.create({ from: req.user.id, to });
+    
+    // Crea notifica per il destinatario
+    try {
+      await NotificationService.createFriendRequestNotification(req.user.id, to);
+    } catch (notifError) {
+      console.error('Errore nella creazione notifica richiesta amicizia:', notifError);
+      // Non blocchiamo la richiesta se la notifica fallisce
+    }
+    
     res.status(201).json(request);
   } catch (err) {
     res.status(500).json({ error: "Errore invio richiesta" });
@@ -134,6 +144,14 @@ router.post("/requests/:id/accept", authMiddleware, async (req, res) => {
   if (updated) {
     await fromUser.save();
     await toUser.save();
+  }
+
+  // Crea notifica per chi ha inviato la richiesta
+  try {
+    await NotificationService.createFriendAcceptedNotification(req.user.id, request.from);
+  } catch (notifError) {
+    console.error('Errore nella creazione notifica amicizia accettata:', notifError);
+    // Non blocchiamo l'accettazione se la notifica fallisce
   }
 
   res.json({ message: "Richiesta accettata" });
