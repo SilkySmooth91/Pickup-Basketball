@@ -1,4 +1,21 @@
 {
+  "redirects": [
+    {
+      "source": "https://pickup-basketball.com/(.*)",
+      "destination": "https://pickup-basketball.it/$1",
+      "permanent": true
+    },
+    {
+      "source": "https://www.pickup-basketball.com/(.*)",
+      "destination": "https://pickup-basketball.it/$1",
+      "permanent": true
+    },
+    {
+      "source": "https://www.pickup-basketball.it/(.*)",
+      "destination": "https://pickup-basketball.it/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

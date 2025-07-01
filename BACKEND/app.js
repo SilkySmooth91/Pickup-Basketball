@@ -39,13 +39,22 @@ app.use(passport.initialize());
 
 // Configurazione CORS per permettere richieste solo dal frontend
 const corsOptions = {
-  origin: [process.env.FE_URL, 'http://localhost:5173', 'https://pickup-basketball.vercel.app'],
+  origin: [
+    process.env.FE_URL, 
+    'http://localhost:5173', 
+    'https://pickup-basketball.vercel.app',
+    'https://pickup-basketball.it',
+    'https://www.pickup-basketball.it',
+    'https://pickup-basketball.com',
+    'https://www.pickup-basketball.com'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 app.use("/auth", authRoutes);
