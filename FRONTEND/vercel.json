@@ -1,14 +1,20 @@
 {
   "redirects": [
     {
-      "source": "https://pickup-basketball.com/(.*)",
+      "source": "/(.*)",
       "destination": "https://pickup-basketball.it/$1",
-      "permanent": true
+      "permanent": true,
+      "has": [
+        { "host": "pickup-basketball.com" }
+      ]
     },
     {
-      "source": "https://www.pickup-basketball.com/(.*)",
+      "source": "/(.*)",
       "destination": "https://pickup-basketball.it/$1",
-      "permanent": true
+      "permanent": true,
+      "has": [
+        { "host": "www.pickup-basketball.com" }
+      ]
     },
     {
       "source": "https://www.pickup-basketball.it/(.*)",
