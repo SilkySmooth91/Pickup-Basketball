@@ -42,6 +42,9 @@ export default function EventDetailsPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const isCreator = user && event?.creator?._id === user.id;
   const isParticipant = user && event?.participants?.some(p => p._id === user.id);
+  
+  // Verifica se l'evento è nel passato
+  const isEventPast = event ? new Date(event.datetime) < new Date() : false;
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -103,8 +106,8 @@ export default function EventDetailsPage() {
             {/* Header immagine + titolo + organizzatore */}
             <div className="relative h-70 flex flex-col justify-end" style={{background: event.court?.images?.[0]?.url ? `url(${event.court.images[0].url}) center/cover no-repeat` : '#f3f3f3'}}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0" />
-              {/* Pulsante modifica SOLO per il creatore*/}
-              {isCreator && (
+              {/* Pulsante modifica SOLO per il creatore e solo se l'evento non è passato */}
+              {isCreator && !isEventPast && (
                 <button
                   className="absolute top-3 right-3 z-20 bg-white text-orange-600 rounded-lg p-2 shadow-xl hover:bg-gray-100 transition cursor-pointer"
                   title="Modifica evento"
@@ -113,12 +116,19 @@ export default function EventDetailsPage() {
                   Modifica
                 </button>
               )}
+              {/* Indicatore evento passato */}
+              {isEventPast && (
+                <div className="absolute top-3 right-3 z-20 bg-gray-600 text-white rounded-lg px-3 py-2 shadow-xl">
+                  <span className="text-sm font-medium">Evento concluso</span>
+                </div>
+              )}
               <div className="relative z-10 p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <h2 className="text-3xl font-bold text-white drop-shadow">{event.title}</h2>
                   <FontAwesomeIcon 
                     icon={event.isprivate ? faLock : faLockOpen} 
-                    className={event.isprivate ? "text-orange-600" : "text-green-500"}                    title={event.isprivate ? 'Evento privato' : 'Evento pubblico'}/>
+                    className={event.isprivate ? "text-orange-600" : "text-green-500"}                    
+                    title={event.isprivate ? 'Evento privato' : 'Evento pubblico'}/>
                 </div>
                 {event.creator && (
                   <div className="flex items-center gap-2">
@@ -185,28 +195,40 @@ export default function EventDetailsPage() {
                   <div className="text-gray-800 mt-1">{event.description}</div>
                 </div>
               )}
-              {/* Pulsante partecipa, con logica evento privato */}
+              {/* Pulsante partecipa, con logica evento privato e evento passato */}
               {!isCreator && (
                 <button
                   className={`cursor-pointer mt-6 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md text-lg font-semibold transition shadow-sm
-                    ${isParticipant
-                      ? 'bg-red-50 text-red-600 border border-red-600 hover:bg-red-100'
-                      : 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'}
+                    ${isEventPast
+                      ? 'bg-gray-200 text-gray-500 border border-gray-300'
+                      : isParticipant
+                        ? 'bg-red-50 text-red-600 border border-red-600 hover:bg-red-100'
+                        : 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'}
                     disabled:opacity-60 disabled:cursor-not-allowed`
                   }
                   onClick={handleParticipation}
                   disabled={
+                    isEventPast || // BLOCCA partecipazione se l'evento è passato
                     actionLoading ||
                     (event.maxplayers && event.participants?.length >= event.maxplayers && !isParticipant) ||
                     (event.isprivate && !isCreator) // BLOCCA partecipazione se l'evento è privato
                   }>
                   <FontAwesomeIcon icon={isParticipant ? faUserMinus : faUserPlus} />
-                  {actionLoading
-                    ? 'Attendere...'
-                    : isParticipant
-                      ? 'Annulla partecipazione'
-                      : event.isprivate ? 'Solo su invito' : 'Partecipa'}
+                  {isEventPast
+                    ? 'Evento concluso'
+                    : actionLoading
+                      ? 'Attendere...'
+                      : isParticipant
+                        ? 'Annulla partecipazione'
+                        : event.isprivate ? 'Solo su invito' : 'Partecipa'}
                 </button>
+              )}
+              {/* Messaggio per il creatore quando l'evento è passato */}
+              {isCreator && isEventPast && (
+                <div className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md text-lg font-semibold bg-gray-100 text-gray-600 border border-gray-300">
+                  <FontAwesomeIcon icon={faCalendar} />
+                  Questo evento è già concluso
+                </div>
               )}
             </div>
           </div>
@@ -214,9 +236,10 @@ export default function EventDetailsPage() {
           <div className="w-full md:w-1/5 bg-white rounded-lg shadow-xl p-4 flex flex-col gap-2 h-fit self-start mt-6 md:mt-0">
             <div className="font-semibold text-orange-700 mb-2">Partecipanti</div>
             {event.participants?.length > 0 ? (
-              <>                {(showAllParticipants ? event.participants : event.participants.slice(0, 9)).map(p => (
+              <>                
+              {(showAllParticipants ? event.participants : event.participants.slice(0, 9)).map(p => (
                   <div key={p._id} className="flex items-center gap-2 cursor-pointer hover:bg-orange-50 rounded p-1 transition" onClick={() => window.location.href = `/profile/${p._id}` }>
-                    <ImageWithFallback src={p.avatar || '/vite.svg'} alt={p.username} className="w-8 h-8 rounded-full object-cover border-2 border-orange-600" />
+                    <ImageWithFallback src={p.avatar} alt={p.username} className="w-8 h-8 rounded-full object-cover border-2 border-orange-600" />
                     <span className="font-medium text-gray-700">{p.username}</span>
                   </div>
                 ))}
@@ -232,7 +255,8 @@ export default function EventDetailsPage() {
               <span className="text-gray-400 text-sm">Nessun partecipante</span>
             )}
           </div>
-        </div>        {/* Sezione commenti */}
+        </div>        
+        {/* Sezione commenti */}
         <div className="mt-8">
           <CommentsSection targetId={eventId} targetType="Events" />
         </div>

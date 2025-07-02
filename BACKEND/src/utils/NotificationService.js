@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import Notification from '../models/NotificationSchema.js';
+import Users from '../models/UsersSchema.js';
 
 // Servizio per creare notifiche automatiche
 class NotificationService {
@@ -23,14 +24,21 @@ class NotificationService {
     try {
       console.log('Creando notifica richiesta amicizia:', { senderId, recipientId });
       
+      // Recupera le informazioni del mittente
+      const sender = await Users.findById(senderId).select('username');
+      if (!sender) {
+        throw new Error('Utente mittente non trovato');
+      }
+      
       const notification = await Notification.createNotification({
         recipient: recipientId,
         sender: senderId,
         type: 'friend_request',
         title: 'Nuova richiesta di amicizia',
-        message: 'Hai ricevuto una nuova richiesta di amicizia',
+        message: `${sender.username} ti ha inviato una richiesta di amicizia`,
         data: {
-          senderId: senderId
+          senderId: senderId,
+          senderUsername: sender.username
         },
         actionUrl: '/profile'
       });
@@ -46,14 +54,21 @@ class NotificationService {
   // Notifica per richiesta di amicizia accettata
   static async createFriendAcceptedNotification(accepterId, requesterId) {
     try {
+      // Recupera le informazioni di chi ha accettato
+      const accepter = await Users.findById(accepterId).select('username');
+      if (!accepter) {
+        throw new Error('Utente che ha accettato non trovato');
+      }
+      
       const notification = await Notification.createNotification({
         recipient: requesterId,
         sender: accepterId,
         type: 'friend_accepted',
         title: 'Richiesta di amicizia accettata!',
-        message: 'La tua richiesta di amicizia è stata accettata',
+        message: `${accepter.username} ha accettato la tua richiesta di amicizia!`,
         data: {
-          accepterId: accepterId
+          accepterId: accepterId,
+          accepterUsername: accepter.username
         },
         actionUrl: '/profile'
       });
@@ -69,15 +84,22 @@ class NotificationService {
   // Notifica per invito a evento
   static async createEventInvitationNotification(senderId, recipientId, eventId, eventTitle) {
     try {
+      // Recupera le informazioni di chi ha inviato l'invito
+      const sender = await Users.findById(senderId).select('username');
+      if (!sender) {
+        throw new Error('Utente che ha inviato l\'invito non trovato');
+      }
+      
       const notification = await Notification.createNotification({
         recipient: recipientId,
         sender: senderId,
         type: 'event_invitation',
         title: 'Invito a evento',
-        message: `Sei stato invitato all'evento: ${eventTitle}`,
+        message: `${sender.username} ti ha invitato all'evento: ${eventTitle}`,
         data: {
           eventId: eventId,
-          eventTitle: eventTitle
+          eventTitle: eventTitle,
+          senderUsername: sender.username
         },
         actionUrl: `/events/${eventId}`
       });
@@ -182,30 +204,6 @@ class NotificationService {
     }
   }
 
-  // Notifica per nuovo campetto preferito
-  static async createCourtFavoriteNotification(userId, courtId, courtName) {
-    try {
-      const notification = await Notification.createNotification({
-        recipient: userId,
-        sender: null, // Notifica di sistema
-        type: 'court_favorite',
-        title: 'Campetto aggiunto ai preferiti',
-        message: `Hai aggiunto "${courtName}" ai tuoi campetti preferiti`,
-        data: {
-          courtId: courtId,
-          courtName: courtName
-        },
-        actionUrl: `/courts/${courtId}`
-      });
-      
-      console.log('Notifica campetto preferito creata:', notification._id);
-      return notification;
-    } catch (error) {
-      console.error('Errore nella creazione notifica campetto preferito:', error);
-      throw error;
-    }
-  }
-
   // Notifica di sistema generica
   static async createSystemNotification(recipientId, title, message, data = {}, actionUrl = null) {
     try {
@@ -233,6 +231,37 @@ class NotificationService {
       return await Notification.cleanupOldNotifications();
     } catch (error) {
       console.error('Errore nel cleanup notifiche:', error);
+      throw error;
+    }
+  }
+
+  // Notifica per nuovo evento su campo preferato
+  static async createNewEventOnFavoriteCourtNotification(eventId, eventTitle, courtName, userIds) {
+    try {
+      const notifications = [];
+      
+      for (const userId of userIds) {
+        const notification = await Notification.createNotification({
+          recipient: userId,
+          sender: null, // Notifica di sistema
+          type: 'court_favorite',
+          title: 'Nuovo evento sul tuo campo preferito!',
+          message: `È stato creato l'evento "${eventTitle}" su ${courtName}`,
+          data: {
+            eventId: eventId,
+            eventTitle: eventTitle,
+            courtName: courtName
+          },
+          actionUrl: `/events/${eventId}`
+        });
+        
+        notifications.push(notification);
+      }
+      
+      console.log(`${notifications.length} notifiche nuovo evento su campo preferito create`);
+      return notifications;
+    } catch (error) {
+      console.error('Errore nella creazione notifiche nuovo evento su campo preferito:', error);
       throw error;
     }
   }

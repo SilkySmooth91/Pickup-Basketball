@@ -27,6 +27,7 @@ import commentsRoutes from "./src/routes/comments/comments.routes.js";
 import bugReportsRoutes from "./src/routes/bug-reports/bugReports.routes.js";
 import favoritesRoutes from "./src/routes/favorites/favorites.routes.js";
 import notificationsRoutes from "./src/routes/notifications/notifications.routes.js";
+import EventReminderService from "./src/utils/EventReminderService.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./src/config/swagger.js";
 
@@ -69,6 +70,9 @@ app.use("/favorites", favoritesRoutes);
 app.use("/notifications", notificationsRoutes);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Avvia il servizio di promemoria eventi
+EventReminderService.startReminderService();
 
 app.get("/", (req, res) => {
   res.send("API running...");

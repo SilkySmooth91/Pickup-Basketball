@@ -19,6 +19,7 @@ import { faBell, faCheck, faTimes, faUser, faCalendarAlt, faBasketball } from '@
 import { useAuth } from '../../context/AuthContext';
 import { fetchWithAuth } from '../../context/fetchWithAuth';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function NotificationDropdown() {
   const [notifications, setNotifications] = useState([]);
@@ -27,6 +28,7 @@ export default function NotificationDropdown() {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
   const { accessToken, refresh, logout } = useAuth();
+  const navigate = useNavigate();
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -50,6 +52,20 @@ export default function NotificationDropdown() {
       console.error('Errore nel caricamento notifiche:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle notification click
+  const handleNotificationClick = async (notification) => {
+    // Segna come letta se non è già letta
+    if (!notification.read) {
+      await markAsRead(notification._id);
+    }
+    
+    // Naviga all'URL se presente
+    if (notification.actionUrl) {
+      navigate(notification.actionUrl);
+      setDropdownOpen(false); // Chiudi il dropdown
     }
   };
 
@@ -163,18 +179,17 @@ export default function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       {/* Notification Bell Button */}
       <button
-        className="relative flex items-center justify-center p-2 text-gray-600 hover:text-orange-600 focus:outline-none transition-colors"
+        className="relative flex items-center justify-center md:p-2 text-gray-600 hover:text-orange-600 focus:outline-none transition-colors cursor-pointer"
         onClick={() => {
           setDropdownOpen(!dropdownOpen);
           if (!dropdownOpen) {
             fetchNotifications();
           }
         }}
-        aria-label="Notifiche"
-      >
+        aria-label="Notifiche">
         <FontAwesomeIcon icon={faBell} className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+          <span className="absolute -top-1 -right-1 md:-right-0 bg-red-500 text-white text-xs rounded-full min-w-[14px] h-[14px] md:min-w-[18px] md:h-[18px] flex items-center justify-center p-1">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -183,7 +198,7 @@ export default function NotificationDropdown() {
       {/* Dropdown */}
       {dropdownOpen && (
         <div 
-          className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-hidden"
+          className="absolute -right-15 top-10 md:top-12 w-80 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-hidden"
           style={{ zIndex: 9999 }}
         >
           {/* Header */}
@@ -192,8 +207,7 @@ export default function NotificationDropdown() {
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-sm text-orange-600 hover:text-orange-800 font-medium"
-              >
+                className="text-sm text-orange-600 hover:text-orange-800 font-medium">
                 Segna tutte come lette
               </button>
             )}
@@ -211,46 +225,58 @@ export default function NotificationDropdown() {
                 <p>Nessuna notifica</p>
               </div>
             ) : (
-              notifications.map((notification) => (
-                <div
-                  key={notification._id}
-                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
-                    !notification.read ? 'bg-blue-50' : ''
-                  }`}
-                  onClick={() => !notification.read && markAsRead(notification._id)}
-                >
-                  <div className="flex items-start space-x-3">
-                    <div className={`flex-shrink-0 p-2 rounded-full ${
-                      !notification.read ? 'bg-orange-100' : 'bg-gray-100'
-                    }`}>
-                      <FontAwesomeIcon 
-                        icon={getNotificationIcon(notification.type)} 
-                        className={`w-4 h-4 ${
-                          !notification.read ? 'text-orange-600' : 'text-gray-500'
-                        }`}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${
-                        !notification.read ? 'font-semibold text-gray-900' : 'text-gray-700'
+              <ul className="divide-y divide-gray-100" role="list" aria-label="Lista notifiche">
+                {notifications.map((notification) => (
+                  <li
+                    key={notification._id}
+                    className={`p-4 hover:bg-gray-50 cursor-pointer transition ${
+                      !notification.read ? 'bg-blue-50' : ''
+                    }`}
+                    onClick={() => handleNotificationClick(notification)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleNotificationClick(notification);
+                      }
+                    }}
+                    aria-label={`Notifica: ${notification.title}. ${notification.message}`}
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className={`flex-shrink-0 px-3 py-2 rounded-full ${
+                        !notification.read ? 'bg-orange-100' : 'bg-gray-100'
                       }`}>
-                        {notification.title}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {notification.message}
-                      </p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-gray-400">
-                          {formatTime(notification.createdAt)}
-                        </span>
-                        {!notification.read && (
-                          <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                        )}
+                        <FontAwesomeIcon 
+                          icon={getNotificationIcon(notification.type)} 
+                          className={`w-4 h-4 ${
+                            !notification.read ? 'text-orange-600' : 'text-gray-500'
+                          }`}
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm ${
+                          !notification.read ? 'font-semibold text-gray-900' : 'text-gray-700'
+                        }`}>
+                          {notification.title}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {notification.message}
+                        </p>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-xs text-gray-400">
+                            {formatTime(notification.createdAt)}
+                          </span>
+                          {!notification.read && (
+                            <div className="w-2 h-2 bg-orange-500 rounded-full" aria-label="Non letta"></div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ))
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 

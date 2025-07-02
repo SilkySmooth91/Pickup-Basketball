@@ -16,6 +16,7 @@
 import express from "express";
 import Notification from "../../models/NotificationSchema.js";
 import Users from "../../models/UsersSchema.js";
+import EventReminderService from "../../utils/EventReminderService.js";
 import authMiddleware from "../../middlewares/auth.js";
 
 const router = express.Router();
@@ -310,7 +311,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
  *                 description: ID del destinatario
  *               type:
  *                 type: string
- *                 enum: [friend_request, friend_accepted, event_invitation, event_update, event_cancelled, event_reminder, court_favorite, system]
+ *                 enum: [friend_request, friend_accepted, event_invitation, event_update, event_cancelled, event_reminder, system]
  *               title:
  *                 type: string
  *                 maxLength: 100
@@ -385,7 +386,8 @@ router.post("/test", authMiddleware, async (req, res) => {
       type: 'system',
       title: 'Test notifica',
       message: 'Questa è una notifica di test per verificare il funzionamento del sistema',
-      data: { test: true }
+      data: { test: true },
+      actionUrl: '/profile'
     });
 
     res.status(201).json({ 
@@ -395,6 +397,50 @@ router.post("/test", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error("Errore nella creazione notifica di test:", err);
     res.status(500).json({ error: "Errore nella creazione della notifica di test" });
+  }
+});
+
+/**
+ * @openapi
+ * /notifications/test-reminder/{eventId}:
+ *   post:
+ *     summary: Invia promemoria di test per un evento
+ *     tags:
+ *       - Notifications
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: eventId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID dell'evento per cui inviare il promemoria
+ *     responses:
+ *       200:
+ *         description: Promemoria di test inviato
+ *       404:
+ *         description: Evento non trovato
+ *       401:
+ *         description: Non autorizzato
+ */
+router.post("/test-reminder/:eventId", authMiddleware, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    const success = await EventReminderService.sendTestReminder(eventId);
+    
+    if (success) {
+      res.json({ 
+        message: "Promemoria di test inviato con successo",
+        eventId 
+      });
+    } else {
+      res.status(404).json({ error: "Evento non trovato o senza partecipanti" });
+    }
+  } catch (err) {
+    console.error("Errore nell'invio promemoria di test:", err);
+    res.status(500).json({ error: "Errore nell'invio del promemoria di test" });
   }
 });
 

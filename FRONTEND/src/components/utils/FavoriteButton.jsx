@@ -92,11 +92,11 @@ export default function FavoriteButton({ courtId, courtName, className = '', siz
       }
       
       // Mostra messaggio di successo
-      if (result.isFavorite) {
-        toast.success(`${courtName} aggiunto ai preferiti! ⭐`);
-      } else {
-        toast.success(`${courtName} rimosso dai preferiti`);
-      }
+      const message = result.isFavorite 
+        ? `${courtName} aggiunto ai preferiti! ⭐` 
+        : `${courtName} rimosso dai preferiti`;
+      
+      toast.success(message);
 
     } catch (error) {
       console.error('Errore nel toggle preferiti:', error);

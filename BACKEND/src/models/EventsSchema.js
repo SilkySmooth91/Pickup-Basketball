@@ -24,7 +24,8 @@ const eventsSchema = new mongoose.Schema({
     isprivate: { type: Boolean, required: true, default: false },
     creator: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments" }]
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comments" }],
+    reminderSent: { type: Boolean, default: false }
 })
 
 const eventModel = mongoose.model("Events", eventsSchema)

@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FloatingLabel from './FloatingLabel';
 import LoadingSpinner from './LoadingSpinner';
+import ImageWithFallback from './ImageWithFallback';
 
 export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) {
   const { user, accessToken } = useAuth();
@@ -46,6 +47,9 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
   
   // Verifica se l'utente corrente partecipa all'evento
   const isParticipant = user && event?.participants?.some(p => p._id === user.id);
+  
+  // Verifica se l'evento è nel passato
+  const isEventPast = event ? new Date(event.datetime) < new Date() : false;
   useEffect(() => {
     const fetchEventDetails = async () => {
       if (!eventId) return;
@@ -189,8 +193,8 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                       className={`flex items-center py-2 px-3 rounded ${participant._id === event.creator._id ? 'bg-orange-100' : 'bg-gray-100'} cursor-pointer hover:bg-orange-50 transition-colors`}
                       onClick={() => navigate(`/profile/${participant._id}`)}>
                       <div className="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gray-200 flex-shrink-0">
-                        <img 
-                          src={participant.avatar || '/vite.svg'} 
+                        <ImageWithFallback 
+                          src={participant.avatar} 
                           alt={participant.username} 
                           className="w-full h-full object-cover"/>
                       </div>
@@ -263,32 +267,39 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
                     </div>
                   </form>
                 ) : (
-                  <button 
-                    className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 border border-orange-600 rounded-md hover:bg-orange-50 transition"
-                    onClick={() => setEditMode(true)}>
-                    <FontAwesomeIcon icon={faPen} />
-                    Modifica
-                  </button>
+                  !isEventPast && (
+                    <button 
+                      className="flex items-center gap-2 px-4 py-2 bg-white text-orange-600 border border-orange-600 rounded-md hover:bg-orange-50 transition"
+                      onClick={() => setEditMode(true)}>
+                      <FontAwesomeIcon icon={faPen} />
+                      Modifica
+                    </button>
+                  )
                 )
               ) : (
                 <button 
                   className={`flex items-center gap-2 px-4 py-2 rounded-md transition ${
-                    isParticipant 
-                      ? 'bg-red-50 text-red-600 border border-red-600 hover:bg-red-100' 
-                      : 'bg-green-50 text-green-600 border border-green-600 hover:bg-green-100'
+                    isEventPast
+                      ? 'bg-gray-200 text-gray-500 border border-gray-300 cursor-not-allowed'
+                      : isParticipant 
+                        ? 'bg-red-50 text-red-600 border border-red-600 hover:bg-red-100' 
+                        : 'bg-green-50 text-green-600 border border-green-600 hover:bg-green-100'
                   }`}
                   onClick={handleParticipation}
                   disabled={
+                    isEventPast || // BLOCCA partecipazione se l'evento è passato
                     actionLoading ||
                     (event.participants?.length >= event.maxplayers && !isParticipant) ||
                     (event.isprivate && !isCreator) // BLOCCA partecipazione se l'evento è privato.
                   }>
                   <FontAwesomeIcon icon={isParticipant ? faUserMinus : faUserPlus} />
-                  {actionLoading 
-                    ? 'Attendere...' 
-                    : isParticipant 
-                      ? 'Annulla partecipazione' 
-                      : event.isprivate ? 'Solo su invito' : 'Partecipa'}
+                  {isEventPast
+                    ? 'Evento concluso'
+                    : actionLoading 
+                      ? 'Attendere...' 
+                      : isParticipant 
+                        ? 'Annulla partecipazione' 
+                        : event.isprivate ? 'Solo su invito' : 'Partecipa'}
                 </button>
               )}
             </div>

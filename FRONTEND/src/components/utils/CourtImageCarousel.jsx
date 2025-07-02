@@ -104,7 +104,7 @@ export default function CourtImageCarousel({ images = [], courtName = '', onUplo
           </div>
         </>
       ) : (
-        <div className="w-full aspect-[16/9] flex flex-col items-center justify-center bg-gray-100 rounded shadow mb-2 relative">
+        <div className="w-full aspect-[16/3] flex flex-col items-center justify-center bg-gray-100 rounded shadow mb-2 relative">
           <span className="text-gray-500 mb-4">Non ci sono ancora immagini per questo campetto</span>
         </div>
       )}

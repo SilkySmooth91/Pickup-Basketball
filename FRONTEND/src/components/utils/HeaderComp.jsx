@@ -144,7 +144,7 @@ export default function HeaderComp() {
           </button>
 
           {/* Logo & Title (center, mobile) */}
-          <Link to="/" className="flex flex-row items-center justify-center gap-1 flex-1">
+          <Link to="/" className="flex flex-row items-center justify-center md:gap-1 flex-1">
             <ImageWithFallback src={logo} alt="Logo" className="h-9 w-9 object-contain select-none"/>
             <span className="text-xl font-bold text-center text-orange-600 leading-none" style={{ letterSpacing: 1 }}>
               PickupBasketball
@@ -153,18 +153,18 @@ export default function HeaderComp() {
 
           {/* Notifications & Avatar (right, mobile) - mostra solo se autenticato */}
           {isAuthenticated && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center md:gap-2">
               {/* Notification Bell Mobile */}
               <NotificationDropdown />
               
               {/* Avatar & Dropdown Mobile */}
               <div className="relative" ref={dropdownRefMobile}>
                 <button
-                  className="flex items-center gap-2 focus:outline-none"
+                  className="flex items-center ml-2 md:m-0 md:gap-2 focus:outline-none"
                   onClick={() => setDropdownOpenMobile((v) => !v)}
                   aria-label="User menu">
                   <ImageWithFallback
-                    src={user?.avatar || "/vite.svg"}
+                    src={user?.avatar}
                     alt="avatar"
                     className="w-9 h-9 rounded-full border-2 border-orange-500 object-cover shadow"/>
                   <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />
@@ -235,7 +235,7 @@ export default function HeaderComp() {
                   onClick={() => setDropdownOpen((v) => !v)}
                   aria-label="User menu">
                   <ImageWithFallback
-                    src={user?.avatar || "/vite.svg"}
+                    src={user?.avatar}
                     alt="avatar"
                     className="w-10 h-10 rounded-full border-2 border-orange-500 object-cover shadow"/>
                   <FontAwesomeIcon icon={faChevronDown} className="text-gray-500" />

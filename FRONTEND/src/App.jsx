@@ -74,13 +74,25 @@ function AppRoutes() {
   
   return (
     <>
-      <ToastContainer position="top-center" autoClose={3500} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer 
+        position="top-center" 
+        autoClose={3500} 
+        hideProgressBar={false} 
+        newestOnTop 
+        closeOnClick 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+        style={{ zIndex: 9999 }}
+        toastStyle={{ zIndex: 9999 }}
+      />
       <ChangelogModal isOpen={showChangelog} onClose={closeChangelog} />
       <Routes>
         {/* Rotte protette (richiedono autenticazione) */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />        
         <Route path="/profile/:userId" element={<ProtectedRoute><Profile /></ProtectedRoute>} />        
-        <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />          <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
+        <Route path="/map" element={<ProtectedRoute><MainMap /></ProtectedRoute>} />          
+        <Route path="/court/:id" element={<ProtectedRoute><CourtInfo /></ProtectedRoute>} />
         <Route path="/add-court" element={<ProtectedRoute><AddCourtPage /></ProtectedRoute>} />
         <Route path="/events" element={<ProtectedRoute><YourEvents /></ProtectedRoute>} />
         <Route path="/favorite-courts" element={<ProtectedRoute><FavoriteCourts /></ProtectedRoute>} />
