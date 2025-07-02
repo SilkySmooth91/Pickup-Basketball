@@ -20,17 +20,17 @@ export const CURRENT_CHANGELOG_VERSION = '1.2.0';
 export const CHANGELOG_DATA = [
     {
     version: '1.2.0',
-    date: '1 Luglio 2025',
+    date: '2 Luglio 2025',
     title: 'Sistema di Notifiche',
     features: [
-      'Nuovo sistema di notifiche con campanellina nella navbar: ricevi notifiche in tempo reale per richieste di amicizia, eventi e molto altro!',
-      'Notifiche automatiche per richieste di amicizia inviate e accettate',
-      'Contatore notifiche non lette sempre visibile',
-      'Dropdown notifiche con azioni rapide e cronologia completa'
+      'Nuovo sistema di notifiche! Clicca sulla campanellina per visualizzare notifiche per richieste di amicizia, nuovi eventi, aggiornamenti e altro!',
+      'Sistema di campetti preferiti implementato! Ora puoi aggiungere campetti ai tuoi preferiti e ricevere notifiche quando ci sono aggiornamenti o vengono creati nuovi eventi!',
+      'Suddivisione fra eventi passati e futuri nella pagina "I tuoi eventi" per una migliore visualizzazione e organizzazione'
     ],
     fixes: [
       'Migliorata la responsività della navbar su dispositivi mobili',
-      'Ottimizzate le performance del sistema di autenticazione'
+      'Bloccata la partecipazione a eventi passati',
+      'Corretti alcuni bug di visualizzazione degli avatar di default nella navbar'
     ]
   },
   {
