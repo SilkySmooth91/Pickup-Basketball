@@ -16,7 +16,7 @@ Pickup Basketball è una piattaforma che connette giocatori di basket di ogni li
 
 ## 🚀 Demo
 
-L'applicazione è disponibile online all'indirizzo: [https://pickup-basketball.vercel.app](https://pickup-basketball.vercel.app)
+L'applicazione è disponibile online all'indirizzo: [https://pickup-basketball.it](https://pickup-basketball.vercel.app)
 
 ## 🛠️ Tecnologie Utilizzate
 
