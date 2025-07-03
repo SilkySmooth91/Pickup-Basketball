@@ -30,6 +30,7 @@ import CommentsSection from '../components/utils/CommentsSection';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
 import FavoriteButton from '../components/utils/FavoriteButton';
 import Footer from '../components/utils/Footer';
+import SEOHelmet from '../components/utils/SEOHelmet';
 
 export default function CourtInfo() {  const { id } = useParams();
   const navigate = useNavigate();
@@ -59,11 +60,23 @@ export default function CourtInfo() {  const { id } = useParams();
 
   useEffect(() => {
     fetchCourt();
-  }, [id, accessToken]);  return (
-    <div className="min-h-screen flex flex-col">
-      <HeaderComp />
-      <div className="flex-grow">
-        <PageContainer>
+  }, [id, accessToken]);  
+
+  return (
+    <>
+      {court && (
+        <SEOHelmet
+          title={court.name}
+          description={`Campo da basket ${court.name} a ${court.address}. ${court.baskets} canestri${court.officialsize ? ', dimensioni ufficiali' : ''}${court.nightlights ? ', illuminazione notturna' : ''}. Prenota il tuo evento basket!`}
+          image={court.images?.[0]}
+          url={`/court/${court._id}`}
+          keywords={`campo basket ${court.name}, basket ${court.address}, campi sportivi, pickup basketball, prenotazione campo basket`}
+        />
+      )}
+      <div className="min-h-screen flex flex-col">
+        <HeaderComp />
+        <div className="flex-grow">
+          <PageContainer>
         <button 
           onClick={() => {
             // Controllo se ci sono coordinate salvate
@@ -217,5 +230,6 @@ export default function CourtInfo() {  const { id } = useParams();
       </div>
       <Footer />
     </div>
+    </>
   );
 }

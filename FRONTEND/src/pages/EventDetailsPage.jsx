@@ -30,6 +30,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
 import ImageWithFallback from '../components/utils/ImageWithFallback';
 import Footer from '../components/utils/Footer';
+import SEOHelmet from '../components/utils/SEOHelmet';
 
 export default function EventDetailsPage() {
   const { eventId } = useParams();
@@ -95,11 +96,33 @@ export default function EventDetailsPage() {
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
   if (!event) return null;
+  
+  const eventDate = new Date(event.datetime);
+  const formattedDate = eventDate.toLocaleDateString('it-IT', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  const formattedTime = eventDate.toLocaleTimeString('it-IT', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <HeaderComp />
-      <div className="flex-grow">
-        <PageContainer>
+    <>
+      <SEOHelmet
+        title={`${event.title} - ${formattedDate}`}
+        description={`Evento basket: ${event.title} presso ${event.court?.name || 'campo da basket'}. ${formattedDate} alle ${formattedTime}. ${event.description || 'Unisciti alla partita!'}`}
+        image={event.court?.images?.[0]?.url}
+        url={`/event/${event._id}`}
+        keywords={`evento basket, partita basket, ${event.court?.name}, pickup basketball, ${event.title}`}
+        type="event"
+      />
+      <div className="min-h-screen flex flex-col">
+        <HeaderComp />
+        <div className="flex-grow">
+          <PageContainer>
           <div className="flex gap-6 flex-row flex-wrap md:flex-nowrap">
           {/* Card evento principale */}
           <div className="bg-white rounded-lg shadow-xl min-w-[260px] border-orange-500 border-l-6 flex-1 p-0 overflow-hidden">
@@ -270,5 +293,6 @@ export default function EventDetailsPage() {
       </div>
       <Footer />
     </div>
+    </>
   );
 }

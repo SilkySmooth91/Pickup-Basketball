@@ -17,6 +17,7 @@ import HeaderComp from '../components/utils/HeaderComp';
 import MapComp from '../components/map/MapComp';
 import SearchBar from '../components/map/SearchBar';
 import Footer from '../components/utils/Footer';
+import SEOHelmet from '../components/utils/SEOHelmet';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -47,11 +48,20 @@ export default function MainMap() {
     setLocationName("");
     localStorage.setItem('mapCoords', JSON.stringify(coords));
     localStorage.setItem('mapLocationName', "");
-  };  return (
-    <div className="map-page">
-      <div className="map-page-header">
-        <HeaderComp />
-      </div>
+  };  
+
+  return (
+    <>
+      <SEOHelmet
+        title="Mappa campi da basket"
+        description="Esplora la mappa interattiva dei campi da basket. Trova campi vicino a te, scopri eventi e prenota il tuo posto in partita."
+        url="/map"
+        keywords="mappa campi basket, campi basket vicino a me, trova campo basket, mappa interattiva basket"
+      />
+      <div className="map-page">
+        <div className="map-page-header">
+          <HeaderComp />
+        </div>
       
       <SearchBar onLocationSelect={handleLocationSelect} />
         <div className="w-full h-full">
@@ -72,5 +82,6 @@ export default function MainMap() {
         <Footer />
       </div>
     </div>
+    </>
   );
 }

@@ -15,7 +15,7 @@
 
 import FloatingLabel from './FloatingLabel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload, faSave, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUpload, faSave, faMapMarkerAlt, faLocationCrosshairs, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 
 export default function AddCourtForm({
   form,
@@ -27,7 +27,11 @@ export default function AddCourtForm({
   addressCoordinates,
   previewImages,
   loading,
-  searchingCoordinates
+  searchingCoordinates,
+  useManualCoordinates,
+  manualCoordinates,
+  handleManualCoordinatesChange,
+  toggleCoordinateMode
 }) {
   return (
     <div className="bg-white rounded-lg shadow-xl border-orange-500 border-l-4 overflow-hidden">
@@ -48,37 +52,135 @@ export default function AddCourtForm({
                 onChange={handleChange} />
             </div>
             
-            <div className="flex space-x-2 items-start">
-              <div className="flex-grow">
-                <FloatingLabel 
-                  id="address" 
-                  type="text" 
-                  label="Indirizzo completo *" 
-                  value={form.address}
-                  onChange={handleChange} />
-                <p className="text-xs text-gray-500 mt-1">
-                  Inserisci: Via/Piazza, numero civico, CAP, città (es. Via Roma 25, 20123 Milano), poi clicca sull'icona qui affianco per cercare le coordinate.
-                </p>
+            <div className="space-y-4">
+              <div className="flex space-x-2 items-start">
+                <div className="flex-grow">
+                  <FloatingLabel 
+                    id="address" 
+                    type="text" 
+                    label="Indirizzo completo *" 
+                    value={form.address}
+                    onChange={handleChange} />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Inserisci: Via/Piazza, numero civico, CAP, città (es. Via Roma 25, 20123 Milano)
+                  </p>
+                </div>
+
+                {!useManualCoordinates && (
+                  <button 
+                    type="button"
+                    onClick={searchCoordinates}
+                    className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition cursor-pointer"
+                    disabled={searchingCoordinates || !form.address}
+                    title="Cerca coordinate dall'indirizzo">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className={searchingCoordinates ? 'animate-pulse' : ''} />
+                  </button>
+                )}
               </div>
 
-              <button 
-                type="button"
-                onClick={searchCoordinates}
-                className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition cursor-pointer"
-                disabled={searchingCoordinates || !form.address}>
-                <FontAwesomeIcon icon={faMapMarkerAlt} className={searchingCoordinates ? 'animate-pulse' : ''} />
-              </button>
+              {/* Toggle per modalità coordinate */}
+              <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg transition-all duration-300 hover:bg-gray-100">
+                <FontAwesomeIcon icon={faLocationCrosshairs} className="text-orange-600" />
+                <span className="text-sm font-medium text-gray-700">
+                  Inserire coordinate manualmente?
+                </span>
+                <button
+                  type="button"
+                  onClick={toggleCoordinateMode}
+                  className={`
+                    p-1 rounded transition-all duration-300 transform hover:scale-110
+                    ${useManualCoordinates ? 'text-orange-600' : 'text-gray-400'}
+                  `}
+                  title={useManualCoordinates ? 'Passa alla ricerca per indirizzo' : 'Inserisci coordinate manualmente'}>
+                  <FontAwesomeIcon 
+                    icon={useManualCoordinates ? faToggleOn : faToggleOff} 
+                    className="text-2xl transition-all duration-300" 
+                  />
+                </button>
+                <span className={`
+                  text-xs transition-all duration-300
+                  ${useManualCoordinates ? 'text-blue-600 font-medium' : 'text-gray-500'}
+                `}>
+                  {useManualCoordinates ? 'Coordinate manuali attive' : 'Ricerca per indirizzo attiva'}
+                </span>
+              </div>
+
+              {/* Campi coordinate manuali */}
+              <div className={`
+                overflow-hidden transition-all duration-500 ease-in-out
+                ${useManualCoordinates ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+              `}>
+                <div className={`
+                  grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg
+                  transform transition-all duration-500 ease-in-out
+                  ${useManualCoordinates ? 'translate-y-0 scale-100' : 'translate-y-4 scale-95'}
+                `}>
+                  <div>
+                    <FloatingLabel 
+                      id="latitude" 
+                      type="number" 
+                      step="any"
+                      label="Latitudine *" 
+                      value={manualCoordinates.latitude}
+                      onChange={handleManualCoordinatesChange} 
+                      placeholder="es. 45.4642"
+                    />
+                    <p className="text-xs text-blue-600 mt-1">
+                      Valore tra -90 e 90
+                    </p>
+                  </div>
+                  <div>
+                    <FloatingLabel 
+                      id="longitude" 
+                      type="number" 
+                      step="any"
+                      label="Longitudine *" 
+                      value={manualCoordinates.longitude}
+                      onChange={handleManualCoordinatesChange} 
+                      placeholder="es. 9.1900"
+                    />
+                    <p className="text-xs text-blue-600 mt-1">
+                      Valore tra -180 e 180
+                    </p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <div className="bg-blue-100 border border-blue-300 rounded-md p-3 text-sm">
+                      <p className="font-medium text-blue-800 mb-1">💡 Come trovare le coordinate:</p>
+                      <ul className="text-blue-700 space-y-1 text-xs">
+                        <li>• Apri Google Maps e cerca il luogo</li>
+                        <li>• Clicca con il tasto destro sul punto esatto</li>
+                        <li>• Clicca sul primo numero nel menu (le coordinate)</li>
+                        <li>• Copia i valori: il primo è latitudine, il secondo longitudine</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          {addressCoordinates && (
-            <div className="bg-green-50 border border-green-200 rounded-md p-3 text-sm">
-              <p className="font-medium text-green-800">Coordinate trovate:</p>
+          {/* Visualizzazione coordinate trovate */}
+          <div className={`
+            overflow-hidden transition-all duration-500 ease-in-out
+            ${(addressCoordinates || (useManualCoordinates && manualCoordinates.latitude && manualCoordinates.longitude)) ? 
+              'max-h-24 opacity-100' : 'max-h-0 opacity-0'}
+          `}>
+            <div className={`
+              bg-green-50 border border-green-200 rounded-md p-3 text-sm
+              transform transition-all duration-500 ease-in-out
+              ${(addressCoordinates || (useManualCoordinates && manualCoordinates.latitude && manualCoordinates.longitude)) ? 
+                'translate-y-0 scale-100' : 'translate-y-2 scale-95'}
+            `}>
+              <p className="font-medium text-green-800">✓ Coordinate {useManualCoordinates ? 'inserite' : 'trovate'}:</p>
               <p className="text-green-600">
-                Lat: {addressCoordinates.coordinates[1]}, Lon: {addressCoordinates.coordinates[0]}
+                {useManualCoordinates ? (
+                  `Lat: ${manualCoordinates.latitude}, Lon: ${manualCoordinates.longitude}`
+                ) : (
+                  addressCoordinates && `Lat: ${addressCoordinates.coordinates[1]}, Lon: ${addressCoordinates.coordinates[0]}`
+                )}
               </p>
             </div>
-          )}
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FloatingLabel 

@@ -20,6 +20,7 @@ import { createCourt } from '../api/courtApi';
 import HeaderComp from '../components/utils/HeaderComp';
 import Footer from '../components/utils/Footer';
 import AddCourtForm from '../components/utils/AddCourtForm';
+import SEOHelmet from '../components/utils/SEOHelmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
@@ -32,6 +33,11 @@ export default function AddCourtPage() {
   const [previewImages, setPreviewImages] = useState([]);
   const [addressCoordinates, setAddressCoordinates] = useState(null);
   const [searchingCoordinates, setSearchingCoordinates] = useState(false);
+  const [useManualCoordinates, setUseManualCoordinates] = useState(false);
+  const [manualCoordinates, setManualCoordinates] = useState({
+    latitude: '',
+    longitude: ''
+  });
   const [form, setForm] = useState({
     name: '',
     address: '',
@@ -47,6 +53,21 @@ export default function AddCourtPage() {
       ...prev,
       [id]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleManualCoordinatesChange = (e) => {
+    const { id, value } = e.target;
+    setManualCoordinates(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const toggleCoordinateMode = () => {
+    setUseManualCoordinates(!useManualCoordinates);
+    // Reset coordinate quando si cambia modalità
+    setAddressCoordinates(null);
+    setManualCoordinates({ latitude: '', longitude: '' });
   };
 
   const handleImagesChange = (e) => {
@@ -110,9 +131,48 @@ export default function AddCourtPage() {
   };  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!form.name || !form.address || !addressCoordinates) {
-      toast.error("Nome, indirizzo e coordinate sono obbligatori");
+    // Validazione base
+    if (!form.name || !form.address) {
+      toast.error("Nome e indirizzo sono obbligatori");
       return;
+    }
+
+    // Validazione coordinate
+    let finalCoordinates;
+    if (useManualCoordinates) {
+      const lat = parseFloat(manualCoordinates.latitude);
+      const lon = parseFloat(manualCoordinates.longitude);
+      
+      if (!manualCoordinates.latitude || !manualCoordinates.longitude) {
+        toast.error("Inserisci sia latitudine che longitudine");
+        return;
+      }
+      
+      if (isNaN(lat) || isNaN(lon)) {
+        toast.error("Le coordinate devono essere numeri validi");
+        return;
+      }
+      
+      if (lat < -90 || lat > 90) {
+        toast.error("La latitudine deve essere tra -90 e 90");
+        return;
+      }
+      
+      if (lon < -180 || lon > 180) {
+        toast.error("La longitudine deve essere tra -180 e 180");
+        return;
+      }
+      
+      finalCoordinates = {
+        type: "Point",
+        coordinates: [lon, lat] // GeoJSON usa [longitude, latitude]
+      };
+    } else {
+      if (!addressCoordinates) {
+        toast.error("Cerca le coordinate dell'indirizzo prima di salvare");
+        return;
+      }
+      finalCoordinates = addressCoordinates;
     }
 
     setLoading(true);
@@ -121,7 +181,7 @@ export default function AddCourtPage() {
       const formData = new FormData();
       formData.append('name', form.name);
       formData.append('address', form.address);
-      formData.append('coordinates', JSON.stringify(addressCoordinates));
+      formData.append('coordinates', JSON.stringify(finalCoordinates));
       formData.append('baskets', form.baskets);
       formData.append('officialsize', form.officialsize.toString());
       formData.append('nightlights', form.nightlights.toString());
@@ -150,6 +210,8 @@ export default function AddCourtPage() {
       setSelectedImages([]);
       setPreviewImages([]);
       setAddressCoordinates(null);
+      setManualCoordinates({ latitude: '', longitude: '' });
+      setUseManualCoordinates(false);
       
       // Redirect alla mappa dopo alcuni secondi
       setTimeout(() => {
@@ -160,10 +222,20 @@ export default function AddCourtPage() {
     } finally {
       setLoading(false);
     }
-  };  return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <HeaderComp />
-      <div className="container mx-auto px-4 py-8 flex-grow">
+  };  
+
+  return (
+    <>
+      <SEOHelmet
+        title="Aggiungi un nuovo campo da basket"
+        description="Contribuisci alla community aggiungendo un nuovo campo da basket. Condividi la posizione, le caratteristiche e le foto del campo."
+        url="/add-court"
+        keywords="aggiungi campo basket, nuovo campo basket, contribuisci community, condividi campo basket"
+        noIndex={true}
+      />
+      <div className="min-h-screen flex flex-col bg-gray-100">
+        <HeaderComp />
+        <div className="container mx-auto px-4 py-8 flex-grow">
         <button 
           onClick={() => navigate('/map')}
           className="mb-4 flex items-center gap-2 py-2 px-4 rounded-md shadow bg-white hover:bg-gray-100 text-orange-600 hover:text-orange-700 transition-colors font-medium cursor-pointer">
@@ -183,11 +255,16 @@ export default function AddCourtPage() {
             previewImages={previewImages}
             loading={loading}
             searchingCoordinates={searchingCoordinates}
+            useManualCoordinates={useManualCoordinates}
+            manualCoordinates={manualCoordinates}
+            handleManualCoordinatesChange={handleManualCoordinatesChange}
+            toggleCoordinateMode={toggleCoordinateMode}
           />
         </div>
       </div>
       
       <Footer />
     </div>
+    </>
   );
 }
