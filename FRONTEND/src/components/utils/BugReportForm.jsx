@@ -91,8 +91,8 @@ export default function BugReportForm() {
       return;
     }
     
-    // Validazione formato email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Validazione formato email - regex sicura che previene ReDoS attacks
+    const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,64}$/;
     if (!emailRegex.test(bugReport.email.trim())) {
       toast.error("Inserisci un indirizzo email valido");
       setIsLoading(false);

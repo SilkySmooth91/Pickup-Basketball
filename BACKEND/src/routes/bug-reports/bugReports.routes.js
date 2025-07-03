@@ -123,7 +123,8 @@ router.post(
       }
 
       const trimmedEmail = email.trim();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // Regex sicura per email validation - previene ReDoS attacks con quantificatori limitati
+      const emailRegex = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,64}$/;
       if (!emailRegex.test(trimmedEmail)) {
         return res.status(400).json({
           success: false,
