@@ -30,7 +30,8 @@ import CommentsSection from '../components/utils/CommentsSection';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
 import FavoriteButton from '../components/utils/FavoriteButton';
 import Footer from '../components/utils/Footer';
-import SEOHelmet from '../components/utils/SEOHelmet';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function CourtInfo() {  const { id } = useParams();
   const navigate = useNavigate();
@@ -49,7 +50,6 @@ export default function CourtInfo() {  const { id } = useParams();
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';      const res = await fetchWithAuth(`${API_URL}/courts/${id}`, {}, { accessToken });
       if (!res.ok) throw new Error('Errore nel recupero del campetto');
       const data = await res.json();
-      console.log('Dati campetto ricevuti:', data); // Aggiunto log per debug
       setCourt(data);
     } catch (err) {
       setError('Impossibile caricare i dati del campetto');
@@ -64,15 +64,18 @@ export default function CourtInfo() {  const { id } = useParams();
 
   return (
     <>
-      {court && (
-        <SEOHelmet
-          title={court.name}
-          description={`Campo da basket ${court.name} a ${court.address}. ${court.baskets} canestri${court.officialsize ? ', dimensioni ufficiali' : ''}${court.nightlights ? ', illuminazione notturna' : ''}. Prenota il tuo evento basket!`}
-          image={court.images?.[0]}
-          url={`/court/${court._id}`}
-          keywords={`campo basket ${court.name}, basket ${court.address}, campi sportivi, pickup basketball, prenotazione campo basket`}
-        />
-      )}
+      <ToastContainer 
+        position="top-center" 
+        autoClose={3500} 
+        hideProgressBar={false} 
+        newestOnTop 
+        closeOnClick 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+        style={{ zIndex: 9999 }}
+        toastStyle={{ zIndex: 9999 }}
+      />
       <div className="min-h-screen flex flex-col">
         <HeaderComp />
         <div className="flex-grow">

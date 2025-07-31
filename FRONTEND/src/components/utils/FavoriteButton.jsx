@@ -93,7 +93,7 @@ export default function FavoriteButton({ courtId, courtName, className = '', siz
       
       // Mostra messaggio di successo
       const message = result.isFavorite 
-        ? `${courtName} aggiunto ai preferiti! ⭐` 
+        ? `${courtName} aggiunto ai preferiti!` 
         : `${courtName} rimosso dai preferiti`;
       
       toast.success(message);

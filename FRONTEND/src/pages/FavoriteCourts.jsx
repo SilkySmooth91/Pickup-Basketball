@@ -23,7 +23,6 @@ import { getFavoriteCourts } from "../api/favoritesApi";
 import LoadingSpinner from '../components/utils/LoadingSpinner';
 import Footer from '../components/utils/Footer';
 import FavoriteButton from '../components/utils/FavoriteButton';
-import SEOHelmet from '../components/utils/SEOHelmet';
 
 export default function FavoriteCourts() {
   const { user, accessToken, refresh, logout } = useAuth();
@@ -96,13 +95,6 @@ export default function FavoriteCourts() {
 
   return (
     <>
-      <SEOHelmet
-        title="I tuoi campi preferiti"
-        description="Visualizza e gestisci la tua collezione di campi da basket preferiti. Accesso rapido ai tuoi campi del cuore."
-        url="/favorites"
-        keywords="campi preferiti, campi salvati, basket preferiti, collezione campi basket"
-        noIndex={true}
-      />
       <div className="min-h-screen flex flex-col bg-gray-100">
         <HeaderComp />
         <div className="flex-grow container mx-auto px-4 py-8">

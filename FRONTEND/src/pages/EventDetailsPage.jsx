@@ -30,7 +30,6 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
 import ImageWithFallback from '../components/utils/ImageWithFallback';
 import Footer from '../components/utils/Footer';
-import SEOHelmet from '../components/utils/SEOHelmet';
 
 export default function EventDetailsPage() {
   const { eventId } = useParams();
@@ -111,14 +110,6 @@ export default function EventDetailsPage() {
 
   return (
     <>
-      <SEOHelmet
-        title={`${event.title} - ${formattedDate}`}
-        description={`Evento basket: ${event.title} presso ${event.court?.name || 'campo da basket'}. ${formattedDate} alle ${formattedTime}. ${event.description || 'Unisciti alla partita!'}`}
-        image={event.court?.images?.[0]?.url}
-        url={`/event/${event._id}`}
-        keywords={`evento basket, partita basket, ${event.court?.name}, pickup basketball, ${event.title}`}
-        type="event"
-      />
       <div className="min-h-screen flex flex-col">
         <HeaderComp />
         <div className="flex-grow">

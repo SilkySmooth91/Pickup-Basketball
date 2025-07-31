@@ -15,14 +15,11 @@
 
 import WelcomeComp from '../components/WelcomeComp'
 import Footer from '../components/utils/Footer'
-import SEOHelmet from '../components/utils/SEOHelmet'
-import SimpleHelmetTest from '../components/utils/SimpleHelmetTest'
 import '../styles/map-fixes.css'
 
 export default function HomePage() {
   return (
     <>
-      <SimpleHelmetTest />
       <div className="home-page">      
         <div className="home-page-content">
           <WelcomeComp />

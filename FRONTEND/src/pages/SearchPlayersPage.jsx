@@ -24,7 +24,6 @@ import { sendFriendRequest, getFriends } from "../api/friendApi";
 import LoadingSpinner from "../components/utils/LoadingSpinner";
 import ImageWithFallback from "../components/utils/ImageWithFallback";
 import Footer from '../components/utils/Footer';
-import SEOHelmet from '../components/utils/SEOHelmet';
 import { useFriendRequests } from "../context/FriendRequestContext";
 import FloatingLabel from "../components/utils/FloatingLabel";
 import { useAuthErrorHandler } from "../hooks/useAuthErrorHandler";
@@ -272,12 +271,6 @@ export default function SearchPlayersPage() {
   
   return (
     <>
-      <SEOHelmet
-        title="Cerca giocatori di basket"
-        description="Trova e connettiti con altri appassionati di basket nella tua zona. Cerca giocatori, invia richieste di amicizia e organizza partite insieme."
-        url="/search-players"
-        keywords="cerca giocatori basket, trova amici basket, community basket, giocatori pickup basketball"
-      />
       <div className="min-h-screen flex flex-col">
         <HeaderComp />        
         <div className="flex-grow flex flex-col items-center mt-8">

@@ -74,18 +74,6 @@ function AppRoutes() {
   
   return (
     <>
-      <ToastContainer 
-        position="top-center" 
-        autoClose={3500} 
-        hideProgressBar={false} 
-        newestOnTop 
-        closeOnClick 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
-        style={{ zIndex: 9999 }}
-        toastStyle={{ zIndex: 9999 }}
-      />
       <ChangelogModal isOpen={showChangelog} onClose={closeChangelog} />
       <Routes>
         {/* Rotte protette (richiedono autenticazione) */}
@@ -108,6 +96,20 @@ function AppRoutes() {
         {/* Pagina 404 per rotte sconosciute */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      
+      {/* ToastContainer globale per header e componenti non in route protette */}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

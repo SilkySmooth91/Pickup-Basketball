@@ -17,10 +17,11 @@ import HeaderComp from '../components/utils/HeaderComp';
 import MapComp from '../components/map/MapComp';
 import SearchBar from '../components/map/SearchBar';
 import Footer from '../components/utils/Footer';
-import SEOHelmet from '../components/utils/SEOHelmet';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function MainMap() {
   // Recupera le coordinate e il nome della posizione salvati, o usa null come default
@@ -52,11 +53,17 @@ export default function MainMap() {
 
   return (
     <>
-      <SEOHelmet
-        title="Mappa campi da basket"
-        description="Esplora la mappa interattiva dei campi da basket. Trova campi vicino a te, scopri eventi e prenota il tuo posto in partita."
-        url="/map"
-        keywords="mappa campi basket, campi basket vicino a me, trova campo basket, mappa interattiva basket"
+      <ToastContainer 
+        position="top-center" 
+        autoClose={3500} 
+        hideProgressBar={false} 
+        newestOnTop 
+        closeOnClick 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+        style={{ zIndex: 9999 }}
+        toastStyle={{ zIndex: 9999 }}
       />
       <div className="map-page">
         <div className="map-page-header">

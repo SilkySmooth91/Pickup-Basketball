@@ -20,7 +20,6 @@ import { createCourt } from '../api/courtApi';
 import HeaderComp from '../components/utils/HeaderComp';
 import Footer from '../components/utils/Footer';
 import AddCourtForm from '../components/utils/AddCourtForm';
-import SEOHelmet from '../components/utils/SEOHelmet';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
@@ -226,13 +225,6 @@ export default function AddCourtPage() {
 
   return (
     <>
-      <SEOHelmet
-        title="Aggiungi un nuovo campo da basket"
-        description="Contribuisci alla community aggiungendo un nuovo campo da basket. Condividi la posizione, le caratteristiche e le foto del campo."
-        url="/add-court"
-        keywords="aggiungi campo basket, nuovo campo basket, contribuisci community, condividi campo basket"
-        noIndex={true}
-      />
       <div className="min-h-screen flex flex-col bg-gray-100">
         <HeaderComp />
         <div className="container mx-auto px-4 py-8 flex-grow">
