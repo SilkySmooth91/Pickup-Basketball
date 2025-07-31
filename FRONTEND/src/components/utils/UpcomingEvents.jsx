@@ -76,7 +76,11 @@ export default function UpcomingEvents({ courtId, refreshTrigger }) {  const [ev
             {loading && <span className="ml-2 text-sm text-orange-400">(Aggiornamento...)</span>}
           </h3>        </div>
         <div className="bg-white rounded-b-lg shadow p-4">
-          {loading && <LoadingSpinner />}
+          {loading && (
+            <div className="flex items-center justify-center py-4">
+              <LoadingSpinner size="md" showText={false} />
+            </div>
+          )}
           {error && <p className="text-red-500">{error}</p>}            {!loading && !error && (
             events.length === 0 ? (
               <p className="text-gray-500 py-2">Non ci sono ancora eventi in programma</p>

@@ -517,9 +517,9 @@ router.post("/:id/invite", authMiddleware, async (req, res) => {
       return res.status(404).json({ error: "Evento non trovato" });
     }
 
-    // Solo il creator può invitare
-    if (event.creator.toString() !== req.user.id) {
-      return res.status(403).json({ error: "Solo il creatore può invitare utenti" });
+    // Verifica che l'utente che invita sia partecipante all'evento (creatore o partecipante normale)
+    if (!event.participants.includes(req.user.id) && event.creator.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Solo i partecipanti all'evento possono invitare utenti" });
     }
 
     // Verifica che l'utente da invitare esista

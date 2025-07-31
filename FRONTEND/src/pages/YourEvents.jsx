@@ -225,7 +225,9 @@ export default function YourEvents() {
             </div>
               <div className="p-6">
                 {loading ? (
-                  <LoadingSpinner />
+                  <div className="flex items-center justify-center py-8">
+                    <LoadingSpinner size="md" showText={true} />
+                  </div>
                 ) : error ? (
                   <div className="text-center text-red-500 py-8">
                     <p>{error}</p>

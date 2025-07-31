@@ -86,7 +86,9 @@ export default function EditEventModal({ eventId, isOpen, onClose, onEventUpdate
         >×</button>        
         <h2 className="text-xl font-bold mb-4 text-orange-600">Modifica evento</h2>
         {loading ? (
-          <LoadingSpinner />
+          <div className="flex items-center justify-center py-8">
+            <LoadingSpinner size="md" />
+          </div>
         ) : (
           <form onSubmit={handleEditSubmit} className="flex flex-col gap-2 w-full !mb-2">
             <FloatingLabel
@@ -130,8 +132,14 @@ export default function EditEventModal({ eventId, isOpen, onClose, onEventUpdate
             </label>
             {editError && <div className="text-red-500 text-sm mb-2">{editError}</div>}
             <div className="flex gap-2 mt-2">
-              <button type="submit" className="bg-orange-500 text-white px-4 py-2 rounded font-semibold hover:bg-orange-600 transition">Salva</button>
-              <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded font-semibold hover:bg-gray-300 transition" onClick={onClose}>Annulla</button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-md shadow-sm hover:from-orange-600 hover:to-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center h-[40px] cursor-pointer"              
+              disabled={loading}
+            >
+              Salva
+            </button>
+              <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded font-semibold hover:bg-gray-300 transition cursor-pointer" onClick={onClose}>Annulla</button>
             </div>
           </form>
         )}

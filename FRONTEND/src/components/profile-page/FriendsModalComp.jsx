@@ -114,7 +114,9 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
         {activeTab === 'friends' && (
           <div className="space-y-4">
             {loadingFriends ? (
-              <LoadingSpinner />
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner size="md" />
+              </div>
             ) : friends.length === 0 ? (
               <div className="text-center py-4 text-gray-500">Nessun amico da mostrare</div>
             ) : (
@@ -147,7 +149,9 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
         {activeTab === 'requests' && isOwner && (
           <div className="space-y-4">
             {loadingFriends ? (
-              <LoadingSpinner />
+              <div className="flex items-center justify-center py-8">
+                <LoadingSpinner size="md" />
+              </div>
             ) : friendRequests.length === 0 ? (
               <div className="text-center py-4 text-gray-500">Nessuna richiesta di amicizia</div>
             ) : (

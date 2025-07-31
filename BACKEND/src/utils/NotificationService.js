@@ -94,8 +94,8 @@ class NotificationService {
         recipient: recipientId,
         sender: senderId,
         type: 'event_invitation',
-        title: 'Invito a evento',
-        message: `${sender.username} ti ha invitato all'evento: ${eventTitle}`,
+        title: 'Sei stato invitato ad un evento!',
+        message: `${sender.username} ti ha appena invitato ad un evento: ${eventTitle}`,
         data: {
           eventId: eventId,
           eventTitle: eventTitle,

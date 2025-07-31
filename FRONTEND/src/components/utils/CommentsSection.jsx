@@ -81,7 +81,8 @@ export default function CommentsSection({ targetId, targetType }) {
       <div className="bg-gradient-to-r from-orange-100 to-red-200 rounded-t-lg p-4 flex items-center">
         <FontAwesomeIcon icon={faComments} className="text-xl text-orange-500 pl-2" />
         <span className="font-semibold text-2xl pl-3">Commenti</span>
-      </div>      <div className="p-6">
+      </div>      
+      <div className="p-6">
         {loading ? (
           <LoadingSpinner />
         ) : error ? (

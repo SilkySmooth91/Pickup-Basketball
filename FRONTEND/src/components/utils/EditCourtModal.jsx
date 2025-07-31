@@ -198,7 +198,11 @@ export default function EditCourtModal({ court, onClose, onUpdate }) {
             </button>
           </div>
           
-          {loading && <LoadingSpinner />}
+          {loading && (
+            <div className="fixed inset-0 bg-black/20 flex items-center justify-center rounded-lg">
+              <LoadingSpinner size="md" />
+            </div>
+          )}
           
           {Object.keys(changedFields).length > 0 && (
             <div className="mt-4 text-sm text-gray-600">

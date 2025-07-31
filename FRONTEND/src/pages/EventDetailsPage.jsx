@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import CommentsSection from '../components/utils/CommentsSection';
 import EditEventModal from '../components/utils/EditEventModal';
+import InviteFriendsModal from '../components/utils/InviteFriendsModal';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../components/utils/LoadingSpinner';
 import ImageWithFallback from '../components/utils/ImageWithFallback';
@@ -40,6 +41,7 @@ export default function EventDetailsPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [showAllParticipants, setShowAllParticipants] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const isCreator = user && event?.creator?._id === user.id;
   const isParticipant = user && event?.participants?.some(p => p._id === user.id);
   
@@ -248,7 +250,19 @@ export default function EventDetailsPage() {
           </div>
           {/* Colonna partecipanti */}
           <div className="w-full md:w-1/5 bg-white rounded-lg shadow-xl p-4 flex flex-col gap-2 h-fit self-start mt-6 md:mt-0">
-            <div className="font-semibold text-orange-700 mb-2">Partecipanti</div>
+            <div className="flex items-center justify-between mb-2">
+              <div className="font-semibold text-orange-700">Partecipanti</div>
+              {/* Pulsante invita amici - visibile solo ai partecipanti e se l'evento non è passato */}
+              {(isParticipant || isCreator) && !isEventPast && (
+                <button
+                  onClick={() => setShowInviteModal(true)}
+                  className="w-8 h-8 rounded-full bg-orange-500 text-white hover:bg-orange-600 transition flex items-center justify-center text-sm cursor-pointer"
+                  title="Invita amici"
+                >
+                  <FontAwesomeIcon icon={faUserPlus} />
+                </button>
+              )}
+            </div>
             {event.participants?.length > 0 ? (
               <>                
               {(showAllParticipants ? event.participants : event.participants.slice(0, 9)).map(p => (
@@ -280,6 +294,11 @@ export default function EventDetailsPage() {
         isOpen={showEditModal}
         onClose={handleEditModalClose}
         onEventUpdated={setEvent} 
+      />
+      <InviteFriendsModal
+        eventId={eventId}
+        isOpen={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
       />
       </div>
       <Footer />

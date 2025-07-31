@@ -156,7 +156,9 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
           <FontAwesomeIcon icon={faClose} className="text-xl" />
         </button>
           {loading ? (
-          <LoadingSpinner />
+          <div className="flex items-center justify-center py-8">
+            <LoadingSpinner size="md" />
+          </div>
         ) : error ? (
           <div className="py-10 text-center text-red-500">{error}</div>
         ) : event ? (
