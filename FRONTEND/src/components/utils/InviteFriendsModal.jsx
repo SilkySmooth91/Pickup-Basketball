@@ -15,14 +15,14 @@
 
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClose, faSearch, faUserPlus, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faSearch, faUserPlus, faCheck, faLock } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import { getFriends, getRecentFriends, searchFriends, inviteFriendToEvent } from '../../api/friendApi';
 import { toast } from 'react-toastify';
 import LoadingSpinner from './LoadingSpinner';
 import ImageWithFallback from './ImageWithFallback';
 
-export default function InviteFriendsModal({ eventId, isOpen, onClose }) {
+export default function InviteFriendsModal({ eventId, event, isOpen, onClose }) {
   const { user, accessToken, refresh, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [friends, setFriends] = useState([]);
@@ -30,9 +30,12 @@ export default function InviteFriendsModal({ eventId, isOpen, onClose }) {
   const [inviting, setInviting] = useState(new Set());
   const [invitedFriends, setInvitedFriends] = useState(new Set()); // Nuovo state per tracciare gli invitati
 
+  // Verifica se l'utente può invitare amici
+  const canInvite = !event?.isprivate || (event?.creator?._id === user?.id);
+
   // Carica amici recenti o risultati ricerca
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !canInvite) return;
     
     // Reset dello stato invitati quando si riapre il modal
     setInvitedFriends(new Set());
@@ -127,6 +130,30 @@ export default function InviteFriendsModal({ eventId, isOpen, onClose }) {
   };
 
   if (!isOpen) return null;
+
+  // Se l'utente non può invitare, mostra un messaggio informativo
+  if (!canInvite) {
+    return (
+      <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+          <button 
+            className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+            onClick={onClose}>
+            <FontAwesomeIcon icon={faClose} className="text-xl" />
+          </button>
+          
+          <h2 className="text-xl font-bold mb-4 text-orange-600">Invita amici</h2>
+          
+          <div className="text-center py-8">
+            <FontAwesomeIcon icon={faLock} className="text-4xl text-gray-300 mb-4" />
+            <p className="text-gray-600">
+              Solo il creatore può invitare amici a questo evento privato.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">

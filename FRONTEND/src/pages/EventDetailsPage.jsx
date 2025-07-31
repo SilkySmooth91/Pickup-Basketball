@@ -252,8 +252,9 @@ export default function EventDetailsPage() {
           <div className="w-full md:w-1/5 bg-white rounded-lg shadow-xl p-4 flex flex-col gap-2 h-fit self-start mt-6 md:mt-0">
             <div className="flex items-center justify-between mb-2">
               <div className="font-semibold text-orange-700">Partecipanti</div>
-              {/* Pulsante invita amici - visibile solo ai partecipanti e se l'evento non è passato */}
-              {(isParticipant || isCreator) && !isEventPast && (
+              {/* Pulsante invita amici - Per eventi pubblici: visibile a tutti i partecipanti. Per eventi privati: solo al creatore */}
+              {(isParticipant || isCreator) && !isEventPast && 
+               (!event.isprivate || isCreator) && (
                 <button
                   onClick={() => setShowInviteModal(true)}
                   className="w-8 h-8 rounded-full bg-orange-500 text-white hover:bg-orange-600 transition flex items-center justify-center text-sm cursor-pointer"
@@ -297,6 +298,7 @@ export default function EventDetailsPage() {
       />
       <InviteFriendsModal
         eventId={eventId}
+        event={event}
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
