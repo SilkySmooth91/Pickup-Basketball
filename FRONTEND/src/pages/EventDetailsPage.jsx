@@ -44,6 +44,7 @@ export default function EventDetailsPage() {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const isCreator = user && event?.creator?._id === user.id;
   const isParticipant = user && event?.participants?.some(p => p._id === user.id);
+  const hasLeftEvent = user && event?.leftParticipants?.some(p => p._id === user.id);
   
   // Verifica se l'evento è nel passato
   const isEventPast = event ? new Date(event.datetime) < new Date() : false;
@@ -82,7 +83,12 @@ export default function EventDetailsPage() {
       setEvent(updated);
       toast.success(isParticipant ? 'Hai annullato la partecipazione' : 'Iscrizione avvenuta con successo!');
     } catch (err) {
-      toast.error(err?.message || 'Errore durante la partecipazione all\'evento');
+      // Gestione errori specifici
+      if (err?.response?.status === 403) {
+        toast.error('Non puoi ri-partecipare a questo evento privato dopo averlo abbandonato');
+      } else {
+        toast.error(err?.message || 'Errore durante la partecipazione all\'evento');
+      }
     } finally {
       setActionLoading(false);
     }
@@ -227,7 +233,8 @@ export default function EventDetailsPage() {
                     isEventPast || // BLOCCA partecipazione se l'evento è passato
                     actionLoading ||
                     (event.maxplayers && event.participants?.length >= event.maxplayers && !isParticipant) ||
-                    (event.isprivate && !isCreator) // BLOCCA partecipazione se l'evento è privato
+                    (event.isprivate && !isCreator && !isParticipant && hasLeftEvent) || // BLOCCA ri-partecipazione se ha lasciato evento privato
+                    (event.isprivate && !isCreator && !isParticipant && !hasLeftEvent) // BLOCCA partecipazione se evento privato e non invitato
                   }>
                   <FontAwesomeIcon icon={isParticipant ? faUserMinus : faUserPlus} />
                   {isEventPast
@@ -236,7 +243,11 @@ export default function EventDetailsPage() {
                       ? 'Attendere...'
                       : isParticipant
                         ? 'Annulla partecipazione'
-                        : event.isprivate ? 'Solo su invito' : 'Partecipa'}
+                        : event.isprivate && hasLeftEvent
+                          ? 'Hai lasciato questo evento'
+                          : event.isprivate 
+                            ? 'Solo su invito' 
+                            : 'Partecipa'}
                 </button>
               )}
               {/* Messaggio per il creatore quando l'evento è passato */}

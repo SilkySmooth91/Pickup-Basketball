@@ -198,7 +198,7 @@ export default function NotificationDropdown() {
       {/* Dropdown */}
       {dropdownOpen && (
         <div 
-          className="absolute -right-15 top-10 md:top-12 w-80 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-hidden"
+          className="absolute -right-15 top-10 md:top-12 w-80 bg-white rounded-lg border border-gray-200 max-h-96 overflow-hidden animate-fade-in"
           style={{ zIndex: 9999 }}
         >
           {/* Header */}

@@ -225,6 +225,10 @@ router.get("/:id", authMiddleware, async (req, res) => {
       .populate({
         path: "participants",
         select: "username avatar"
+      })
+      .populate({
+        path: "leftParticipants",
+        select: "username avatar"
       });
     if (!event) {
       return res.status(404).json({ error: "Evento non trovato" });
@@ -408,10 +412,17 @@ router.post("/:id/join", authMiddleware, async (req, res) => {
     if (event.participants.includes(req.user.id)) {
       return res.status(400).json({ error: "Sei già iscritto a questo evento" });
     }
+    
+    // Se l'evento è privato, verifica che l'utente non abbia precedentemente lasciato l'evento
+    if (event.isprivate && event.leftParticipants && event.leftParticipants.includes(req.user.id)) {
+      return res.status(403).json({ error: "Non puoi ri-partecipare a questo evento privato dopo averlo abbandonato" });
+    }
+    
     // Controlla maxplayers
     if (event.maxplayers && event.participants.length >= event.maxplayers) {
       return res.status(400).json({ error: "Evento pieno" });
     }
+    
     event.participants.push(req.user.id);
     await event.save();
     res.json({ message: "Iscritto all'evento", event });
@@ -457,9 +468,17 @@ router.post("/:id/leave", authMiddleware, async (req, res) => {
     if (event.creator.toString() === req.user.id) {
       return res.status(400).json({ error: "Il creatore non può lasciare l'evento" });
     }
+    
+    // Rimuovi dalla lista partecipanti
     event.participants = event.participants.filter(
       userId => userId.toString() !== req.user.id
     );
+    
+    // Se l'evento è privato, aggiungi alla lista di chi ha lasciato l'evento
+    if (event.isprivate && !event.leftParticipants.includes(req.user.id)) {
+      event.leftParticipants.push(req.user.id);
+    }
+    
     await event.save();
     res.json({ message: "Disiscritto dall'evento", event });
   } catch (err) {
