@@ -14,10 +14,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Versione attuale del changelog (aggiorna questo quando aggiungi nuove features)
-export const CURRENT_CHANGELOG_VERSION = '1.2.0';
+export const CURRENT_CHANGELOG_VERSION = '1.3.0';
 
 // Dati del changelog - aggiungi nuove versioni in cima
 export const CHANGELOG_DATA = [
+    {
+      version: '1.3.0',
+      date: '8 Agosto 2025',
+      title: 'Sistema di Notifiche',
+      features: [
+        'Ora puoi invitare i tuoi amici agli eventi a cui partecipi! Basta cliccare sul pulsante nella lista dei partecipanti all\'evento e selezionare gli amici da invitare',
+        'Logica degli eventi privati migliorata: ora puoi creare eventi privati e invitare solo i tuoi amici'
+      ],
+      fixes: [
+        'Aggiunte animazioni per la comparsa dei modali',
+        'Risolto un problema per cui i messaggi di notifica non comparivano correttamente dopo aver aggiunto o rimosso un campetto dai preferiti'
+      ]
+    },
     {
     version: '1.2.0',
     date: '2 Luglio 2025',
