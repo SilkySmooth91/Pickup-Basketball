@@ -23,6 +23,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useFriendRequests } from "../../context/FriendRequestContext";
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
 import ImageWithFallback from '../../components/utils/ImageWithFallback';
+import '../../styles/modal-animations.css';
 import { toast } from 'react-toastify';
 
 export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, onProfileUpdate }) {
@@ -225,10 +226,10 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
 
       {/* MODALE */}
       {showModal && isOwner && (
-        <div className=" fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="edit-profile-modal bg-white rounded-lg shadow-lg p-8 md:mt-10 sm:w-11/12 md:w-full max-w-md relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-overlay">
+          <div className="edit-profile-modal bg-white rounded-lg shadow-lg p-8 md:mt-10 sm:w-11/12 md:w-full max-w-md animate-modal-bounce">
             <button
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl"
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl cursor-pointer"
               onClick={() => setShowModal(false)}
               aria-label="Chiudi"
             >×</button>
@@ -301,7 +302,7 @@ export default function ProfileHeaderComp({ profile, isOwner, onChangeAvatar, on
               {error && <div className="text-red-500">{error}</div>}
               <button
                 type="submit"
-                className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition"
+                className="bg-orange-500 text-white font-semibold px-4 py-2 rounded hover:bg-orange-600 transition cursor-pointer"
                 disabled={loading}
               >
                 {loading ? (

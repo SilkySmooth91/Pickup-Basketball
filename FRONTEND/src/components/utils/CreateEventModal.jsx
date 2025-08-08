@@ -19,6 +19,7 @@ import { createEvent } from '../../api/eventApi';
 import FloatingLabel from './FloatingLabel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose, faCalendar, faUsers, faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import '../../styles/modal-animations.css';
 
 // Stato iniziale del form
 const initialState = {
@@ -127,8 +128,8 @@ export default function CreateEventModal({ court, onClose, onEventCreated }) {
     }
   };
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] md:mt-12">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center animate-overlay">
+      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] md:mt-12 animate-modal-bounce">
         <button 
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
           onClick={onClose}

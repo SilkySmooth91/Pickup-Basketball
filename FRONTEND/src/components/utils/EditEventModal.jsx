@@ -18,6 +18,7 @@ import { useAuth } from '../../context/AuthContext';
 import { updateEvent, getEventById } from '../../api/eventApi';
 import FloatingLabel from './FloatingLabel';
 import LoadingSpinner from './LoadingSpinner';
+import '../../styles/modal-animations.css';
 
 export default function EditEventModal({ eventId, isOpen, onClose, onEventUpdated }) {
   const { accessToken } = useAuth();
@@ -78,8 +79,8 @@ export default function EditEventModal({ eventId, isOpen, onClose, onEventUpdate
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center animate-overlay">
+      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto animate-modal-bounce">
         <button
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
           onClick={() => onClose()}

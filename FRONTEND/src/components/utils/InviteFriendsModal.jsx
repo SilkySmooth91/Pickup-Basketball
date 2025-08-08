@@ -21,6 +21,7 @@ import { getFriends, getRecentFriends, searchFriends, inviteFriendToEvent } from
 import { toast } from 'react-toastify';
 import LoadingSpinner from './LoadingSpinner';
 import ImageWithFallback from './ImageWithFallback';
+import '../../styles/modal-animations.css';
 
 export default function InviteFriendsModal({ eventId, event, isOpen, onClose }) {
   const { user, accessToken, refresh, logout } = useAuth();
@@ -134,8 +135,8 @@ export default function InviteFriendsModal({ eventId, event, isOpen, onClose }) 
   // Se l'utente non può invitare, mostra un messaggio informativo
   if (!canInvite) {
     return (
-      <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+      <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 animate-overlay">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative animate-modal-bounce">
           <button 
             className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
             onClick={onClose}>
@@ -156,8 +157,8 @@ export default function InviteFriendsModal({ eventId, event, isOpen, onClose }) 
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative max-h-[85vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 animate-overlay">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative max-h-[85vh] overflow-hidden flex flex-col animate-modal-bounce">
         <button 
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
           onClick={onClose}>

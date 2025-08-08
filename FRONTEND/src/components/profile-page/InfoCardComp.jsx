@@ -24,6 +24,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import FriendsModalComp from './FriendsModalComp';
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
 import FloatingLabel from '../utils/FloatingLabel';
+import '../../styles/modal-animations.css';
 
 export default function InfoCardComp({ profile, isOwner }) {
   const [showModal, setShowModal] = useState(false);
@@ -148,9 +149,9 @@ export default function InfoCardComp({ profile, isOwner }) {
       </div>      
       {/* MODALE CAMBIO PASSWORD */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white rounded-lg shadow-lg p-8 md:mt-10 sm:w-11/12 md:w-full max-w-md relative">
-            <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={() => setShowModal(false)} aria-label="Chiudi">×</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-overlay">
+          <div className="bg-white rounded-lg shadow-lg p-8 md:mt-10 w-11/12 md:w-full max-w-md relative animate-modal-bounce">
+            <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl cursor-pointer" onClick={() => setShowModal(false)} aria-label="Chiudi">×</button>
             <h2 className="text-xl font-bold mb-4 text-orange-600">Cambia password</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 !mb-2">
               <FloatingLabel 

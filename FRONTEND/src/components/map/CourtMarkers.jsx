@@ -176,7 +176,7 @@ export default function CourtMarkers({ searchedCoords }) {
             <Popup className="court-popup-container">
               <div className="court-popup p-5">
                 <div className="flex items-center justify-between mb-2 md:mb-4">
-                  <h3 className="font-bold md:text-2xl text-orange-600 mr-2">{court.name}</h3>
+                  <h3 className="font-bold text-2xl text-orange-600 mr-2">{court.name}</h3>
                   <FavoriteButton 
                     courtId={court._id} 
                     courtName={court.name}

@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose, faWrench, faCheckCircle, faBasketball } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/newLogo.jpg';
 import { CURRENT_CHANGELOG_VERSION, CHANGELOG_DATA } from '../../data/changelog';
+import '../../styles/modal-animations.css';
 
 export { CURRENT_CHANGELOG_VERSION };
 
@@ -26,8 +27,8 @@ export default function ChangelogModal({ isOpen, onClose }) {
   const latestVersion = CHANGELOG_DATA[0];
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl w-11/12 md:w-full max-w-md p-6 md:mt-8 relative max-h-[70vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center animate-overlay">
+      <div className="bg-white rounded-lg shadow-xl w-11/12 md:w-full max-w-md p-6 md:mt-8 relative max-h-[70vh] overflow-y-auto animate-modal-bounce">
         <button 
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 cursor-pointer"
           onClick={onClose}>

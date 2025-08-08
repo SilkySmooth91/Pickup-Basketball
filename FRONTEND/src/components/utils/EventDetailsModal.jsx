@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import FloatingLabel from './FloatingLabel';
 import LoadingSpinner from './LoadingSpinner';
+import '../../styles/modal-animations.css';
 import ImageWithFallback from './ImageWithFallback';
 
 export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) {
@@ -148,8 +149,8 @@ export default function EventDetailsModal({ eventId, onClose, onEventUpdated }) 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto md:mt-12">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center animate-overlay">
+      <div className="bg-white rounded-lg shadow-xl sm:w-11/12 md:w-full max-w-md p-6 relative max-h-[90vh] overflow-y-auto md:mt-12 animate-modal-bounce">
         <button 
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
           onClick={onClose}>

@@ -42,8 +42,9 @@ export default function WhatsNewPage() {
                 key={version.version}
                 className="bg-white rounded-lg shadow-md p-6 transition-all duration-200 hover:shadow-lg"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
+                <div className="mb-4">
+                  {/* Header responsive: versione + titolo + badge */}
+                  <div className="flex items-center mb-2 md:mb-0">
                     <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-medium mr-3">
                       v{version.version}
                     </span>
@@ -54,10 +55,15 @@ export default function WhatsNewPage() {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center text-gray-500 text-sm">
+                  
+                  {/* Data: sotto su mobile, a destra su desktop */}
+                  <div className="flex items-center text-gray-500 text-sm md:float-right md:-mt-8">
                     <FontAwesomeIcon icon={faCalendar} className="mr-2" />
                     {version.date}
                   </div>
+                  
+                  {/* Clearfix per il float */}
+                  <div className="clear-both"></div>
                 </div>
 
                 {/* Features */}

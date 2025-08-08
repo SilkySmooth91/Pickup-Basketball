@@ -22,6 +22,7 @@ import { getFriends, getReceivedFriendRequests, acceptFriendRequest, rejectFrien
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../../components/utils/LoadingSpinner';
 import ImageWithFallback from '../../components/utils/ImageWithFallback';
+import '../../styles/modal-animations.css';
 
 export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }) {
   const [activeTab, setActiveTab] = useState('friends');
@@ -79,8 +80,8 @@ export default function FriendsModalComp({ isOpen, onClose, isOwner, profileId }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="bg-white rounded-lg shadow-lg p-6 sm:w-11/12 md:w-full max-w-lg relative h-[70vh] max-h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-overlay">
+      <div className="bg-white rounded-lg shadow-lg p-6 sm:w-11/12 md:w-full max-w-lg relative h-[70vh] max-h-[80vh] overflow-y-auto animate-modal-bounce">
         <button className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl" onClick={onClose} aria-label="Chiudi">×</button>
         <div className="flex items-center mb-4">
             <FontAwesomeIcon icon={faUsers} className="mr-2 text-orange-600"/>
