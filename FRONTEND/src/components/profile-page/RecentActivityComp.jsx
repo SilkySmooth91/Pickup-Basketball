@@ -16,7 +16,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { faChartLine, faTrophy } from "@fortawesome/free-solid-svg-icons";
+import ImageWithFallback from '../utils/ImageWithFallback';
+import { Link } from 'react-router-dom';
 
 export default function RecentActivityComp({ userId }) {
   const { accessToken } = useAuth();
@@ -39,29 +41,82 @@ export default function RecentActivityComp({ userId }) {
         <span className="font-semibold text-2xl mb-4 p-4 pl-3">Attività recente</span>
       </div>
       <div className="p-6">
-        <div>
-          <h3 className="font-semibold mb-2">Ultimi eventi</h3>
-          <ul>
-            {activity.recentEvents.length === 0 && (
-              <li className="text-gray-400">Nessun evento recente</li>
-            )}
-            {activity.recentEvents.map(ev => (
-              <li key={ev._id}>
-                {ev.title} - {new Date(ev.datetime).toLocaleString()}
-              </li>
-            ))}
-          </ul>
+        {/* Sezione Eventi Recenti */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-4 text-gray-800">Ultimi 3 eventi</h3>
+          {activity.recentEvents.length === 0 ? (
+            <p className="text-gray-400 italic">Nessun evento recente</p>
+          ) : (
+            <div className="space-y-3">
+              {activity.recentEvents.slice(0, 3).map(event => (
+                <Link 
+                  key={event._id}
+                  to={`/events/${event._id}`}
+                  className="flex items-center p-3 rounded-lg hover:bg-orange-50 transition-colors duration-200 border border-gray-100 hover:border-orange-200 group"
+                >
+                  {/* Icona Evento */}
+                  <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center mr-3 group-hover:bg-orange-200 transition-colors duration-200">
+                    <FontAwesomeIcon icon={faTrophy} className="text-orange-600 text-lg" />
+                  </div>
+                  
+                  {/* Info Evento */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 group-hover:text-orange-700 transition-colors duration-200 truncate">
+                      {event.title}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(event.datetime).toLocaleDateString('it-IT', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      })} alle {new Date(event.datetime).toLocaleTimeString('it-IT', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="mt-4">
-          <h3 className="font-semibold mb-2">Amici aggiunti di recente</h3>
-          <ul>
-            {activity.recentFriends.length === 0 && (
-              <li className="text-gray-400">Nessun amico aggiunto di recente</li>
-            )}
-            {activity.recentFriends.map((friend, idx) => (
-              <li key={friend._id + '-' + idx}>{friend.username}</li>
-            ))}
-          </ul>
+
+        {/* Sezione Amici Recenti */}
+        <div>
+          <h3 className="font-semibold mb-4 text-gray-800">Ultimi 3 amici aggiunti</h3>
+          {activity.recentFriends.length === 0 ? (
+            <p className="text-gray-400 italic">Nessun amico aggiunto di recente</p>
+          ) : (
+            <div className="space-y-3">
+              {activity.recentFriends.slice(0, 3).map(friend => (
+                <Link 
+                  key={friend._id}
+                  to={`/profile/${friend._id}`}
+                  className="flex items-center p-3 rounded-lg hover:bg-orange-50 transition-colors duration-200 border border-gray-100 hover:border-orange-200 group"
+                >
+                  {/* Avatar Amico */}
+                  <div className="w-11 h-11 rounded-full overflow-hidden mr-3 bg-gray-200 flex-shrink-0">
+                    <ImageWithFallback
+                      src={friend.avatar}
+                      alt={friend.username}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* Info Amico */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 group-hover:text-orange-700 transition-colors duration-200 truncate">
+                      {friend.username}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {friend.city ? `${friend.city}` : 'Città non specificata'}
+                      {friend.age ? ` • ${friend.age} anni` : ''}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
